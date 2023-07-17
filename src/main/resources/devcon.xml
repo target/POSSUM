@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE JposEntries PUBLIC "-//JavaPOS//DTD//EN"
+                             "jpos/res/jcl.dtd">
+<JposEntries>
+<!--Saved by JavaPOS jpos.config/loader (JCL) version 2.2.0 on 11/4/19 2:23 PM-->
+
+    <JposEntry logicalName="DLS-USB-Flash">
+        <creation factoryClass="com.dls.jpos.service.DLSScannerInstanceFactory" serviceClass="com.dls.jpos.service.DLSScannerService"/>
+        <vendor name="DLA" url="http://www.adc.datalogic.com"/>
+        <jpos category="Flash" version="1.13"/>
+        <product description="ScannerService" name="ScannerService" url="http://www.adc.datalogic.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="deviceBus" type="String" value="USB"/>
+        <prop name="canUpdateFirmware" type="String" value="True"/>
+        <prop name="productId" type="String" value="120A"/>
+        <prop name="canAcceptStatisticsCmd" type="String" value="True"/>
+        <prop name="canCompareFirmwareVersion" type="String" value="True"/>
+        <prop name="usage" type="String" value="A000"/>
+        <prop name="vendorId" type="String" value="05f9"/>
+    </JposEntry>
+
+    <JposEntry logicalName="Datalogic 8200 Scanner">
+        <creation factoryClass="com.dls.jpos.service.DLSScannerInstanceFactory" serviceClass="com.dls.jpos.service.DLSScannerService"/>
+        <vendor name="DLA" url="http://www.datalogic.com"/>
+        <jpos category="Scanner" version="1.13"/>
+        <product description="ScannerService" name="ScannerService" url="http://www.datalogic.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="canCompareFirmwareVersion" type="String" value="True"/>
+        <prop name="enableUPCEtoUPCAExpansion" type="String" value="False"/>
+        <prop name="enableVolumeSwitch" type="String" value="True"/>
+        <prop name="enable2DigitSups" type="String" value="False"/>
+        <prop name="itfRange" type="String" value="0"/>
+        <prop name="scanControl" type="String" value="False"/>
+        <prop name="enableBarCodeProgramming" type="String" value="True"/>
+        <prop name="storeLabelSecurityLevel" type="String" value="0"/>
+        <prop name="laserTimeout" type="String" value="1"/>
+        <prop name="enableEANJAN2LabelDecode" type="String" value="False"/>
+        <prop name="enable4DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="usage" type="String" value="4a00"/>
+        <prop name="motorTimeout" type="String" value="1"/>
+        <prop name="enableUPCD1D5" type="String" value="True"/>
+        <prop name="deviceBus" type="String" value="USB"/>
+        <prop name="enableCode39" type="String" value="True"/>
+        <prop name="doubleReadTimeout" type="String" value="2"/>
+        <prop name="twoItfs" type="String" value="0"/>
+        <prop name="fullDisable" type="String" value="False"/>
+        <prop name="enableCodabar" type="String" value="True"/>
+        <prop name="vendorId" type="String" value="05f9"/>
+        <prop name="enableCode128Sups" type="String" value="False"/>
+        <prop name="enableCode93" type="String" value="True"/>
+        <prop name="enableITFCheckDigit" type="String" value="False"/>
+        <prop name="canUpdateFirmware" type="String" value="True"/>
+        <prop name="enableUPCECheckDigit" type="String" value="False"/>
+        <prop name="enableUPCEAN" type="String" value="True"/>
+        <prop name="deviceClass" type="String" value="USBScanner"/>
+        <prop name="enableUPCAtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepDuration" type="String" value="1"/>
+        <prop name="ledGoodReadDuration" type="String" value="1"/>
+        <prop name="deviceType" type="String" value="Flatbed"/>
+        <prop name="enableCode128" type="String" value="True"/>
+        <prop name="enableGoodReadBeep" type="String" value="True"/>
+        <prop name="enableUPCEtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepVolume" type="String" value="2"/>
+        <prop name="canAcceptStatisticsCmd" type="String" value="True"/>
+        <prop name="enable5DigitSups" type="String" value="False"/>
+        <prop name="enableUPCACheckDigit" type="String" value="False"/>
+        <prop name="enable5DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="deviceDescription" type="String" value="DLS Magellan 8200 USB Scanner"/>
+        <prop name="itfLength2" type="String" value="0"/>
+        <prop name="enableInterleaved" type="String" value="True"/>
+        <prop name="enableUCCEAN128" type="String" value="True"/>
+        <prop name="itfLength1" type="String" value="0"/>
+        <prop name="productId" type="String" value="1120"/>
+        <prop name="enableCode39CheckDigit" type="String" value="False"/>
+        <prop name="deviceName" type="String" value="DLS Magellan 8200"/>
+        <prop name="canNotifyPowerChange" type="String" value="True"/>
+        <prop name="beepFrequency" type="String" value="2"/>
+        <prop name="enableLaserOnOffSwitch" type="String" value="True"/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="Datalogic 8405 Scale">
+        <creation factoryClass="com.dls.jpos.service.DLSScaleInstanceFactory" serviceClass="com.dls.jpos.service.DLSScaleService"/>
+        <vendor name="DLA" url="http://www.adc.datalogic.com"/>
+        <jpos category="Scale" version="1.13"/>
+        <product description="ScaleService" name="ScaleService" url="http://www.adc.datalogic.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="deviceClass" type="String" value="USBScale"/>
+        <prop name="operationMode" type="String" value="0"/>
+        <prop name="scanControl" type="String" value="False"/>
+        <prop name="enforceZeroReturn" type="String" value="True"/>
+        <prop name="canCompareFirmwareVersion" type="String" value="False"/>
+        <prop name="displayRequired" type="String" value="True"/>
+        <prop name="deviceName" type="String" value="DLS Magellan 8400"/>
+        <prop name="singleCable" type="String" value="False"/>
+        <prop name="canStatusUpdate" type="String" value="True"/>
+        <prop name="indicateZeroWithLED" type="String" value="True"/>
+        <prop name="canNotifyPowerChange" type="String" value="True"/>
+        <prop name="canUpdateFirmware" type="String" value="False"/>
+        <prop name="liveWeightPollRate" type="String" value="500"/>
+        <prop name="fullDisable" type="String" value="False"/>
+        <prop name="productId" type="String" value="1503"/>
+        <prop name="vibrationSensitivity" type="String" value="2"/>
+        <prop name="deviceBus" type="String" value="USB"/>
+        <prop name="zeroValid" type="String" value="False"/>
+        <prop name="fiveDigitWeight" type="String" value="False"/>
+        <prop name="metricWeightMode" type="String" value="False"/>
+        <prop name="usage" type="String" value="6e00"/>
+        <prop name="vendorId" type="String" value="05f9"/>
+        <prop name="deviceDescription" type="String" value="DLS Magellan 8400 USB Scale"/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="NCR 7167 MICR">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.micr.MICRService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="MICR" version="1.7"/>
+        <product description="NCR MICR Service" name="NCR Services for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="sModelClassName" type="String" value="NCR71xxPrinterCDMICRModel"/>
+        <prop name="Version" type="String" value="1.13.0"/>
+        <prop name="ReturnErrorData" type="String" value="F"/>
+        <prop name="ModelDescription" type="String" value="NCR 71xx MICR"/>
+        <prop name="Model.Uses" type="String" value="POSPrinter"/>
+        <prop name="ModelVersion" type="String" value="3.16.1.25"/>
+        <prop name="Description" type="String" value="NCR JavaPOS MICR Device Service"/>
+        <prop name="NCRLegacyMICRError" type="String" value="F"/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="NCR 5976 LineDisplay Serial">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.linedisplay.LineDisplayService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="LineDisplay" version="1.7"/>
+        <product description="NCR LineDisplay Service" name="NCR LineDisplay Service for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="IO.IONModel" type="String" value=""/>
+        <prop name="IO.DevUsagePage" type="String" value="65407"/>
+        <prop name="IO.Reports" type="String" value="2"/>
+        <prop name="sModelClassName" type="String" value="NCR59762x20LineDisplay"/>
+        <prop name="ScreenSaver" type="String" value="0"/>
+        <prop name="Version" type="String" value="1.10.0"/>
+        <prop name="Brightness" type="String" value="100"/>
+        <prop name="IO.DevUsage" type="String" value="6"/>
+        <prop name="IO.VendorID" type="String" value="1028"/>
+        <prop name="IO.ProductID" type="String" value="821"/>
+        <prop name="ModelDescription" type="String" value="NCR 5976 2x20 Line Display"/>
+        <prop name="DeviceWindows" type="String" value="5"/>
+        <prop name="ConnectionType" type="String" value="S"/>
+        <prop name="CodePage" type="String" value="858"/>
+        <prop name="IO.portName" type="String" value="COM2"/>
+        <prop name="IO.ClearAfterRead" type="String" value="true"/>
+        <prop name="ModelVersion" type="String" value="3.16.1.25"/>
+        <prop name="Description" type="String" value="NCR JavaPOS LineDisplay Device Service"/>
+        <prop name="IO.DevPath" type="String" value=""/>
+        <prop name="sEncoding" type="String" value=""/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="Datalogic 2300 Scanner">
+        <creation factoryClass="com.dls.jpos.service.DLSScannerInstanceFactory" serviceClass="com.dls.jpos.service.DLSScannerService"/>
+        <vendor name="DLA" url="http://www.datalogic.com"/>
+        <jpos category="Scanner" version="1.13"/>
+        <product description="ScannerService" name="ScannerService" url="http://www.datalogic.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="canCompareFirmwareVersion" type="String" value="True"/>
+        <prop name="enableUPCEtoUPCAExpansion" type="String" value="False"/>
+        <prop name="enableVolumeSwitch" type="String" value="True"/>
+        <prop name="disableOnExit" type="String" value="False"/>
+        <prop name="enable2DigitSups" type="String" value="False"/>
+        <prop name="itfRange" type="String" value="0"/>
+        <prop name="scanControl" type="String" value="False"/>
+        <prop name="enableBarCodeProgramming" type="String" value="True"/>
+        <prop name="storeLabelSecurityLevel" type="String" value="0"/>
+        <prop name="laserTimeout" type="String" value="1"/>
+        <prop name="enableEANJAN2LabelDecode" type="String" value="False"/>
+        <prop name="enable4DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="usage" type="String" value="4a00"/>
+        <prop name="motorTimeout" type="String" value="1"/>
+        <prop name="enableUPCD1D5" type="String" value="True"/>
+        <prop name="deviceBus" type="String" value="USB"/>
+        <prop name="enableCode39" type="String" value="True"/>
+        <prop name="doubleReadTimeout" type="String" value="2"/>
+        <prop name="twoItfs" type="String" value="0"/>
+        <prop name="fullDisable" type="String" value="False"/>
+        <prop name="enableCodabar" type="String" value="True"/>
+        <prop name="vendorId" type="String" value="05f9"/>
+        <prop name="enableCode128Sups" type="String" value="False"/>
+        <prop name="rxPrefix" type="String" value="0"/>
+        <prop name="enableCode93" type="String" value="True"/>
+        <prop name="enableITFCheckDigit" type="String" value="True"/>
+        <prop name="canUpdateFirmware" type="String" value="True"/>
+        <prop name="enableUPCEAN" type="String" value="True"/>
+        <prop name="enableUPCECheckDigit" type="String" value="False"/>
+        <prop name="deviceClass" type="String" value="USBScanner"/>
+        <prop name="enableUPCAtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepDuration" type="String" value="1"/>
+        <prop name="ledGoodReadDuration" type="String" value="1"/>
+        <prop name="decodeData" type="String" value="False"/>
+        <prop name="deviceType" type="String" value="Flatbed"/>
+        <prop name="enableCode128" type="String" value="True"/>
+        <prop name="decodeType" type="String" value="standard"/>
+        <prop name="enableGoodReadBeep" type="String" value="True"/>
+        <prop name="WMIEnabled" type="String" value="True"/>
+        <prop name="enableUPCEtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepVolume" type="String" value="2"/>
+        <prop name="canAcceptStatisticsCmd" type="String" value="True"/>
+        <prop name="enable5DigitSups" type="String" value="False"/>
+        <prop name="MBeansEnabled" type="String" value="False"/>
+        <prop name="enableUPCACheckDigit" type="String" value="False"/>
+        <prop name="enable5DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="deviceDescription" type="String" value="DLS Magellan 2300 USB Scanner"/>
+        <prop name="itfLength2" type="String" value="0"/>
+        <prop name="enableInterleaved" type="String" value="True"/>
+        <prop name="enableUCCEAN128" type="String" value="True"/>
+        <prop name="itfLength1" type="String" value="4"/>
+        <prop name="productId" type="String" value="1506"/>
+        <prop name="enableCode39CheckDigit" type="String" value="False"/>
+        <prop name="rxTrailer" type="String" value="d"/>
+        <prop name="deviceName" type="String" value="DLS Magellan 2300"/>
+        <prop name="canNotifyPowerChange" type="String" value="True"/>
+        <prop name="beepFrequency" type="String" value="2"/>
+        <prop name="enableLaserOnOffSwitch" type="String" value="True"/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="NCRPOSPrinter-7167">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.posprinter.POSPrinterService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="POSPrinter" version="1.7"/>
+        <product description="NCR POS Printer Service" name="NCR Services for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="Model.Model" type="String" value="7167"/>
+        <prop name="RecLineSpacingDefault" type="String" value=""/>
+        <prop name="ModelVersion" type="String" value="3.16.1.25"/>
+        <prop name="DefaultCharacterSet" type="String" value="437"/>
+        <prop name="PaperLowOption" type="String" value="2"/>
+        <prop name="sEncodingScheme" type="String" value="2"/>
+        <prop name="ModelDescription" type="String" value="NCR 71xx POS Printer"/>
+        <prop name="CountSlipLines" type="String" value="T"/>
+        <prop name="UserBarcodeTopMarginSpacing" type="String" value="0"/>
+        <prop name="IO.dataBits" type="String" value="3"/>
+        <prop name="SUEAsyncFire" type="String" value="T"/>
+        <prop name="Code128CharacterSet" type="String" value="SET A"/>
+        <prop name="IO.portName" type="String" value="COM10"/>
+        <prop name="IO.parity" type="String" value="0"/>
+        <prop name="PDF417Width" type="String" value="2"/>
+        <prop name="LetterQualityDefault" type="String" value="F"/>
+        <prop name="UseFullRTC" type="String" value="F"/>
+        <prop name="Description" type="String" value="NCR JavaPOS POSPrinter Device Service"/>
+        <prop name="sEncoding" type="String" value=""/>
+        <prop name="IO.baudRate" type="String" value="115200"/>
+        <prop name="SlipToTopOfForm" type="String" value="T"/>
+        <prop name="SlipStopEOF" type="String" value="T"/>
+        <prop name="LineSize" type="String" value="80"/>
+        <prop name="UserBarcodeWidthDefault" type="String" value="7"/>
+        <prop name="HeartbeatPollTime" type="String" value="1000"/>
+        <prop name="InvertCDPolarity" type="String" value="F"/>
+        <prop name="IgnorePitchProperty" type="String" value="F"/>
+        <prop name="AsyncBlockStatusTimeout" type="String" value="200"/>
+        <prop name="CharacterByteSize" type="String" value="1"/>
+        <prop name="AsyncBlockSize" type="String" value="10"/>
+        <prop name="ConnectionType" type="String" value="S"/>
+        <prop name="ColorPaper" type="String" value="1"/>
+        <prop name="EscapeSequenceModule" type="String" value="NCRUPOSPrinterParsers"/>
+        <prop name="SlipOutSettleTime" type="String" value="500"/>
+        <prop name="PrintIntegrityMode" type="String" value="1"/>
+        <prop name="MapMode" type="String" value="1"/>
+        <prop name="IO.stopBits" type="String" value="0"/>
+        <prop name="SlipInSettleTime" type="String" value="500"/>
+        <prop name="UserBarcodeBottomMarginSpacing" type="String" value="0"/>
+        <prop name="PrintStatusWaitTime" type="String" value="30000"/>
+        <prop name="Version" type="String" value="1.13.0"/>
+        <prop name="Code128ASCIIInput" type="String" value="T"/>
+        <prop name="IO.IONModel" type="String" value="7167"/>
+        <prop name="AutoLineFeed" type="String" value="F"/>
+        <prop name="EjectSlipFeed" type="String" value="-25"/>
+        <prop name="ReportOfflineAsPaperOut" type="String" value="F"/>
+        <prop name="DefaultPitch" type="String" value="N"/>
+        <prop name="TwoByteCodePage" type="String" value="932"/>
+        <prop name="sModelClassName" type="String" value="NCR71xxPrinterCDMICRModel"/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="Datalogic 8400 Scanner (Without Scale)">
+        <creation factoryClass="com.dls.jpos.service.DLSScannerInstanceFactory" serviceClass="com.dls.jpos.service.DLSScannerService"/>
+        <vendor name="DLA" url="http://www.adc.datalogic.com"/>
+        <jpos category="Scanner" version="1.13"/>
+        <product description="ScannerService" name="ScannerService" url="http://www.adc.datalogic.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="canCompareFirmwareVersion" type="String" value="True"/>
+        <prop name="enableUPCEtoUPCAExpansion" type="String" value="False"/>
+        <prop name="enableVolumeSwitch" type="String" value="True"/>
+        <prop name="enable2DigitSups" type="String" value="False"/>
+        <prop name="itfRange" type="String" value="0"/>
+        <prop name="scanControl" type="String" value="False"/>
+        <prop name="enableBarCodeProgramming" type="String" value="True"/>
+        <prop name="storeLabelSecurityLevel" type="String" value="0"/>
+        <prop name="laserTimeout" type="String" value="1"/>
+        <prop name="enableEANJAN2LabelDecode" type="String" value="False"/>
+        <prop name="enable4DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="usage" type="String" value="4a00"/>
+        <prop name="motorTimeout" type="String" value="1"/>
+        <prop name="enableUPCD1D5" type="String" value="True"/>
+        <prop name="deviceBus" type="String" value="USB"/>
+        <prop name="enableCode39" type="String" value="True"/>
+        <prop name="doubleReadTimeout" type="String" value="2"/>
+        <prop name="twoItfs" type="String" value="0"/>
+        <prop name="fullDisable" type="String" value="False"/>
+        <prop name="enableCodabar" type="String" value="True"/>
+        <prop name="vendorId" type="String" value="05f9"/>
+        <prop name="enableCode128Sups" type="String" value="False"/>
+        <prop name="enableCode93" type="String" value="True"/>
+        <prop name="enableITFCheckDigit" type="String" value="False"/>
+        <prop name="canUpdateFirmware" type="String" value="True"/>
+        <prop name="enableUPCEAN" type="String" value="True"/>
+        <prop name="enableUPCECheckDigit" type="String" value="False"/>
+        <prop name="deviceClass" type="String" value="USBScanner"/>
+        <prop name="enableUPCAtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepDuration" type="String" value="1"/>
+        <prop name="ledGoodReadDuration" type="String" value="1"/>
+        <prop name="deviceType" type="String" value="Flatbed"/>
+        <prop name="enableCode128" type="String" value="True"/>
+        <prop name="enableGoodReadBeep" type="String" value="True"/>
+        <prop name="enableUPCEtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepVolume" type="String" value="2"/>
+        <prop name="canAcceptStatisticsCmd" type="String" value="True"/>
+        <prop name="enable5DigitSups" type="String" value="False"/>
+        <prop name="enableUPCACheckDigit" type="String" value="False"/>
+        <prop name="enable5DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="deviceDescription" type="String" value="DLS Magellan 8400 USB Scanner"/>
+        <prop name="itfLength2" type="String" value="0"/>
+        <prop name="enableInterleaved" type="String" value="True"/>
+        <prop name="enableUCCEAN128" type="String" value="True"/>
+        <prop name="itfLength1" type="String" value="0"/>
+        <prop name="enableCode39CheckDigit" type="String" value="False"/>
+        <prop name="productId" type="String" value="1504"/>
+        <prop name="deviceName" type="String" value="DLS Magellan 8400"/>
+        <prop name="canNotifyPowerChange" type="String" value="True"/>
+        <prop name="beepFrequency" type="String" value="2"/>
+        <prop name="enableLaserOnOffSwitch" type="String" value="True"/>
+</JposEntry>
+
+    
+    <JposEntry logicalName="NCR 5975 LineDisplay Serial">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.linedisplay.LineDisplayService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="LineDisplay" version="1.7"/>
+        <product description="NCR LineDisplay Service" name="NCR LineDisplay Service for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="IO.IONModel" type="String" value=""/>
+        <prop name="IO.dataBits" type="String" value="3"/>
+        <prop name="IO.CTSFlowControl" type="String" value="1"/>
+        <prop name="sModelClassName" type="String" value="NCR59752x20LineDisplay"/>
+        <prop name="IO.parity" type="String" value="0"/>
+        <prop name="Version" type="String" value="1.10.0"/>
+        <prop name="ScreenSaver" type="String" value="0"/>
+        <prop name="Brightness" type="String" value="100"/>
+        <prop name="IO.stopBits" type="String" value="1"/>
+        <prop name="ModelDescription" type="String" value="NCR 5975 2x20 Line Display"/>
+        <prop name="DeviceWindows" type="String" value="5"/>
+        <prop name="IO.baudRate" type="String" value="9600"/>
+        <prop name="ConnectionType" type="String" value="S"/>
+        <prop name="CodePage" type="String" value="858"/>
+        <prop name="ModelVersion" type="String" value="3.16.1.25"/>
+        <prop name="IO.portName" type="String" value="COM2"/>
+        <prop name="Description" type="String" value="NCR JavaPOS LineDisplay Device Service"/>
+        <prop name="IO.startBits" type="String" value="1"/>
+        <prop name="sEncoding" type="String" value=""/>
+</JposEntry>
+
+    <JposEntry logicalName="CashDrawer_ELO">
+        <creation factoryClass="com.elo.jpos.EloJposServiceInstanceFactory" serviceClass="com.elo.jpos.CashDrawerService"/>
+        <vendor name="Elo Touch Solutions" url="http://www.UnknownVerdorURL.com"/>
+        <jpos category="CashDrawer" version="1.12"/>
+        <product description="JPOS cash drawer for EloPOS Pack" name="Elo POS Pack 1st" url="http://www.elotouch.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="deviceBus" type="String" value="Proprietary"/>
+        <prop name="DeviceID" type="String" value="EloPOSPackCD1"/>
+    </JposEntry>
+
+
+    <JposEntry logicalName="CashDrawer_NCR">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.cashdrawer.CashDrawerService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="CashDrawer" version="1.10"/>
+        <product description="NCR Cash Drawer Service" name="NCR Services for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="nDeviceNumber" type="String" value="0"/>
+        <prop name="Model.OpenDrawerDetect" type="String" value="0"/>
+        <prop name="sModelClassName" type="String" value="NCRCashDrawerProcessor"/>
+        <prop name="Version" type="String" value="1.10.0"/>
+        <prop name="Model.Model" type="String" value="INTEGRATED"/>
+        <prop name="ModelDescription" type="String" value="NCR Cash Drawer Kickout"/>
+        <prop name="Model.OpenDrawerSUE" type="String" value="1"/>
+        <prop name="SUEAsyncFire" type="String" value="T"/>
+        <prop name="ConnectionType" type="String" value="M"/>
+        <prop name="ModelVersion" type="String" value="3.16.4.27"/>
+        <prop name="Description" type="String" value="NCR JavaPOS CashDrawer Device Service"/>
+        <prop name="YCableStatus" type="String" value="2"/>
+    </JposEntry>
+
+    
+    <JposEntry logicalName="CashDrawer_Uses_Printer">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.cashdrawer.CashDrawerService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="CashDrawer" version="1.7"/>
+        <product description="NCR CashDrawer Service" name="NCR CashDrawer Service for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="nDeviceNumber" type="String" value="0"/>
+        <prop name="sModelClassName" type="String" value="NCR71xxPrinterCDMICRModel"/>
+        <prop name="Version" type="String" value="1.10.0"/>
+        <prop name="ModelDescription" type="String" value="NCR 71xx Cash Drawer Kickout"/>
+        <prop name="Model.Uses" type="String" value="POSPrinter"/>
+        <prop name="SUEAsyncFire" type="String" value="T"/>
+        <prop name="ModelVersion" type="String" value="3.16.1.25"/>
+        <prop name="Description" type="String" value="NCR JavaPOS CashDrawer Device Service"/>
+        <prop name="YCableStatus" type="String" value="1"/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="Honeywell 1900 Scanner">
+        <creation factoryClass="com.honeywell.jpos.HHPJposServiceInstanceFactory" serviceClass="com.honeywell.jpos.scanner.ScannerService"/>
+        <vendor name="Honeywell" url="www.honeywell.com"/>
+        <jpos category="Scanner" version="1.14"/>
+        <product description="Honeywell JPOS Service Driver, (c) 2011 Honeywell, Inc." name="Honeywell Products, Inc. Services for JavaPOS(TM) Standard" url="www.honeywell.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="LogFileSize" type="String" value="10240"/>
+        <prop name="ClearLogFile" type="String" value="False"/>
+        <prop name="DebugType" type="String" value="0"/>
+        <prop name="DECODE_GS1_LTD" type="Integer" value="0"/>
+        <prop name="FWDebugFile" type="String" value=""/>
+        <prop name="CUSTOM_COMMAND" type="String" value=""/>
+        <prop name="LOGFILE" type="String" value=""/>
+        <prop name="FWProtocolFile" type="String" value=""/>
+        <prop name="CLAIMTIMEOUT_0" type="Integer" value="500"/>
+        <prop name="SCANDATAOPTION_01" type="Integer" value="0"/>
+        <prop name="AUX_PORT_ADDRESS" type="String" value=":-- Select --:"/>
+        <prop name="infiniteTimeout" type="String" value="30000"/>
+        <prop name="Port" type="String" value="COM1"/>
+        <prop name="deviceType" type="String" value="HandScanner"/>
+        <prop name="DEVICE_POLL_FREQUENCY" type="Long" value="2000"/>
+        <prop name="AUTO_RESYNCH" type="Integer" value="0"/>
+        <prop name="autodetect" type="String" value="True"/>
+        <prop name="SDKDebugLevel" type="Integer" value="0"/>
+        <prop name="COMMANDTIMEOUT" type="String" value="10000"/>
+        <prop name="LogServiceFile" type="String" value=""/>
+        <prop name="Manufacturer" type="String" value="Honeywell"/>
+        <prop name="FWDebugType" type="Integer" value="1"/>
+        <prop name="FWDebugLevel" type="Integer" value="1"/>
+        <prop name="NoOfBackupFiles" type="String" value="0"/>
+        <prop name="GOODSCANCOUNT" type="Integer" value="80"/>
+        <prop name="deviceName" type="String" value="Honeywell"/>
+        <prop name="CombinedSDKLog" type="String" value="True"/>
+        <prop name="NOREADCOUNT" type="Integer" value="0"/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="Datalogic 9400 Scanner">
+        <creation factoryClass="com.dls.jpos.service.DLSScannerInstanceFactory" serviceClass="com.dls.jpos.service.DLSScannerService"/>
+        <vendor name="DLA" url="http://www.adc.datalogic.com"/>
+        <jpos category="Scanner" version="1.13"/>
+        <product description="ScaleService" name="ScaleService" url="http://www.adc.datalogic.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="canCompareFirmwareVersion" type="String" value="True"/>
+        <prop name="enableUPCEtoUPCAExpansion" type="String" value="False"/>
+        <prop name="enableVolumeSwitch" type="String" value="True"/>
+        <prop name="disableOnExit" type="String" value="False"/>
+        <prop name="enable2DigitSups" type="String" value="False"/>
+        <prop name="itfRange" type="String" value="0"/>
+        <prop name="scanControl" type="String" value="False"/>
+        <prop name="enableBarCodeProgramming" type="String" value="True"/>
+        <prop name="storeLabelSecurityLevel" type="String" value="0"/>
+        <prop name="laserTimeout" type="String" value="1"/>
+        <prop name="enableEANJAN2LabelDecode" type="String" value="False"/>
+        <prop name="enable4DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="usage" type="String" value="4a00"/>
+        <prop name="motorTimeout" type="String" value="1"/>
+        <prop name="enableUPCD1D5" type="String" value="True"/>
+        <prop name="deviceBus" type="String" value="USB"/>
+        <prop name="enableCode39" type="String" value="True"/>
+        <prop name="doubleReadTimeout" type="String" value="2"/>
+        <prop name="twoItfs" type="String" value="0"/>
+        <prop name="fullDisable" type="String" value="False"/>
+        <prop name="enableCodabar" type="String" value="True"/>
+        <prop name="vendorId" type="String" value="05f9"/>
+        <prop name="enableCode128Sups" type="String" value="False"/>
+        <prop name="rxPrefix" type="String" value="0"/>
+        <prop name="enableCode93" type="String" value="True"/>
+        <prop name="canUpdateFirmware" type="String" value="True"/>
+        <prop name="enableITFCheckDigit" type="String" value="False"/>
+        <prop name="enableUPCEAN" type="String" value="True"/>
+        <prop name="enableUPCECheckDigit" type="String" value="False"/>
+        <prop name="deviceClass" type="String" value="USBScanner"/>
+        <prop name="enableUPCAtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepDuration" type="String" value="1"/>
+        <prop name="ledGoodReadDuration" type="String" value="1"/>
+        <prop name="decodeData" type="String" value="False"/>
+        <prop name="deviceType" type="String" value="Flatbed"/>
+        <prop name="enableCode128" type="String" value="True"/>
+        <prop name="decodeType" type="String" value="standard"/>
+        <prop name="enableGoodReadBeep" type="String" value="True"/>
+        <prop name="WMIEnabled" type="String" value="True"/>
+        <prop name="enableUPCEtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepVolume" type="String" value="2"/>
+        <prop name="canAcceptStatisticsCmd" type="String" value="True"/>
+        <prop name="enable5DigitSups" type="String" value="False"/>
+        <prop name="MBeansEnabled" type="String" value="False"/>
+        <prop name="enableUPCACheckDigit" type="String" value="False"/>
+        <prop name="enable5DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="deviceDescription" type="String" value="DLS Magellan 9400i USB OEM Scanner Scale"/>
+        <prop name="itfLength2" type="String" value="0"/>
+        <prop name="enableInterleaved" type="String" value="True"/>
+        <prop name="enableUCCEAN128" type="String" value="True"/>
+        <prop name="itfLength1" type="String" value="0"/>
+        <prop name="enableCode39CheckDigit" type="String" value="False"/>
+        <prop name="productId" type="String" value="1512"/>
+        <prop name="rxTrailer" type="String" value="d"/>
+        <prop name="deviceName" type="String" value="Datalogic 9400i"/>
+        <prop name="canNotifyPowerChange" type="String" value="True"/>
+        <prop name="beepFrequency" type="String" value="2"/>
+        <prop name="enableLaserOnOffSwitch" type="String" value="True"/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="NCR 5976 LineDisplay USB">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.linedisplay.LineDisplayService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="LineDisplay" version="1.7"/>
+        <product description="NCR LineDisplay Service" name="NCR LineDisplay Service for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="IO.IONModel" type="String" value=""/>
+        <prop name="IO.DevUsagePage" type="String" value="65407"/>
+        <prop name="IO.Reports" type="String" value="2"/>
+        <prop name="sModelClassName" type="String" value="NCR59762x20LineDisplay"/>
+        <prop name="Version" type="String" value="1.10.0"/>
+        <prop name="ScreenSaver" type="String" value="0"/>
+        <prop name="Brightness" type="String" value="100"/>
+        <prop name="IO.VendorID" type="String" value="1028"/>
+        <prop name="IO.DevUsage" type="String" value="6"/>
+        <prop name="IO.ProductID" type="String" value="821"/>
+        <prop name="ModelDescription" type="String" value="NCR 5976 2x20 Line Display"/>
+        <prop name="DeviceWindows" type="String" value="5"/>
+        <prop name="ConnectionType" type="String" value="U"/>
+        <prop name="CodePage" type="String" value="858"/>
+        <prop name="ModelVersion" type="String" value="3.16.1.25"/>
+        <prop name="IO.ClearAfterRead" type="String" value="true"/>
+        <prop name="Description" type="String" value="NCR JavaPOS LineDisplay Device Service"/>
+        <prop name="sEncoding" type="String" value=""/>
+        <prop name="IO.DevPath" type="String" value=""/>
+    </JposEntry>
+
+    <JposEntry logicalName="NCR 5977 LineDisplay USB">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.linedisplay.LineDisplayService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="LineDisplay" version="1.7"/>
+        <product description="NCR LineDisplay Service" name="NCR LineDisplay Service for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="IO.IONModel" type="String" value=""/>
+        <prop name="IO.DevUsagePage" type="String" value="65407"/>
+        <prop name="IO.Reports" type="String" value="2"/>
+        <prop name="sModelClassName" type="String" value="NCR59762x20LineDisplay"/>
+        <prop name="Version" type="String" value="1.10.0"/>
+        <prop name="ScreenSaver" type="String" value="0"/>
+        <prop name="Brightness" type="String" value="100"/>
+        <prop name="IO.VendorID" type="String" value="1028"/>
+        <prop name="IO.DevUsage" type="String" value="6"/>
+        <prop name="IO.ProductID" type="String" value="863"/>
+        <prop name="ModelDescription" type="String" value="NCR 5976 2x20 Line Display"/>
+        <prop name="DeviceWindows" type="String" value="5"/>
+        <prop name="ConnectionType" type="String" value="U"/>
+        <prop name="CodePage" type="String" value="858"/>
+        <prop name="ModelVersion" type="String" value="3.16.1.25"/>
+        <prop name="IO.ClearAfterRead" type="String" value="true"/>
+        <prop name="Description" type="String" value="NCR JavaPOS LineDisplay Device Service"/>
+        <prop name="sEncoding" type="String" value=""/>
+        <prop name="IO.DevPath" type="String" value=""/>
+    </JposEntry>
+  
+    <JposEntry logicalName="NCRPOSPrinter-EPIC-7199">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.posprinter.POSPrinterService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="POSPrinter" version="1.7"/>
+        <product description="NCR POSPrinter Service" name="NCR POSPrinter Service for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="HeartbeatPollTime" type="String" value="1000"/>
+        <prop name="MapMode" type="String" value="1"/>
+        <prop name="EnhancedThaiFont" type="String" value="F"/>
+        <prop name="InterCharWait" type="String" value="250"/>
+        <prop name="EscapeSequenceModule" type="String" value="NCRUPOSPrinterParsers"/>
+        <prop name="RecLineSpacingDefault" type="String" value=""/>
+        <prop name="ReportOfflineAsPaperOut" type="String" value="F"/>
+        <prop name="Version" type="String" value="1.13.0"/>
+        <prop name="PrintIntegrityMode" type="String" value="1"/>
+        <prop name="AsyncBlockSize" type="String" value="10"/>
+        <prop name="AsyncBlockStatusTimeout" type="String" value="200"/>
+        <prop name="CompatBarcodeLen" type="String" value="T"/>
+        <prop name="UserBarcodeWidthDefault" type="String" value="7"/>
+        <prop name="ConnectionType" type="String" value="S"/>
+        <prop name="UserBarcodeTopMarginSpacing" type="String" value="0"/>
+        <prop name="ModelDescription" type="String" value="NCR 71xx POS Printer"/>
+        <prop name="PrinterMaintenanceLogPath" type="String" value=""/>
+        <prop name="IO.parity" type="String" value="0"/>
+        <prop name="sEncodingScheme" type="String" value="1"/>
+        <prop name="AutoReset" type="String" value="7"/>
+        <prop name="PDF417Width" type="String" value="2"/>
+        <prop name="IO.portName" type="String" value="COM10"/>
+        <prop name="DefaultCharacterSet" type="String" value="437"/>
+        <prop name="OffMode" type="String" value="0"/>
+        <prop name="Model.Model" type="String" value="7199"/>
+        <prop name="IO.stopBits" type="String" value="0"/>
+        <prop name="IO.dataBits" type="String" value="3"/>
+        <prop name="LineSize" type="String" value="80"/>
+        <prop name="DefaultPitch" type="String" value="N"/>
+        <prop name="CompatibleTopMarginTimeout" type="String" value="0"/>
+        <prop name="Code128CharacterSet" type="String" value="NONE"/>
+        <prop name="PaperLowOption" type="String" value="4"/>
+        <prop name="KnifeMode" type="String" value="0"/>
+        <prop name="SpecialFont" type="String" value="6"/>
+        <prop name="SUEAsyncFire" type="String" value="F"/>
+        <prop name="BuzzerTone" type="String" value="1"/>
+        <prop name="Description" type="String" value="NCR JavaPOS POSPrinter Device Service"/>
+        <prop name="sModelClassName" type="String" value="NCR71xxPrinterCDMICRModel"/>
+        <prop name="Code128ASCIIInput" type="String" value="F"/>
+        <prop name="GSWaterMarkAlignment" type="String" value="1"/>
+        <prop name="LEDMODE" type="String" value="0"/>
+        <prop name="IgnorePitchProperty" type="String" value="F"/>
+        <prop name="TimeoutValueToSetConfigEntries" type="String" value="8000"/>
+        <prop name="QRErrLevel" type="String" value="1"/>
+        <prop name="QRModel" type="String" value="0"/>
+        <prop name="LetterQualityDefault" type="String" value="F"/>
+        <prop name="IO.IONModel" type="String" value="7199"/>
+        <prop name="HeadFailDetect" type="String" value="0"/>
+        <prop name="InvertCDPolarity" type="String" value="F"/>
+        <prop name="GSWaterMarkImage" type="String" value=""/>
+        <prop name="GSWaterMarkPrintingEnabled" type="String" value="F"/>
+        <prop name="QRSize" type="String" value="0"/>
+        <prop name="IO.baudRate" type="String" value="115200"/>
+        <prop name="MaxPDF417CharactersFor9Columns" type="String" value="0"/>
+        <prop name="UseFullRTC" type="String" value="F"/>
+        <prop name="AutoLineFeed" type="String" value="F"/>
+        <prop name="ThaiDiacriticalSpaceComp" type="String" value="F"/>
+        <prop name="ColorPaper" type="String" value="1"/>
+        <prop name="PrintStatusWaitTime" type="String" value="30000"/>
+        <prop name="sEncoding" type="String" value=""/>
+        <prop name="ModelVersion" type="String" value="3.16.1.25"/>
+        <prop name="GSBitmapPrinting" type="String" value="F"/>
+        <prop name="MultiplePrintersUsed" type="String" value="T"/>
+        <prop name="UserBarcodeBottomMarginSpacing" type="String" value="0"/>
+        <prop name="PrintMode" type="String" value="0"/>
+        <prop name="UserDefCharFile" type="String" value=""/>
+        <prop name="CompatibleTopMargin" type="String" value="F"/>
+</JposEntry>
+
+    <JposEntry logicalName="NCRPOSPrinter-USB-7199">
+        <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.posprinter.POSPrinterService"/>
+        <vendor name="NCR" url="http://www.ncr.com"/>
+        <jpos category="POSPrinter" version="1.7"/>
+        <product description="POSPrinter" name="POSPrinter" url="http://www.ncr.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="BuzzerTone" type="String" value="1"/>
+        <prop name="Model.Model" type="String" value="7199"/>
+        <prop name="ModelVersion" type="String" value="3.16.1.23"/>
+        <prop name="DefaultCharacterSet" type="String" value="437"/>
+        <prop name="PaperLowOption" type="String" value="4"/>
+        <prop name="sEncodingScheme" type="String" value="OEM"/>
+        <prop name="StandbyMode" type="String" value="F"/>
+        <prop name="IO.DevPath" type="String" value=""/>
+        <prop name="PrinterMaintenanceLogPath" type="String" value=""/>
+        <prop name="ModelDescription" type="String" value="NCR 71xx POS Printer"/>
+        <prop name="IO.VendorID" type="String" value="1028"/>
+        <prop name="CountSlipLines" type="String" value="T"/>
+        <prop name="UserBarcodeTopMarginSpacing" type="String" value="0"/>
+        <prop name="QRErrLevel" type="String" value="1"/>
+        <prop name="PDF417Width" type="String" value="2"/>
+        <prop name="LetterQualityDefault" type="String" value="F"/>
+        <prop name="LEDMode" type="String" value="0"/>
+        <prop name="UseFullRTC" type="String" value="F"/>
+        <prop name="TimeoutValueToSetConfigEntries" type="String" value="8000"/>
+        <prop name="Description" type="String" value="NCR JavaPOS POSPrinter Device Service"/>
+        <prop name="IO.baudRate" type="String" value="115200"/>
+        <prop name="QRModel" type="String" value="0"/>
+        <prop name="SlipStopEOF" type="String" value="T"/>
+        <prop name="PrintMode" type="String" value="0"/>
+        <prop name="LineSize" type="String" value="80"/>
+        <prop name="IO.Reports" type="String" value="5"/>
+        <prop name="IO.DevUsage" type="String" value="5"/>
+        <prop name="QRSize" type="String" value="0"/>
+        <prop name="EnhancedThaiFont" type="String" value="F"/>
+        <prop name="HeadFailDetect" type="String" value="0"/>
+        <prop name="UserBarcodeWidthDefault" type="String" value="7"/>
+        <prop name="GSWaterMarkPrintingEnabled" type="String" value="F"/>
+        <prop name="HeartbeatPollTime" type="String" value="1000"/>
+        <prop name="InvertCDPolarity" type="String" value="F"/>
+        <prop name="GSWaterMarkImage" type="String" value=""/>
+        <prop name="AsyncBlockStatusTimeout" type="String" value="200"/>
+        <prop name="AsyncBlockSize" type="String" value="10"/>
+        <prop name="ThaiDiacriticalSpaceComp" type="String" value="F"/>
+        <prop name="ConnectionType" type="String" value="U"/>
+        <prop name="ColorPaper" type="String" value="1"/>
+        <prop name="GSWaterMarkAlignment" type="String" value="1"/>
+        <prop name="EscapeSequenceModule" type="String" value="NCRUPOSPrinterParsers"/>
+        <prop name="PrintIntegrityMode" type="String" value="1"/>
+        <prop name="IO.DevUsagePage" type="String" value="0xFF8B"/>
+        <prop name="MapMode" type="String" value="1"/>
+        <prop name="CompatibleTopMargin" type="String" value="F"/>
+        <prop name="UserBarcodeBottomMarginSpacing" type="String" value="0"/>
+        <prop name="IO.ClearAfterRead" type="String" value="true"/>
+        <prop name="PrintStatusWaitTime" type="String" value="30000"/>
+        <prop name="Version" type="String" value="1.13.0"/>
+        <prop name="GSBitmapPrinting" type="String" value="F"/>
+        <prop name="Code128ASCIIInput" type="String" value="F"/>
+        <prop name="IO.IONModel" type="String" value="7199"/>
+        <prop name="AutoLineFeed" type="String" value="F"/>
+        <prop name="KnifeMode" type="String" value="0"/>
+        <prop name="MaxPDF417CharactersFor9Columns" type="String" value="0"/>
+        <prop name="IO.ProductID" type="String" value="0"/>
+        <prop name="sModelClassName" type="String" value="NCR71xxPrinterCDMICRModel"/>
+        <prop name="OffMode" type="String" value="0"/>
+    </JposEntry>
+
+    <JposEntry logicalName="ZebraScanner">
+        <creation factoryClass="com.zebra.jpos.service.scanner.SymScannerSvc112Factory" serviceClass="com.zebra.jpos.service.scanner.SymScannerSvc112"/>
+        <vendor name="Zebra Technologies" url="http://www.zebra.com"/>
+        <jpos category="Scanner" version="1.12"/>
+        <product description="Zebra Serial/USB Scanner" name="Zebra Scanner" url="http://www.zebra.com"/>
+
+        <!--Scanner type, default=0, valid values are: 1- ALL Scanners-->
+        <prop name="ScannerType" value="2"/>
+        <prop name="SetAttribute:1:DS" type="String" value="F:True"/>
+        <prop name="NcrScanNOFPattern" type="String" value="12"/>
+        <prop name="NcrScanTonePattern" type="String" value="4"/>
+        <prop name="DioScannerNotOnFile" type="String" value="12"/>
+        <prop name="DioScannerDioNof" type="String" value="12"/>
+        <prop name="ScanDataLabelId" type="String" value="0"/>
+        <prop name="deviceType" type="String" value="Flatbed"/>
+        <prop name="deviceName" type="String" value="ZebraScanner"/>
+        <prop name="deviceClass" type="String" value="USBScanner"/>
+    </JposEntry>
+
+    <JposEntry logicalName="Datalogic 3550 Scanner">
+        <creation factoryClass="com.dls.jpos.service.DLSScannerInstanceFactory" serviceClass="com.dls.jpos.service.DLSScannerService"/>
+        <vendor name="DLA" url="http://www.adc.datalogic.com"/>
+        <jpos category="Scanner" version="1.13"/>
+        <product description="ScaleService" name="ScaleService" url="http://www.adc.datalogic.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="enableUPCEtoUPCAExpansion" type="String" value="False"/>
+        <prop name="enableVolumeSwitch" type="String" value="True"/>
+        <prop name="disableOnExit" type="String" value="False"/>
+        <prop name="enable2DigitSups" type="String" value="False"/>
+        <prop name="itfRange" type="String" value="0"/>
+        <prop name="scanControl" type="String" value="False"/>
+        <prop name="enableBarCodeProgramming" type="String" value="True"/>
+        <prop name="storeLabelSecurityLevel" type="String" value="0"/>
+        <prop name="laserTimeout" type="String" value="1"/>
+        <prop name="enableEANJAN2LabelDecode" type="String" value="False"/>
+        <prop name="enable4DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="usage" type="String" value="4a00"/>
+        <prop name="motorTimeout" type="String" value="1"/>
+        <prop name="enableUPCD1D5" type="String" value="False"/>
+        <prop name="deviceBus" type="String" value="USB"/>
+        <prop name="enableCode39" type="String" value="True"/>
+        <prop name="doubleReadTimeout" type="String" value="2"/>
+        <prop name="twoItfs" type="String" value="0"/>
+        <prop name="fullDisable" type="String" value="False"/>
+        <prop name="enableCodabar" type="String" value="True"/>
+        <prop name="vendorId" type="String" value="05f9"/>
+        <prop name="enableCode128Sups" type="String" value="False"/>
+        <prop name="rxPrefix" type="String" value="0"/>
+        <prop name="enableCode93" type="String" value="True"/>
+        <prop name="enableITFCheckDigit" type="String" value="False"/>
+        <prop name="canUpdateFirmware" type="String" value="True"/>
+        <prop name="enableUPCECheckDigit" type="String" value="False"/>
+        <prop name="enableUPCEAN" type="String" value="False"/>
+        <prop name="enableUPCAtoEAN13Expansion" type="String" value="False"/>
+        <prop name="deviceClass" type="String" value="USBScanner"/>
+        <prop name="beepDuration" type="String" value="1"/>
+        <prop name="ledGoodReadDuration" type="String" value="1"/>
+        <prop name="decodeData" type="String" value="False"/>
+        <prop name="deviceType" type="String" value="Flatbed"/>
+        <prop name="enableCode128" type="String" value="True"/>
+        <prop name="decodeType" type="String" value="standard"/>
+        <prop name="enableGoodReadBeep" type="String" value="True"/>
+        <prop name="WMIEnabled" type="String" value="True"/>
+        <prop name="enableUPCEtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepVolume" type="String" value="2"/>
+        <prop name="canAcceptStatisticsCmd" type="String" value="True"/>
+        <prop name="MBeansEnabled" type="String" value="False"/>
+        <prop name="enable5DigitSups" type="String" value="False"/>
+        <prop name="enableUPCACheckDigit" type="String" value="False"/>
+        <prop name="deviceDescription" type="String" value="DLS Magellan 3550 USB OEM Scanner Scale"/>
+        <prop name="enable5DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="itfLength2" type="String" value="0"/>
+        <prop name="itfLength1" type="String" value="0"/>
+        <prop name="enableUCCEAN128" type="String" value="True"/>
+        <prop name="enableInterleaved" type="String" value="True"/>
+        <prop name="productId" type="String" value="1514"/>
+        <prop name="enableCode39CheckDigit" type="String" value="False"/>
+        <prop name="rxTrailer" type="String" value="d"/>
+        <prop name="beepFrequency" type="String" value="2"/>
+        <prop name="canNotifyPowerChange" type="String" value="True"/>
+        <prop name="deviceName" type="String" value="DLS Magellan 3550"/>
+        <prop name="enableLaserOnOffSwitch" type="String" value="True"/>
+</JposEntry>
+
+    <JposEntry logicalName="ZebraScale">
+        <creation factoryClass="com.zebra.jpos.serviceonscale.SvcServiceInstanceFactoryImpl" serviceClass="com.zebra.jpos.service.scale.ScaleService113Impl"/>
+        <vendor name="Zebra Technologies" url="http://www.zebra.com"/>
+        <jpos   category="Scale" version="1.13"/>
+        <product description="ZebraTechnologies" name="Zebra Scale" url="http://www.zebra.com"/>
+        <prop name="SyncReadWeightOnZeroTimeout" value="False"/>
+        <prop name="LiveWeightFrequency" value="500"/>
+        <prop name="ErrorOnSameWeight" value="1"/>
+        <prop name="NcrScaleReadWeightTimeout" type="String" value="150"/>
+        <prop name="ExtErrorOverWeight" type="String" value="201"/>
+        <prop name="ExtErrorUnderZero" type="String" value="202"/>
+        <prop name="deviceType" type="String" value="Flatbed"/>
+        <prop name="deviceClass" type="String" value="USBScanner"/>
+        <prop name="deviceName" type="String" value="ZebraScale"/>
+    </JposEntry>
+    
+    <JposEntry logicalName="Datalogic 9400 Scale">
+        <creation factoryClass="com.dls.jpos.service.DLSScaleInstanceFactory" serviceClass="com.dls.jpos.service.DLSScaleService"/>
+        <vendor name="DLA" url="http://www.adc.datalogic.com"/>
+        <jpos category="Scale" version="1.14"/>
+        <product description="ScaleService" name="ScaleService" url="http://www.adc.datalogic.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="deviceClass" type="String" value="USBScale"/>
+        <prop name="operationMode" type="String" value="0"/>
+        <prop name="scanControl" type="String" value="False"/>
+        <prop name="enforceZeroReturn" type="String" value="True"/>
+        <prop name="canCompareFirmwareVersion" type="String" value="False"/>
+        <prop name="displayRequired" type="String" value="True"/>
+        <prop name="deviceName" type="String" value="DLS Magellan 9400i Scale"/>
+        <prop name="singleCable" type="String" value="False"/>
+        <prop name="canStatusUpdate" type="String" value="True"/>
+        <prop name="indicateZeroWithLED" type="String" value="True"/>
+        <prop name="canNotifyPowerChange" type="String" value="True"/>
+        <prop name="canUpdateFirmware" type="String" value="False"/>
+        <prop name="liveWeightPollRate" type="String" value="500"/>
+        <prop name="fullDisable" type="String" value="False"/>
+        <prop name="productId" type="String" value="1512"/>
+        <prop name="vibrationSensitivity" type="String" value="2"/>
+        <prop name="deviceBus" type="String" value="USB"/>
+        <prop name="zeroValid" type="String" value="False"/>
+        <prop name="fiveDigitWeight" type="String" value="True"/>
+        <prop name="metricWeightMode" type="String" value="False"/>
+        <prop name="usage" type="String" value="6e00"/>
+        <prop name="vendorId" type="String" value="05f9"/>
+        <prop name="deviceDescription" type="String" value="DLS Magellan 9400i USB OEM Scale"/>
+</JposEntry>
+    
+    
+    <JposEntry logicalName="Datalogic 8400 Scanner (With Scale)">
+        <creation factoryClass="com.dls.jpos.service.DLSScannerInstanceFactory" serviceClass="com.dls.jpos.service.DLSScannerService"/>
+        <vendor name="DLA" url="http://www.adc.datalogic.com"/>
+        <jpos category="Scanner" version="1.13"/>
+        <product description="ScannerService" name="ScannerService" url="http://www.adc.datalogic.com"/>
+
+        <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+        <prop name="canCompareFirmwareVersion" type="String" value="True"/>
+        <prop name="enableUPCEtoUPCAExpansion" type="String" value="False"/>
+        <prop name="enableVolumeSwitch" type="String" value="True"/>
+        <prop name="enable2DigitSups" type="String" value="False"/>
+        <prop name="itfRange" type="String" value="0"/>
+        <prop name="scanControl" type="String" value="False"/>
+        <prop name="enableBarCodeProgramming" type="String" value="True"/>
+        <prop name="storeLabelSecurityLevel" type="String" value="0"/>
+        <prop name="laserTimeout" type="String" value="1"/>
+        <prop name="enableEANJAN2LabelDecode" type="String" value="False"/>
+        <prop name="enable4DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="usage" type="String" value="4a00"/>
+        <prop name="motorTimeout" type="String" value="1"/>
+        <prop name="enableUPCD1D5" type="String" value="True"/>
+        <prop name="deviceBus" type="String" value="USB"/>
+        <prop name="enableCode39" type="String" value="True"/>
+        <prop name="doubleReadTimeout" type="String" value="2"/>
+        <prop name="twoItfs" type="String" value="0"/>
+        <prop name="fullDisable" type="String" value="False"/>
+        <prop name="enableCodabar" type="String" value="True"/>
+        <prop name="vendorId" type="String" value="05f9"/>
+        <prop name="enableCode128Sups" type="String" value="False"/>
+        <prop name="enableCode93" type="String" value="True"/>
+        <prop name="enableITFCheckDigit" type="String" value="False"/>
+        <prop name="canUpdateFirmware" type="String" value="True"/>
+        <prop name="enableUPCEAN" type="String" value="True"/>
+        <prop name="enableUPCECheckDigit" type="String" value="False"/>
+        <prop name="deviceClass" type="String" value="USBScanner"/>
+        <prop name="enableUPCAtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepDuration" type="String" value="1"/>
+        <prop name="ledGoodReadDuration" type="String" value="1"/>
+        <prop name="deviceType" type="String" value="Flatbed"/>
+        <prop name="enableCode128" type="String" value="True"/>
+        <prop name="enableGoodReadBeep" type="String" value="True"/>
+        <prop name="enableUPCEtoEAN13Expansion" type="String" value="False"/>
+        <prop name="beepVolume" type="String" value="2"/>
+        <prop name="canAcceptStatisticsCmd" type="String" value="True"/>
+        <prop name="enable5DigitSups" type="String" value="False"/>
+        <prop name="enableUPCACheckDigit" type="String" value="False"/>
+        <prop name="enable5DigitPriceCheckDigit" type="String" value="False"/>
+        <prop name="deviceDescription" type="String" value="DLS Magellan 8400 USB Scanner-Scale"/>
+        <prop name="itfLength2" type="String" value="0"/>
+        <prop name="enableInterleaved" type="String" value="True"/>
+        <prop name="enableUCCEAN128" type="String" value="True"/>
+        <prop name="itfLength1" type="String" value="0"/>
+        <prop name="enableCode39CheckDigit" type="String" value="False"/>
+        <prop name="productId" type="String" value="1503"/>
+        <prop name="deviceName" type="String" value="DLS Magellan 8400"/>
+        <prop name="canNotifyPowerChange" type="String" value="True"/>
+        <prop name="beepFrequency" type="String" value="2"/>
+        <prop name="enableLaserOnOffSwitch" type="String" value="True"/>
+</JposEntry>
+
+<JposEntry logicalName="NCRPOSPrinter-F309">
+    <creation factoryClass="com.ncr.retail.jpos.NCRJposServiceInstanceFactory" serviceClass="com.ncr.retail.jpos.services.posprinter.POSPrinterService"/>
+    <vendor name="NCR" url="http://www.ncr.com"/>
+    <jpos category="POSPrinter" version="1.7"/>
+    <product description="NCR POSPrinter Service" name="NCR Services for JavaPOS(TM) Standard" url="http://www.ncr.com"/>
+
+    <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+    <prop name="ServiceLayerName" type="String" value="ncr.aero.servicelayer.posprinter"/>
+
+    <!--Other non JavaPOS required property (mostly vendor properties and bus specific properties i.e. RS232 )-->
+</JposEntry>
+
+</JposEntries>

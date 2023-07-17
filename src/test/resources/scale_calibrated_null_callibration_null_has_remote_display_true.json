@@ -1,0 +1,16 @@
+{
+  "scale": [
+    {
+      "vidpid": "05f9:1512",
+      "usbport": "bus=1:addr=11:port=1",
+      "manufacturer": "Datalogic USA Inc.",
+      "model": "9420820013-010053",
+      "config": "DR9610723",
+      "firmware": "DR9401337-1006",
+      "serialnumber": "F17H08073",
+      "calibrated": null,
+      "calibrated_count": null,
+      "has_remote_display": true
+    }
+  ]
+}

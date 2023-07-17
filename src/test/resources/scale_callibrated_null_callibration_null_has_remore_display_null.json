@@ -1,0 +1,16 @@
+{
+  "scale": [
+    {
+      "vidpid": "1234:4321",
+      "usbport": "bus=2:addr=6:port=7",
+      "manufacturer": "Some company",
+      "model": "some model",
+      "config": "config",
+      "firmware": "firmware1",
+      "serialnumber": "212345654321",
+      "calibrated": null,
+      "calibrated_count": null,
+      "has_remote_display": null
+    }
+  ]
+}

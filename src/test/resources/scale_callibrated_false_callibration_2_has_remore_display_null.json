@@ -1,0 +1,16 @@
+{
+  "scale": [
+    {
+      "vidpid": "05e0:0890",
+      "usbport": "bus=2:addr=6:port=7",
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "MP7001-LHS0M18US",
+      "config": "TgtMP71_21_04_13",
+      "firmware": "PAADGS00-004-R00",
+      "serialnumber": "20253010561759",
+      "calibrated": false,
+      "calibrated_count": 2,
+      "has_remote_display": null
+    }
+  ]
+}

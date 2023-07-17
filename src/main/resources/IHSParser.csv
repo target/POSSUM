@@ -1,0 +1,104 @@
+-----INFORMATION-----,,
+A,ApplicationROM,
+R,ApplicationRevisionLevel,
+C,ConfigurationFileID,
+B,BootloaderROMID,
+W,InternalScaleInformation,
+D,RemoteDisplayVersion,
+S,SerialNumber,
+M,TopModelNumber,
+m,MainBoardNumber,
+I05,Interface,RS232
+I5,Interface,RS232
+I10,Interface,USB-COM-DL
+I20,Interface,SCRS232
+I45,Interface,USB-OEM
+I47,Interface,USB-COM
+I77,Interface,USB-HID
+I4D,Interface,USB-COMPOSITE
+I,Interface,Unknown
+U,UniversalInterfaceApplicationROMID,
+u,UniversalInterfaceBootloaderROMID,
+X,SecondModelNumber,
+Y,SecondSerialNumber,
+Z,SecondSoftwareVersionNumber,
+s,HandheldSerialNumber,
+l,USBLoaderVersion,
+Q,SDRAMCfgVersion,
+q,SoftwareID,
+V,VisionLibraryVersion,
+v,VirtualScanLineLibraryVersion,
+F,FPGAVersion,
+f,TDRFPGAVersion,
+P,IPEAppVersion,T7 IR TDR
+TI1,TDRType,T8.2 IR TDR
+TI2,TDRType,T9 IR TDR
+TI3,TDRType,T12 IR TDR
+TI4,TDRType,Unknown TDR Status
+TI,TDRType,7 Standard TDR
+TN1,TDRType,8.2 Standard TDR
+TN2,TDRType,9 Standard TDR
+TN3,TDRType,12 Standard TDR
+TN4,TDRType,Unknown TDR Status
+TN,TDRType,Legacy TDR (height unknown)
+TL0,TDRType,Legacy TDR (height unknown)
+TLO,TDRType,Unknown TDR Status
+TL,TDRType,TDR preset: undefined height
+TU0,TDRType,Unknown TDR Status
+TU,TDRType,TDR present: not ready yet
+T??,TDRType,Unknown TDR Status
+T?,TDRType,Unknown
+T,TDRType,
+H,HardwareID,
+h,ConnectedDevices,
+E,SmartEASVersion,
+r,RFScannerRadioVersion,
+L,SecondScannerVersion,
+b,SecondScannerBootloader,
+d,DWMSDKVersion,
+t,FormatterVersion,
+-----HEALTH-----,,
+m,MotorHealth,
+h,HorizontalLaserHealth,
+v,VerticalLaserHealth,
+s,ScaleHealth,
+d,RemoteDisplayHealth,
+e,EASSystemHealth,
+c,CameraHealth,
+r,RadioHealth,
+H,USBHandheldConnected,
+D,USBSerialDongleConnected,
+0,IPE0Health,
+1,IPE1Health,
+2,IPE2Health,
+3,IPE3Health,
+S,ScaleSentryHealth,
+-----STATISTICS-----,,
+m,MotorOnTime,
+l,LaserOnTime,
+L,ScanCount,
+z,ScaleZeroAttempts,
+c,ScaleCalibrationAttempts,
+C,CustomData,
+P,PowerOnHours,
+E,EASDeactivateCount,
+e,EASManualCount,
+B,NumberBatteryChargingCycles,
+T,NumberTriggerPulls,
+K,NumberKeyPresses,
+R,TotalResets,
+r,ErrorResets,
+V,VerticalIPEForcedResets,
+H,HorizontalIPEForcedResets,
+D,Forced2DResets,
+Q,TDRForcedResets,
+v,VerticalIPEExcessiveResets,
+h,HorizontalIPEExcessiveResets,
+d,Excessive2DResets,
+q,TDRExcessiveResets,
+Z,POSInitiatedZeroRequests,
+X,EnforcedZeroEvents,
+S,ScaleSentryEvents,
+Y,EASRuntimeFaults,
+b,BatteryHealth,
+s,BatteryChargeStatus,

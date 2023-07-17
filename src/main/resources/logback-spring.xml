@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- use Spring default values -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <appender name="SPRING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/spring.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/spring.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+    <appender name="MICROMETER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/micrometer.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/micrometer.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+    <appender name="POSSUM" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/possum.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/possum.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+    <appender name="JPOS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/javapos.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/javapos.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+    <appender name="DLS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/dls.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/dls.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+    <springProfile name="local">
+        <logger name="com.target.devicemanager" level="DEBUG" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>  
+        <logger name="com.target.jpos" level="INFO" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="STDOUT"/>
+        </logger>
+        <root level="WARN">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+    <springProfile name="dev,devATM,dev7350,devATM7350">
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="SPRING"/>
+        </logger>
+        <logger name="io.micrometer" level="DEBUG" additivity="false">
+            <appender-ref ref="MICROMETER"/>
+        </logger>
+        <logger name="com.target.devicemanager" level="DEBUG" additivity="false">
+            <appender-ref ref="POSSUM"/>
+        </logger>
+        <logger name="com.target.jpos" level="TRACE" additivity="false">
+            <appender-ref ref="JPOS"/>
+        </logger>
+        <logger name="com.dls" level="INFO" additivity="false">
+            <appender-ref ref="DLS"/>
+        </logger>
+        <root level="WARN">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+    <springProfile name="prod,prodATM,prod7350,prodATM7350">
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="SPRING"/>
+        </logger>
+        <logger name="io.micrometer" level="INFO" additivity="false">
+            <appender-ref ref="MICROMETER"/>
+        </logger>
+        <logger name="com.target.devicemanager" level="INFO" additivity="false">
+            <appender-ref ref="POSSUM"/>
+        </logger>
+        <logger name="com.target.jpos" level="DEBUG" additivity="false">
+            <appender-ref ref="JPOS"/>
+        </logger>
+        <logger name="com.dls" level="INFO" additivity="false">
+            <appender-ref ref="DLS"/>
+        </logger>
+        <root level="WARN">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+</configuration>

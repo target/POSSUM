@@ -1,0 +1,35 @@
+//Lines beginning with '//' will be ignored by parser.,,
+//DO NOT CHANGE FORMATTING, entries must remain in the format of following header line with a minimum of <ECI_CODE>,<JAVA_ENCODING>
+//ECI Code (integer), Java Encoding (empty field means unsupported), Optional Description (ignored by parser)
+0,, ISO/IEC 15438 Bar code symbology specification-PDF417: Default character set to 1994 specification with GLI rules
+1,, ISO/IEC 15438 Bar code symbology specification-PDF417: Latin 1 character set to 1994 specification with GLI rules
+2,, ISO/IEC 15438 Bar code symbology specification-PDF417: Default character set with ECI rules
+3,ISO8859_1, ISO/IEC 8859-1 Latin alphabet No. 1
+4,ISO8859_2, ISO/IEC 8859-2 Latin alphabet No. 2
+5,ISO8859_3, ISO/IEC 8859-3 Latin alphabet No. 3
+6,ISO8859_4, ISO/IEC 8859-4 Latin alphabet No. 4
+7,ISO8859_5, ISO/IEC 8859-5 Latin/Cyrillic alphabet
+8,ISO8859_6, ISO/IEC 8859-6 Latin/Arabic alphabet
+9,ISO8859_7, ISO/IEC 8859-7 Latin/Greek alphabet
+10,ISO8859_8, ISO/IEC 8859-8 Latin/Hebrew alphabet
+11,ISO8859_9, ISO/IEC 8859-9 Latin alphabet No. 5
+12,, ISO/IEC 8859-10 Latin alphabet No. 6
+13,Cp874, ISO/IEC 8859-11 Latin/Thai alphabet
+14,, Reserved
+15,ISO8859_13, ISO/IEC 8859-13 Latin alphabet No. 7 (Baltic Rim)
+16,, ISO/IEC 8859-14 Latin alphabet No. 8 (Celtic)
+17,ISO8859_15, ISO/IEC 8859-15 Latin alphabet No. 9
+18,, ISO/IEC 8859-16 Latin alphabet No. 10
+19,, Reserved
+20,SJIS, Shift JIS (JIS X 0208 Annex 1 + JIS X 0201)
+21,Cp1250, Windows 1250 Latin 2 (Central Europe)
+22,Cp1251, Windows 1251 Cyrillic
+23,Cp1252, Windows 1252 Latin 1
+24,Cp1256, Windows 1256 Arabic
+25,UTF-16, ISO/IEC 10646 UCS-2 (High order byte first)
+26,UTF8, ISO/IEC 10646 UTF-8
+27,, ISO/IEC 646:1991 International Reference Version of ISO 7-bit coded character set
+28,Big5, Big 5 (Taiwan) Chinese Character Set
+29,GB18030, GB (PRC) Chinese Character Set
+30,Cp949, Korean Character Set
+899,, 8-bit binary data
