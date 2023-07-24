@@ -1,0 +1,4 @@
+# Codeowners for LinuxDeviceManager repo. Defining these as approvers whom will review PRs
+# that will eventually make their way to production. At least one review from a codeowner is expected before a PR is merged.
+
+* @arpal7 @arnab @AwesomeChris @LijuanZhang
