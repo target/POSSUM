@@ -6,6 +6,7 @@ import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.components.scanner.entities.Barcode;
 import com.target.devicemanager.components.scanner.entities.ScannerType;
+import com.target.devicemanager.configuration.ApplicationConfig;
 import jpos.JposConst;
 import jpos.JposException;
 import jpos.Scanner;
@@ -33,6 +34,7 @@ public class ScannerDevice {
     private final ReentrantLock connectLock;
     private boolean isLocked = false;
     private boolean isTest = false;
+    ApplicationConfig applicationConfig;
 
     /**
      * initializes scanner device.
@@ -40,11 +42,11 @@ public class ScannerDevice {
      * @param dynamicScanner is the dynamic device.
      * @param scannerType is the scanner type.
      */
-    public ScannerDevice(DeviceListener deviceListener, DynamicDevice<? extends Scanner> dynamicScanner, ScannerType scannerType) {
-        this(deviceListener, dynamicScanner, scannerType, new ReentrantLock(true));
+    public ScannerDevice(DeviceListener deviceListener, DynamicDevice<? extends Scanner> dynamicScanner, ScannerType scannerType, ApplicationConfig applicationConfig) {
+        this(deviceListener, dynamicScanner, scannerType, new ReentrantLock(true), applicationConfig);
     }
 
-    public ScannerDevice(DeviceListener deviceListener, DynamicDevice<? extends Scanner> dynamicScanner, ScannerType scannerType, ReentrantLock connectLock) {
+    public ScannerDevice(DeviceListener deviceListener, DynamicDevice<? extends Scanner> dynamicScanner, ScannerType scannerType, ReentrantLock connectLock, ApplicationConfig applicationConfig) {
         if(scannerType == null) {
             LOGGER.error(MARKER, "Failed in Constructor: scannerType cannot be null");
             throw new IllegalArgumentException("scannerType cannot be null");
@@ -61,6 +63,7 @@ public class ScannerDevice {
         this.deviceListener = deviceListener;
         this.scannerType = scannerType;
         this.connectLock = connectLock;
+        this.applicationConfig = applicationConfig;
     }
 
     /**
@@ -147,15 +150,21 @@ public class ScannerDevice {
         try {
             String data;
             int type;
+            String source;
             Scanner scanner;
             synchronized (scanner = (Scanner) dataEvent.getSource()) {
                 data = new String(scanner.getScanDataLabel(), Charset.defaultCharset());
                 type = scanner.getScanDataType();
+                if (applicationConfig != null && applicationConfig.IsSimulationMode()) {
+                    source = scanner.getPhysicalDeviceName();
+                } else {
+                    source = getScannerType();
+                }
             }
-            Barcode barcode = new Barcode(data, type);
-            LOGGER.info(getScannerType() + " - returning scanned data type: " + barcode.type + " of size " + data.length());
-            LOGGER.trace(getScannerType() + "getScannerData(out)");
-            return new Barcode(data, type);
+            Barcode barcode = new Barcode(data, type, source);
+            LOGGER.info(barcode.source + " - returning scanned data type: " + barcode.type + " of size " + data.length());
+            LOGGER.trace(barcode.source + "getScannerData(out)");
+            return barcode;
         } catch (JposException jposException) {
             LOGGER.error(MARKER, getScannerType() + " Failed to Handle Data: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
             throw jposException;

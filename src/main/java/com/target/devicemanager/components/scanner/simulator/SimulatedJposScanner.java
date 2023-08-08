@@ -17,7 +17,7 @@ public class SimulatedJposScanner extends Scanner  {
     private SimulatorState simulatorState;
 
     public SimulatedJposScanner() {
-        barcode = new Barcode("POST desired data to scanner simulator", BarcodeType.UNKNOWN);
+        barcode = new Barcode("POST desired data to scanner simulator", BarcodeType.UNKNOWN, "SIMULATED_SCANNER");
         simulatorState = SimulatorState.ONLINE;
     }
 
@@ -68,6 +68,11 @@ public class SimulatedJposScanner extends Scanner  {
     @Override
     public int getState() {
         return simulatorState == SimulatorState.ONLINE ? JposConst.JPOS_S_IDLE : JposConst.JPOS_S_CLOSED;
+    }
+
+    @Override
+    public String getPhysicalDeviceName() {
+        return barcode.source;
     }
 
     @Override
