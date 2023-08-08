@@ -36,19 +36,19 @@ class ScannerConfig {
             scanners.add(new ScannerDevice(
                     new ScannerDeviceListener(new EventSynchronizer(new Phaser(1))),
                     new SimulatedDynamicDevice<>(simulatedScanner, new DevicePower(), new DeviceConnector<>(simulatedScanner, deviceRegistry)),
-                    ScannerType.FLATBED));
+                    ScannerType.FLATBED, applicationConfig));
         } else {
             Scanner flatbedScanner = new Scanner();
             scanners.add(new ScannerDevice(
                     new ScannerDeviceListener(new EventSynchronizer(new Phaser(1))),
                     new DynamicDevice<>(flatbedScanner, new DevicePower(), new DeviceConnector<>(flatbedScanner, deviceRegistry, new SimpleEntry<>("deviceType", "Flatbed"))),
-                    ScannerType.FLATBED));
+                    ScannerType.FLATBED, applicationConfig));
 
             Scanner handScanner = new Scanner();
             scanners.add(new ScannerDevice(
                     new ScannerDeviceListener(new EventSynchronizer(new Phaser(1))),
                     new DynamicDevice<>(handScanner, new DevicePower(), new DeviceConnector<>(handScanner, deviceRegistry, new SimpleEntry<>("deviceType", "HandScanner"))),
-                    ScannerType.HANDHELD));
+                    ScannerType.HANDHELD, applicationConfig));
         }
 
         return scanners;
