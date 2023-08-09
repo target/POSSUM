@@ -150,15 +150,15 @@ public class ScannerDevice {
         try {
             String data;
             int type;
-            String source;
+            ScannerType source;
             Scanner scanner;
             synchronized (scanner = (Scanner) dataEvent.getSource()) {
                 data = new String(scanner.getScanDataLabel(), Charset.defaultCharset());
                 type = scanner.getScanDataType();
                 if (applicationConfig != null && applicationConfig.IsSimulationMode()) {
-                    source = scanner.getPhysicalDeviceName();
+                    source = ScannerType.fromValue(scanner.getPhysicalDeviceName());
                 } else {
-                    source = getScannerType();
+                    source = scannerType;
                 }
             }
             Barcode barcode = new Barcode(data, type, source);

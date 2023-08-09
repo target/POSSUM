@@ -3,6 +3,7 @@ package com.target.devicemanager.components.scanner.simulator;
 import com.target.devicemanager.common.SimulatorState;
 import com.target.devicemanager.components.scanner.entities.Barcode;
 import com.target.devicemanager.components.scanner.entities.BarcodeType;
+import com.target.devicemanager.components.scanner.entities.ScannerType;
 import jpos.JposConst;
 import jpos.Scanner;
 import jpos.events.DataEvent;
@@ -17,7 +18,7 @@ public class SimulatedJposScanner extends Scanner  {
     private SimulatorState simulatorState;
 
     public SimulatedJposScanner() {
-        barcode = new Barcode("POST desired data to scanner simulator", BarcodeType.UNKNOWN, "SIMULATED_SCANNER");
+        barcode = new Barcode("POST desired data to scanner simulator", BarcodeType.UNKNOWN, ScannerType.HANDHELD);
         simulatorState = SimulatorState.ONLINE;
     }
 
@@ -72,7 +73,7 @@ public class SimulatedJposScanner extends Scanner  {
 
     @Override
     public String getPhysicalDeviceName() {
-        return barcode.source;
+        return barcode.source.toString();
     }
 
     @Override
