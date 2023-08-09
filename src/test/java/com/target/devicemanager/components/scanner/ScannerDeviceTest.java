@@ -510,10 +510,10 @@ public class ScannerDeviceTest {
         handheldScannerDevice.setIsTest(true);
         byte[] expectedData = {'T', 'E', 'S', 'T'};
         int expectedType = 101;
-        String expectedSource = "HANDHELD";
+        ScannerType expectedSource = ScannerType.HANDHELD;
         when(mockHandheldScanner.getScanDataLabel()).thenReturn(expectedData);
         when(mockHandheldScanner.getScanDataType()).thenReturn(expectedType);
-        when(mockHandheldScanner.getPhysicalDeviceName()).thenReturn(expectedSource);
+        when(mockHandheldScanner.getPhysicalDeviceName()).thenReturn(expectedSource.toString());
         when(mockDeviceListener.waitForData()).thenReturn(new DataEvent(mockHandheldScanner, 1));
 
         //act
