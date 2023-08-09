@@ -63,7 +63,7 @@ public class ScannerControllerTest {
     @Test
     public void getScannerData_WhenDataIsNull_CallBothScanners() throws ScannerException {
         //arrange
-        Barcode expected = new Barcode("data", ScannerConst.SCAN_SDT_UPCA);
+        Barcode expected = new Barcode("data", ScannerConst.SCAN_SDT_UPCA, ScannerType.HANDHELD);
         when(mockScannerManager.getData(any())).thenReturn(expected);
 
         //act
@@ -79,7 +79,7 @@ public class ScannerControllerTest {
     @Test
     public void getScannerData_WhenDataIsHandheld_CallHandheldScanner() throws ScannerException {
         //arrange
-        Barcode expected = new Barcode("data", ScannerConst.SCAN_SDT_UPCA);
+        Barcode expected = new Barcode("data", ScannerConst.SCAN_SDT_UPCA, ScannerType.HANDHELD);
         when(mockScannerManager.getData(any())).thenReturn(expected);
 
         //act
@@ -96,7 +96,7 @@ public class ScannerControllerTest {
     @Test
     public void getScannerData_WhenDataIsFlatbed_CallFlatbedScanner() throws ScannerException {
         //arrange
-        Barcode expected = new Barcode("data", ScannerConst.SCAN_SDT_UPCA);
+        Barcode expected = new Barcode("data", ScannerConst.SCAN_SDT_UPCA, ScannerType.FLATBED);
         when(mockScannerManager.getData(any())).thenReturn(expected);
 
         //act

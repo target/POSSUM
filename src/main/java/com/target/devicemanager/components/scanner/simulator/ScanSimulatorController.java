@@ -2,6 +2,8 @@ package com.target.devicemanager.components.scanner.simulator;
 
 import com.target.devicemanager.common.SimulatorState;
 import com.target.devicemanager.components.scanner.entities.Barcode;
+import com.target.devicemanager.components.scanner.entities.ScannerError;
+import com.target.devicemanager.components.scanner.entities.ScannerException;
 import com.target.devicemanager.configuration.ApplicationConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,9 +35,12 @@ public class ScanSimulatorController {
 
     @Operation(description = "Set barcode to complete the currently pending scan request")
     @PostMapping(path = "scan")
-    public void setBarcodeData(@RequestBody Barcode barcode) {
+    public void setBarcodeData(@RequestBody Barcode barcode) throws ScannerException {
         if (!applicationConfig.IsSimulationMode()) {
             throw new UnsupportedOperationException("Simulation mode is not enabled.");
+        }
+        if (barcode.source == null) {
+            throw new ScannerException(ScannerError.UNKNOWN_DEVICE);
         }
         simulatedJposScanner.setBarcode(barcode);
     }

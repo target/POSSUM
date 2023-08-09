@@ -4,7 +4,9 @@ import com.target.devicemanager.common.DeviceListener;
 import com.target.devicemanager.common.DynamicDevice;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.components.cashdrawer.CashDrawerDeviceListener;
+import com.target.devicemanager.components.scanner.entities.Barcode;
 import com.target.devicemanager.components.scanner.entities.ScannerType;
+import com.target.devicemanager.configuration.ApplicationConfig;
 import jpos.JposConst;
 import jpos.JposException;
 import jpos.Scanner;
@@ -17,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -51,9 +54,9 @@ public class ScannerDeviceTest {
         when(mockDynamicHandheldScanner.getDevice()).thenReturn(mockHandheldScanner);
         when(mockDynamicFlatbedScanner.getDevice()).thenReturn(mockFlatbedScanner);
 
-        handheldScannerDevice = new ScannerDevice(mockDeviceListener, mockDynamicHandheldScanner, ScannerType.HANDHELD);
-        flatbedScannerDevice = new ScannerDevice(mockDeviceListener, mockDynamicFlatbedScanner, ScannerType.FLATBED);
-        scannerDeviceLock = new ScannerDevice(mockDeviceListener, mockDynamicFlatbedScanner, ScannerType.FLATBED, mockConnectLock);
+        handheldScannerDevice = new ScannerDevice(mockDeviceListener, mockDynamicHandheldScanner, ScannerType.HANDHELD, new ApplicationConfig());
+        flatbedScannerDevice = new ScannerDevice(mockDeviceListener, mockDynamicFlatbedScanner, ScannerType.FLATBED, new ApplicationConfig());
+        scannerDeviceLock = new ScannerDevice(mockDeviceListener, mockDynamicFlatbedScanner, ScannerType.FLATBED, mockConnectLock, new ApplicationConfig());
 
         //Default Mock Behavior
         when(mockDynamicHandheldScanner.isConnected()).thenReturn(true);
@@ -65,7 +68,7 @@ public class ScannerDeviceTest {
     @Test
     public void ctor_WhenDeviceListenerAndDynamicScannerAndScannerTypeAreNull_ThrowsException() {
         try {
-            new ScannerDevice(null, null, null);
+            new ScannerDevice(null, null, null, null);
         } catch (IllegalArgumentException iae) {
             assertEquals("scannerType cannot be null", iae.getMessage());
             return;
@@ -77,7 +80,7 @@ public class ScannerDeviceTest {
     @Test
     public void ctor_WhenDeviceListenerAndDynamicScannerAreNull_ThrowsException() {
         try {
-            new ScannerDevice(null, null, ScannerType.BOTH);
+            new ScannerDevice(null, null, ScannerType.BOTH, null);
         } catch (IllegalArgumentException iae) {
             assertEquals("deviceListener cannot be null", iae.getMessage());
             return;
@@ -89,7 +92,7 @@ public class ScannerDeviceTest {
     @Test
     public void ctor_WhenDeviceListenerAndScannerTypeAreNull_ThrowsException() {
         try {
-            new ScannerDevice(null, mockDynamicHandheldScanner, null);
+            new ScannerDevice(null, mockDynamicHandheldScanner, null, null);
         } catch (IllegalArgumentException iae) {
             assertEquals("scannerType cannot be null", iae.getMessage());
             return;
@@ -101,7 +104,7 @@ public class ScannerDeviceTest {
     @Test
     public void ctor_WhenDynamicScannerAndScannerTypeAreNull_ThrowsException() {
         try {
-            new ScannerDevice(mockDeviceListener, null, null);
+            new ScannerDevice(mockDeviceListener, null, null, null);
         } catch (IllegalArgumentException iae) {
             assertEquals("scannerType cannot be null", iae.getMessage());
             return;
@@ -113,7 +116,7 @@ public class ScannerDeviceTest {
     @Test
     public void ctor_WhenDeviceListenerIsNull_ThrowsException() {
         try {
-            new ScannerDevice(null, mockDynamicHandheldScanner, ScannerType.BOTH);
+            new ScannerDevice(null, mockDynamicHandheldScanner, ScannerType.BOTH, null);
         } catch (IllegalArgumentException iae) {
             assertEquals("deviceListener cannot be null", iae.getMessage());
             return;
@@ -125,7 +128,7 @@ public class ScannerDeviceTest {
     @Test
     public void ctor_WhenDynamicScannerIsNull_ThrowsException() {
         try {
-            new ScannerDevice(mockDeviceListener, null, ScannerType.BOTH);
+            new ScannerDevice(mockDeviceListener, null, ScannerType.BOTH, null);
         } catch (IllegalArgumentException iae) {
             assertEquals("dynamicScanner cannot be null", iae.getMessage());
             return;
@@ -137,7 +140,7 @@ public class ScannerDeviceTest {
     @Test
     public void ctor_WhenScannerTypeIsNull_ThrowsException() {
         try {
-            new ScannerDevice(mockDeviceListener, mockDynamicFlatbedScanner, null);
+            new ScannerDevice(mockDeviceListener, mockDynamicFlatbedScanner, null, null);
         } catch (IllegalArgumentException iae) {
             assertEquals("scannerType cannot be null", iae.getMessage());
             return;
@@ -149,7 +152,7 @@ public class ScannerDeviceTest {
     @Test
     public void ctor_WhenDeviceListenerAndDynamicScannerAndScannerTypeAreNotNull_DoesNotThrowException() {
         try {
-            new ScannerDevice(mockDeviceListener, mockDynamicFlatbedScanner, ScannerType.BOTH);
+            new ScannerDevice(mockDeviceListener, mockDynamicFlatbedScanner, ScannerType.BOTH, null);
         } catch (Exception exception) {
             fail("Existing Device Arguments should not result in an Exception");
         }
@@ -497,6 +500,36 @@ public class ScannerDeviceTest {
         verify(mockHandheldScanner, atLeast(1)).setDeviceEnabled(true);
         verify(mockHandheldScanner, atLeast(1)).getScanDataLabel();
         verify(mockHandheldScanner, atLeast(1)).getScanDataType();
+    }
+
+    @Test
+    public void getScannerData_WhenIsSimulationMode() throws JposException {
+        //arrange
+        System.setProperty("useSimulators", "true");
+        when(mockDynamicHandheldScanner.isConnected()).thenReturn(true);
+        handheldScannerDevice.setIsTest(true);
+        byte[] expectedData = {'T', 'E', 'S', 'T'};
+        int expectedType = 101;
+        ScannerType expectedSource = ScannerType.HANDHELD;
+        when(mockHandheldScanner.getScanDataLabel()).thenReturn(expectedData);
+        when(mockHandheldScanner.getScanDataType()).thenReturn(expectedType);
+        when(mockHandheldScanner.getPhysicalDeviceName()).thenReturn(expectedSource.toString());
+        when(mockDeviceListener.waitForData()).thenReturn(new DataEvent(mockHandheldScanner, 1));
+
+        //act
+        Barcode barcode = handheldScannerDevice.getScannerData();
+
+        //assert
+        verify(mockDeviceListener, atLeast(1)).startEventListeners();
+        verify(mockHandheldScanner, atLeast(1)).setAutoDisable(true);
+        verify(mockHandheldScanner, atLeast(1)).setDecodeData(true);
+        verify(mockHandheldScanner, atLeast(1)).setDataEventEnabled(true);
+        verify(mockHandheldScanner, atLeast(1)).setDeviceEnabled(true);
+        verify(mockHandheldScanner, atLeast(1)).getScanDataLabel();
+        verify(mockHandheldScanner, atLeast(1)).getScanDataType();
+        assertEquals(new String(expectedData, Charset.defaultCharset()), barcode.data);
+        assertEquals(expectedType, barcode.type.getValue());
+        assertEquals(expectedSource, barcode.source);
     }
 
     class TestInterruptingThread extends Thread{
