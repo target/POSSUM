@@ -276,6 +276,8 @@ Add origins to environment `CORS_ORIGINS` variable separated by a comma (,)
     data    string
     type    string (enum)
         [ UPCA, UPCA_S, UPCE, UPCE_S, UPCD1, UPCD2, UPCD3, UPCD4, UPCD5, EAN8, JAN8, EAN8_S, EAN13, JAN13, EAN13_S, EAN128, TWO_OF_FIVE, INTERLEAVED_TWO_OF_FIVE, CODABAR, CODE39, CODE93, CODE128, OCRA, OCRB, RSS14, RSS_EXPANDED, GS1DATABAR, GS1DATABAR_E, CCA, CCB, CCC, PDF417, MAXICODE, DATAMATRIX, QRCODE, UQRCODE, AZTEC, UPDF417, OTHER, UNKNOWN ]
+    source  string (enum)
+        [ HANDHELD, FLATBED, BOTH ]
 }
 ```
 </details>
