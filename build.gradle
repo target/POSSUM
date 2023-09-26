@@ -3,7 +3,7 @@ plugins {
     id 'maven'
     id 'idea'
     id 'application'
-    id 'org.springframework.boot' version '2.7.12'
+    id 'org.springframework.boot' version '3.1.2'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'de.undercouch.download' version '4.1.1'
     id 'jacoco'
@@ -18,16 +18,16 @@ application {
 group 'com.target'
 version '1.0'
 
-sourceCompatibility = 1.8
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web:2.7.12"
-    implementation "org.springframework.boot:spring-boot-starter-actuator:2.7.12"
-    implementation "org.springframework.boot:spring-boot-starter-validation:2.7.12"
+    implementation "org.springframework.boot:spring-boot-starter-web:3.1.2"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:3.1.2"
+    implementation "org.springframework.boot:spring-boot-starter-validation:3.1.2"
     implementation "io.micrometer:micrometer-registry-influx:1.9.0"
     implementation "org.javapos:javapos-config-loader:2.2.0"
     implementation "org.javapos:javapos:1.14.3"
@@ -43,10 +43,10 @@ dependencies {
     implementation "net.logstash.logback:logstash-logback-encoder:6.4"
     implementation "org.yaml:snakeyaml:2.0"
 
-    implementation "org.springframework.boot:spring-boot-starter-cache:2.7.12"
+    implementation "org.springframework.boot:spring-boot-starter-cache:3.1.2"
     implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
     implementation "io.github.classgraph:classgraph:4.8.147"
-    testImplementation "org.springframework.boot:spring-boot-starter-test:2.7.12"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:3.1.2"
 }
 
 tasks.withType(JavaExec){
