@@ -4,7 +4,7 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
-import org.springdoc.core.GroupedOpenApi;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +16,7 @@ public class SwaggerConfig {
     public OpenAPI api() {
         return new OpenAPI()
                 .components(new Components())
-                .info(new Info().title("Posssum")
+                .info(new Info().title("Possum")
                         .description("Spring Boot API used to present the functionality of all USB-connected POS peripherals")
                         .contact(new Contact()
                                 .name("POSSUM Team")));
