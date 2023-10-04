@@ -31,7 +31,7 @@ dependencies {
     implementation "io.micrometer:micrometer-registry-influx:1.9.0"
     implementation "org.javapos:javapos-config-loader:2.2.0"
     implementation "org.javapos:javapos:1.14.3"
-    implementation "org.springdoc:springdoc-openapi-ui:1.7.0"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.14.0"
     implementation "com.fasterxml.jackson.core:jackson-core:2.14.0"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.14.0"
@@ -39,8 +39,9 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.14.0"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0"
     implementation "com.fasterxml.jackson.module:jackson-module-parameter-names:2.14.0"
-    implementation 'jakarta.validation:jakarta.validation-api:2.0.2'
-
+    implementation "jakarta.servlet:jakarta.servlet-api:6.0.0"
+    implementation "jakarta.validation:jakarta.validation-api:3.0.2"
+    implementation "jakarta.annotation:jakarta.annotation-api:2.1.1"
 
     implementation "net.logstash.logback:logstash-logback-encoder:6.4"
     implementation "org.yaml:snakeyaml:2.0"
