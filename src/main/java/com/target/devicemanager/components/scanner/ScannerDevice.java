@@ -213,7 +213,7 @@ public class ScannerDevice {
      * Makes sure scanner is connected and enabled.
      * @throws JposException
      */
-    private void enable() throws JposException {
+    protected void enable() throws JposException {
         LOGGER.trace(getScannerType() + "enable(in)");
         if (!isConnected()) {
             JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
