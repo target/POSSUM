@@ -12,11 +12,11 @@ POSSUM enables the following:
 
 :white_check_mark: &nbsp;&nbsp;&nbsp; Creates operational efficiencies
 
-:white_check_mark: &nbsp;&nbsp;&nbsp; Simplifies configuration managment of retail peripherals
+:white_check_mark: &nbsp;&nbsp;&nbsp; Simplifies configuration management of retail peripherals
 
 :white_check_mark: &nbsp;&nbsp;&nbsp; Increases flexibility in the hardware lifecycle events
 
-:white_check_mark: &nbsp;&nbsp;&nbsp; Promotes competition throught the commoditization of peripheral devices
+:white_check_mark: &nbsp;&nbsp;&nbsp; Promotes competition through the commodification of peripheral devices
 
 :white_check_mark: &nbsp;&nbsp;&nbsp; Enables software developers to create modern point of sale experiences
 
@@ -29,7 +29,7 @@ POSSUM enables the following:
 ## Sequence Overview
   
 <p align="center">
-  <img src="./diagrams/SequenceCodeLDW.png" alt="code sequence diagram">
+  <img src="./diagrams/SequenceCodePOSSUM.png" alt="code sequence diagram">
 </p>
   
 ## Getting Started
