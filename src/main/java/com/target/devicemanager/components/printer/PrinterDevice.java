@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.util.Base64Utils;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -275,7 +275,7 @@ public class PrinterDevice implements StatusUpdateListener{
     private void print(POSPrinter printer, ImageContent content, int printerStation) throws JposException {
         try {
         printer.printMemoryBitmap(printerStation,
-                Base64Utils.decodeFromString(content.data),
+                Base64.getDecoder().decode(content.data),
                 content.imageFormatType.getValue(),
                 POSPrinterConst.PTR_BM_ASIS,
                 POSPrinterConst.PTR_BM_CENTER);
