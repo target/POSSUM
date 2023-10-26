@@ -113,22 +113,27 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
     }
 
     public FormattedWeight getStableWeight(CompletableFuture<FormattedWeight> stableWeightClient) throws ScaleException {
-        //Create new future and add it to the list
-        stableWeightClients.add(stableWeightClient);
-        scaleDevice.startStableWeightRead(STABLE_WEIGHT_TIMEOUT_MSEC);
-        try {
-            //Timeout as a double check against timing errors that would cause us to hang forever
-            return stableWeightClient.get(HANG_TIMEOUT_MSEC, TimeUnit.MILLISECONDS);
-        } catch (ExecutionException executionException) {
-            Throwable jposException = executionException.getCause();
-            ScaleException scaleException = new ScaleException((JposException)jposException);
-            throw scaleException;
-        } catch (InterruptedException interruptedException) {
-            ScaleException scaleException = new ScaleException(new JposException(JposConst.JPOS_E_FAILURE));
-            throw scaleException;
-        } catch (TimeoutException timeoutException) {
-            ScaleException scaleException = new ScaleException(new JposException(JposConst.JPOS_E_TIMEOUT));
-            throw scaleException;
+        if (scaleDevice.tryLock()) {
+            //Create new future and add it to the list
+            stableWeightClients.add(stableWeightClient);
+            scaleDevice.startStableWeightRead(STABLE_WEIGHT_TIMEOUT_MSEC);
+            try {
+                //Timeout as a double check against timing errors that would cause us to hang forever
+                return stableWeightClient.get(HANG_TIMEOUT_MSEC, TimeUnit.MILLISECONDS);
+            } catch (ExecutionException executionException) {
+                Throwable jposException = executionException.getCause();
+                throw (new ScaleException((JposException)jposException));
+            } catch (InterruptedException interruptedException) {
+                throw (new ScaleException(new JposException(JposConst.JPOS_E_FAILURE)));
+            } catch (TimeoutException timeoutException) {
+                throw (new ScaleException(new JposException(JposConst.JPOS_E_TIMEOUT)));
+            }
+            finally {
+                scaleDevice.unlock();
+            }
+        } else {
+            LOGGER.error("Scale Device Busy. Please Wait To Get Stable Weight.");
+            throw (new ScaleException(new JposException(JposConst.JPOS_E_BUSY)));
         }
     }
 
