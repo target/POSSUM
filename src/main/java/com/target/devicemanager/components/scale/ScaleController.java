@@ -86,15 +86,16 @@ public class ScaleController {
                     content = @Content(schema = @Schema(implementation = DeviceError.class)))
     })
     public FormattedWeight getStableWeight() throws ScaleException {
+        long randomWithTS = System.currentTimeMillis();
         String url = "/v1/scale/stableweight";
-        LOGGER.info("request: " + url);
+        LOGGER.info("request: " + randomWithTS + " " + url);
         CompletableFuture<FormattedWeight> completableFuture = new CompletableFuture<>();
         try {
             FormattedWeight weight = scaleManager.getStableWeight(completableFuture);
-            LOGGER.info("response: " + url + " - 200 OK");
+            LOGGER.info("response: " + randomWithTS + " " + url + " - 200 OK ");
             return weight;
         } catch (ScaleException scaleException) {
-            LOGGER.info("response: " + url + " - " + scaleException.getDeviceError().getStatusCode().toString() + ", " + scaleException.getDeviceError());
+            LOGGER.info("response: " + randomWithTS + " " + url + " - " + scaleException.getDeviceError().getStatusCode().toString() + ", " + scaleException.getDeviceError());
             throw scaleException;
         }
     }
