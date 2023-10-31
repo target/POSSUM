@@ -225,7 +225,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
      * @param statusUpdateEvent
      */
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
-        LOGGER.trace("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
+        LOGGER.info("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
         int status = statusUpdateEvent.getStatus();
         switch (status) {
             case JposConst.JPOS_SUE_POWER_OFF:

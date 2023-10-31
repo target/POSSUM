@@ -38,7 +38,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
     private final List<SseEmitter> liveWeightClients;
     private final List<CompletableFuture<FormattedWeight>> stableWeightClients;
     private static final int STABLE_WEIGHT_TIMEOUT_MSEC = 10000;
-    private static final int HANG_TIMEOUT_MSEC = STABLE_WEIGHT_TIMEOUT_MSEC + 20000;
+    private static final int HANG_TIMEOUT_MSEC = STABLE_WEIGHT_TIMEOUT_MSEC + 10000;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private List<SseEmitter> deadEmitterList;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleManager.class);
@@ -139,6 +139,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
 
     @Override
     public void scaleLiveWeightEventOccurred(WeightEvent liveWeightEvent) {
+        LOGGER.info("scaleLiveWeightEventOccurred");
         this.liveWeightClients.forEach(emitter -> {
             try {
                 emitter.send(liveWeightEvent.getWeight(), MediaType.APPLICATION_JSON);
@@ -153,12 +154,14 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
 
     @Override
     public void scaleWeightErrorEventOccurred(WeightErrorEvent weightErrorEvent) {
+        LOGGER.info("scaleWeightErrorEventOccurred");
         this.stableWeightClients.forEach(client -> client.completeExceptionally(weightErrorEvent.getError()));
         this.stableWeightClients.clear();
     }
 
     @Override
     public void scaleStableWeightDataEventOccurred(WeightEvent stableWeightEvent) {
+        LOGGER.info("scaleStableWeightDataEventOccurred");
         this.stableWeightClients.forEach(client -> client.complete(stableWeightEvent.getWeight()));
         this.stableWeightClients.clear();
     }
