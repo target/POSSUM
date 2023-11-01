@@ -129,6 +129,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
                 throw (new ScaleException(new JposException(JposConst.JPOS_E_TIMEOUT)));
             }
             finally {
+                this.stableWeightClients.clear();
                 scaleDevice.unlock();
             }
         } else {
