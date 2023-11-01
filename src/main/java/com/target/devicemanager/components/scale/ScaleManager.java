@@ -4,6 +4,7 @@ import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.common.events.ConnectionEvent;
 import com.target.devicemanager.common.events.ConnectionEventListener;
 
+import com.target.devicemanager.components.printer.entities.PrinterStationType;
 import com.target.devicemanager.components.scale.entities.*;
 import jpos.JposConst;
 import jpos.JposException;
@@ -21,10 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 @EnableScheduling
 @EnableCaching
@@ -38,7 +36,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
     private final List<SseEmitter> liveWeightClients;
     private final List<CompletableFuture<FormattedWeight>> stableWeightClients;
     private static final int STABLE_WEIGHT_TIMEOUT_MSEC = 10000;
-    private static final int HANG_TIMEOUT_MSEC = STABLE_WEIGHT_TIMEOUT_MSEC;
+    private static final int HANG_TIMEOUT_MSEC = STABLE_WEIGHT_TIMEOUT_MSEC + 20000;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private List<SseEmitter> deadEmitterList;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleManager.class);
@@ -116,7 +114,21 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
         if (scaleDevice.tryLock()) {
             //Create new future and add it to the list
             stableWeightClients.add(stableWeightClient);
-            scaleDevice.startStableWeightRead(STABLE_WEIGHT_TIMEOUT_MSEC);
+
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            Callable<Void> task = () -> scaleDevice.startStableWeightRead(STABLE_WEIGHT_TIMEOUT_MSEC);
+            Future<Void> future = executorService.submit(task);
+            try {
+                future.get(STABLE_WEIGHT_TIMEOUT_MSEC, TimeUnit.SECONDS);
+            } catch (InterruptedException interruptedException) {
+                throw (new ScaleException(new JposException(JposConst.JPOS_E_FAILURE)));
+            } catch (ExecutionException executionException) {
+                Throwable jposException = executionException.getCause();
+                throw (new ScaleException((JposException)jposException));
+            } catch (TimeoutException timeoutException) {
+                throw (new ScaleException(new JposException(JposConst.JPOS_E_TIMEOUT)));
+            }
+
             try {
                 //Timeout as a double check against timing errors that would cause us to hang forever
                 return stableWeightClient.get(HANG_TIMEOUT_MSEC, TimeUnit.MILLISECONDS);
@@ -129,7 +141,6 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
                 throw (new ScaleException(new JposException(JposConst.JPOS_E_TIMEOUT)));
             }
             finally {
-                this.stableWeightClients.clear();
                 scaleDevice.unlock();
             }
         } else {

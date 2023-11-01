@@ -182,10 +182,10 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
      * Starts the scale to read weight.
      * @param timeout time out time for device.
      */
-    void startStableWeightRead(int timeout) {
+    Void startStableWeightRead(int timeout) {
         if(stableWeightInProgress) {
             //Only need to trigger this function once until returned
-            return;
+            return null;
         }
         Scale scale;
         synchronized (scale = dynamicScale.getDevice()) {
@@ -200,7 +200,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                     fireScaleStableWeightDataEvent(new FormattedWeight(weight[0]));
                     stableWeightInProgress = false;
                     weight = new int[1];
-                    return;
+                    return null;
                 } catch (JposException jposException) {
                     if(isConnected()) {
                         LOGGER.error(MARKER, "Scale Failed to Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
@@ -210,7 +210,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                     if(jposException.getErrorCode() != JposConst.JPOS_E_TIMEOUT) {
                         fireScaleWeightErrorEvent(jposException);
                         stableWeightInProgress = false;
-                        return;
+                        return null;
                     }
                 }
                 currentTimeMsec = System.currentTimeMillis();
@@ -218,6 +218,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
             fireScaleWeightErrorEvent(new JposException(JposConst.JPOS_E_TIMEOUT));
             stableWeightInProgress = false;
         }
+        return null;
     }
 
     /**
