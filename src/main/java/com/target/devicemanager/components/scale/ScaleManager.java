@@ -4,7 +4,6 @@ import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.common.events.ConnectionEvent;
 import com.target.devicemanager.common.events.ConnectionEventListener;
 
-import com.target.devicemanager.components.printer.entities.PrinterStationType;
 import com.target.devicemanager.components.scale.entities.*;
 import jpos.JposConst;
 import jpos.JposException;
@@ -139,7 +138,6 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
 
     @Override
     public void scaleLiveWeightEventOccurred(WeightEvent liveWeightEvent) {
-        LOGGER.info("scaleLiveWeightEventOccurred");
         this.liveWeightClients.forEach(emitter -> {
             try {
                 emitter.send(liveWeightEvent.getWeight(), MediaType.APPLICATION_JSON);
@@ -154,14 +152,12 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
 
     @Override
     public void scaleWeightErrorEventOccurred(WeightErrorEvent weightErrorEvent) {
-        LOGGER.info("scaleWeightErrorEventOccurred");
         this.stableWeightClients.forEach(client -> client.completeExceptionally(weightErrorEvent.getError()));
         this.stableWeightClients.clear();
     }
 
     @Override
     public void scaleStableWeightDataEventOccurred(WeightEvent stableWeightEvent) {
-        LOGGER.info("scaleStableWeightDataEventOccurred");
         this.stableWeightClients.forEach(client -> client.complete(stableWeightEvent.getWeight()));
         this.stableWeightClients.clear();
     }
