@@ -204,6 +204,10 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                 } catch (JposException jposException) {
                     if(isConnected()) {
                         LOGGER.error(MARKER, "Scale Failed to Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                        long timeDiff = System.currentTimeMillis() - currentTimeMsec;
+                        if( timeDiff > 10000) {
+                            LOGGER.error(MARKER, "Scale Timeout in Stable Weight. Time diff value: " + timeDiff );
+                        }
                     } else {
                         LOGGER.error(MARKER, "Scale not connected in Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
                     }
