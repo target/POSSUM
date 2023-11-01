@@ -38,7 +38,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
     private final List<SseEmitter> liveWeightClients;
     private final List<CompletableFuture<FormattedWeight>> stableWeightClients;
     private static final int STABLE_WEIGHT_TIMEOUT_MSEC = 10000;
-    private static final int HANG_TIMEOUT_MSEC = STABLE_WEIGHT_TIMEOUT_MSEC + 10000;
+    private static final int HANG_TIMEOUT_MSEC = STABLE_WEIGHT_TIMEOUT_MSEC;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private List<SseEmitter> deadEmitterList;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleManager.class);

@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ScaleDevice implements StatusUpdateListener, ErrorListener {
-    private static final int STABLE_WEIGHT_READ_TIMEOUT = 250;
+    private static final int STABLE_WEIGHT_READ_TIMEOUT = 1000;
     private final DynamicDevice<Scale> dynamicScale;
     private final List<ScaleEventListener> scaleEventListeners;
     private final List<ConnectionEventListener> connectionEventListeners;
