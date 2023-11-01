@@ -119,7 +119,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
             Callable<Void> task = () -> scaleDevice.startStableWeightRead(STABLE_WEIGHT_TIMEOUT_MSEC);
             Future<Void> future = executorService.submit(task);
             try {
-                future.get(STABLE_WEIGHT_TIMEOUT_MSEC, TimeUnit.SECONDS);
+                future.get(STABLE_WEIGHT_TIMEOUT_MSEC, TimeUnit.MILLISECONDS);
             } catch (InterruptedException interruptedException) {
                 throw (new ScaleException(new JposException(JposConst.JPOS_E_FAILURE)));
             } catch (ExecutionException executionException) {
