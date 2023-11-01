@@ -128,6 +128,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
             } catch (TimeoutException timeoutException) {
                 throw (new ScaleException(new JposException(JposConst.JPOS_E_TIMEOUT)));
             } finally {
+                LOGGER.error("executorService.shutdown and unlock...");
                 executorService.shutdown();
                 scaleDevice.unlock();
             }
