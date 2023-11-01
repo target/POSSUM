@@ -120,27 +120,15 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
             Future<Void> future = executorService.submit(task);
             try {
                 future.get(STABLE_WEIGHT_TIMEOUT_MSEC, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException interruptedException) {
-                throw (new ScaleException(new JposException(JposConst.JPOS_E_FAILURE)));
-            } catch (ExecutionException executionException) {
-                Throwable jposException = executionException.getCause();
-                throw (new ScaleException((JposException)jposException));
-            } catch (TimeoutException timeoutException) {
-                throw (new ScaleException(new JposException(JposConst.JPOS_E_TIMEOUT)));
-            }
-
-            try {
-                //Timeout as a double check against timing errors that would cause us to hang forever
                 return stableWeightClient.get(HANG_TIMEOUT_MSEC, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException interruptedException) {
+                throw (new ScaleException(new JposException(JposConst.JPOS_E_FAILURE)));
             } catch (ExecutionException executionException) {
                 Throwable jposException = executionException.getCause();
                 throw (new ScaleException((JposException)jposException));
-            } catch (InterruptedException interruptedException) {
-                throw (new ScaleException(new JposException(JposConst.JPOS_E_FAILURE)));
             } catch (TimeoutException timeoutException) {
                 throw (new ScaleException(new JposException(JposConst.JPOS_E_TIMEOUT)));
-            }
-            finally {
+            } finally {
                 scaleDevice.unlock();
             }
         } else {
