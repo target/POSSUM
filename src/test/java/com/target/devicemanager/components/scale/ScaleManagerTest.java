@@ -349,6 +349,22 @@ public class ScaleManagerTest {
     }
 
     @Test
+    public void getStableWeight_ReturnsBusy() throws ScaleException, ExecutionException, InterruptedException, TimeoutException {
+        //arrange
+        when(mockScaleDevice.tryLock()).thenReturn(false);
+        //act
+        try{
+            scaleManager.getStableWeight(mockCompletableFutureFormattedWeight);
+        }
+        catch(ScaleException scaleException) {
+            //assert
+            assertEquals("DEVICE_BUSY", scaleException.getDeviceError().getCode());
+            return;
+        }
+        fail("Expected Exception, but got none");
+    }
+
+    @Test
     public void getStableWeight_ThrowsExecutionException() throws ExecutionException, InterruptedException, TimeoutException {
         //arrange
         ExecutionException executionException = new ExecutionException(new JposException(ScaleConst.JPOS_ESCAL_UNDER_ZERO));
