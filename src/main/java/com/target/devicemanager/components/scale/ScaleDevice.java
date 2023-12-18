@@ -195,6 +195,12 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
             while(currentTimeMsec <= endTimeMsec) {
                 LOGGER.error("Read Weight Time Remaining " + (endTimeMsec - currentTimeMsec));
                 try {
+                    // Giving a second break
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     scale.readWeight(weight, STABLE_WEIGHT_READ_TIMEOUT);
                     LOGGER.error("After ReadWeight " + weight[0]);
                     fireScaleStableWeightDataEvent(new FormattedWeight(weight[0]));
