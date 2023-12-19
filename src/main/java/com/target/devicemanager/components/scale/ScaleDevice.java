@@ -202,6 +202,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                         fireScaleStableWeightDataEvent(new FormattedWeight(weight[0]));
                         stableWeightInProgress = false;
                         weight = new int[1];
+                        readyForStableWeight = false;
                         return;
                     }
                 } catch (JposException jposException) {
@@ -228,7 +229,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
      * @param statusUpdateEvent
      */
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
-        LOGGER.trace("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
+        LOGGER.info("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
         int status = statusUpdateEvent.getStatus();
         readyForStableWeight = false;
         switch (status) {
