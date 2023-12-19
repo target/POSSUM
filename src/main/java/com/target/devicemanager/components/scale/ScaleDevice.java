@@ -198,12 +198,12 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                 try {
                     if(readyForStableWeight){
                         scale.readWeight(weight, STABLE_WEIGHT_READ_TIMEOUT);
+                        LOGGER.error("After ReadWeight " + weight[0]);
+                        fireScaleStableWeightDataEvent(new FormattedWeight(weight[0]));
+                        stableWeightInProgress = false;
+                        weight = new int[1];
+                        return;
                     }
-                    LOGGER.error("After ReadWeight " + weight[0]);
-                    fireScaleStableWeightDataEvent(new FormattedWeight(weight[0]));
-                    stableWeightInProgress = false;
-                    weight = new int[1];
-                    return;
                 } catch (JposException jposException) {
                     if(isConnected()) {
                         LOGGER.error(MARKER, "Scale Failed to Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
