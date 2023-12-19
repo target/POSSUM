@@ -229,7 +229,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
      * @param statusUpdateEvent
      */
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
-        LOGGER.info("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
+        LOGGER.trace("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
         int status = statusUpdateEvent.getStatus();
         readyForStableWeight = false;
         switch (status) {
