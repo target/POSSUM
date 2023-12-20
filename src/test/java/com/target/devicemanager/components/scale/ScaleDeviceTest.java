@@ -520,7 +520,7 @@ public class ScaleDeviceTest {
         scaleDevice.startStableWeightRead(30);
 
         //assert
-        verify(mockDynamicScale, times(2)).getDevice();
+        verify(mockDynamicScale, times(3)).getDevice();
         verify(mockScale, never()).readWeight(any(), anyInt());
     }
 
