@@ -172,6 +172,13 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     }
 
     /**
+     * This method is only used to set 'readyForStableWeight' for unit testing
+     * @param readyForStableWeight
+     */
+    public void setReadyForStableWeight(boolean readyForStableWeight) {
+        this.readyForStableWeight = readyForStableWeight;
+    }
+    /**
      * This method is only used to set 'weight' for unit testing
      * @param weight
      */
