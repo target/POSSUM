@@ -34,6 +34,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     private static final Marker MARKER = MarkerFactory.getMarker("FATAL");
     private boolean deviceConnected = false;
     private int[] weight;
+    private boolean readyForStableWeight;
 
     /**
      * Initializes the Scale Device.
@@ -171,6 +172,13 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     }
 
     /**
+     * This method is only used to set 'readyForStableWeight' for unit testing
+     * @param readyForStableWeight
+     */
+    public void setReadyForStableWeight(boolean readyForStableWeight) {
+        this.readyForStableWeight = readyForStableWeight;
+    }
+    /**
      * This method is only used to set 'weight' for unit testing
      * @param weight
      */
@@ -195,12 +203,15 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
             while(currentTimeMsec <= endTimeMsec) {
                 LOGGER.error("Read Weight Time Remaining " + (endTimeMsec - currentTimeMsec));
                 try {
-                    scale.readWeight(weight, STABLE_WEIGHT_READ_TIMEOUT);
-                    LOGGER.error("After ReadWeight " + weight[0]);
-                    fireScaleStableWeightDataEvent(new FormattedWeight(weight[0]));
-                    stableWeightInProgress = false;
-                    weight = new int[1];
-                    return;
+                    if(readyForStableWeight){
+                        scale.readWeight(weight, STABLE_WEIGHT_READ_TIMEOUT);
+                        LOGGER.error("After ReadWeight " + weight[0]);
+                        fireScaleStableWeightDataEvent(new FormattedWeight(weight[0]));
+                        stableWeightInProgress = false;
+                        weight = new int[1];
+                        readyForStableWeight = false;
+                        return;
+                    }
                 } catch (JposException jposException) {
                     if(isConnected()) {
                         LOGGER.error(MARKER, "Scale Failed to Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
@@ -227,6 +238,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
         LOGGER.trace("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
         int status = statusUpdateEvent.getStatus();
+        readyForStableWeight = false;
         switch (status) {
             case JposConst.JPOS_SUE_POWER_OFF:
             case JposConst.JPOS_SUE_POWER_OFF_OFFLINE:
@@ -237,6 +249,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                 connect();
                 return;
             case ScaleConst.SCAL_SUE_STABLE_WEIGHT:
+                readyForStableWeight = true;
                 Scale theScale = dynamicScale.getDevice();
                 try {
                     int scaleWeight = theScale.getScaleLiveWeight();

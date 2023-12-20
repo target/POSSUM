@@ -516,7 +516,6 @@ public class ScaleDeviceTest {
     public void startStableWeightRead_NotInProgress() throws JposException {
         //arrange
         scaleDevice.setStableWeightInProgress(true);
-
         //act
         scaleDevice.startStableWeightRead(30);
 
@@ -529,6 +528,7 @@ public class ScaleDeviceTest {
     public void startStableWeightRead_InProgress() throws JposException {
         //arrange
         scaleDeviceListLock.setStableWeightInProgress(false);
+        scaleDeviceListLock.setReadyForStableWeight(true);
         scaleDeviceListLock.addScaleEventListener(mockScaleEventListener);
         int[] weight = new int[] {3000, 0};
         doAnswer(invocation -> {
@@ -551,6 +551,7 @@ public class ScaleDeviceTest {
     public void startStableWeightRead_ThrowsException() throws JposException {
         //arrange
         scaleDeviceListLock.setStableWeightInProgress(false);
+        scaleDeviceListLock.setReadyForStableWeight(true);
         scaleDeviceListLock.addScaleEventListener(mockScaleEventListener);
         JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
         doThrow(jposException).when(mockScale).readWeight(any(), anyInt());
@@ -570,6 +571,7 @@ public class ScaleDeviceTest {
     public void startStableWeightRead_TimesOut() throws JposException {
         //arrange
         scaleDeviceListLock.setStableWeightInProgress(false);
+        scaleDeviceListLock.setReadyForStableWeight(true);
         scaleDeviceListLock.addScaleEventListener(mockScaleEventListener);
         JposException jposException = new JposException(JposConst.JPOS_E_TIMEOUT);
         doThrow(jposException).when(mockScale).readWeight(any(), anyInt());
