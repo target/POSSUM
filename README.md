@@ -48,11 +48,11 @@ Add origins to environment `CORS_ORIGINS` variable separated by a comma (,)
 - Once cloned, go to your development environment and click open, and navigate to the project in your finder/folder.
 - Ensure the project is configured to build using Java 17 
 - Once opened, build the project using Gradle commands
-- To run Possum on your local machine will require spring profile environment variable
+- To run POSSUM on your local machine will require spring profile environment variable
 - ```export SPRING_PROFILES_ACTIVE=local```
 - To run simulator use ```./gradlew run -DuseSimulators=true```  
 
-## Running on POS computer
+## Running on a POS Computer
 Requirements:
   - Java 17
   - POS Hardware drivers (provided by the manufacturer)
@@ -63,7 +63,7 @@ Verified Supported OS:
   - Ubuntu
   - NOTE: this is a Java application and can run many OS.
 
-- Follow Running POSSUM Locally to ensure you are able to compile and run POSSUM (NOTE: this does not need to be done on the POS computer)
+- Follow Running POSSUM Locally to ensure you are able to compile and run POSSUM (NOTE: this does not need to be done on a POS computer)
 - Install the OS on the POS computer (refer to the Supported OS list above)
 - Install Java 17 on POS computer
 - Make the following directories:
