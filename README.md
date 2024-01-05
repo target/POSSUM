@@ -46,10 +46,40 @@ Add origins to environment `CORS_ORIGINS` variable separated by a comma (,)
 - Go to your terminal, then enter "git clone (project link)"
 - Enter your credentials (if prompted)
 - Once cloned, go to your development environment and click open, and navigate to the project in your finder/folder.
+- Ensure the project is configured to build using Java 17 
 - Once opened, build the project using Gradle commands
 - To run Possum on your local machine will require spring profile environment variable
 - ```export SPRING_PROFILES_ACTIVE=local```
 - To run simulator use ```./gradlew run -DuseSimulators=true```  
+
+## Running on POS computer
+Requirements:
+Java 17
+POS Hardware drivers (provided by the manufacturer)
+Note: ensure all dependencies for physical POS devices are installed (ex: libusb for Honeywell scanners)
+
+Verified Supported OS:
+CentOS 7 
+Ubuntu
+NOTE: this is a Java application and can run many OS.
+
+1. Follow Running POSSUM Locally to ensure you are able to compile and run POSSUM (NOTE: this does not need to be done on the POS computer)
+2. Install the OS on the POS computer (refer to the Supported OS list above)
+3. Install Java 17 on POS computer
+4. Make the following directories:
+- [ ] sudo mkdir /opt/target
+- [ ] sudo mkdir /opt/target/possum
+- [ ] sudo mkdir /opt/target/possum/externalLib
+5. Compile POSSUM to create a jar file
+6. Copy jar file and following src/main/resource files from the development machine to the POS computer /opt/possum directory 
+- [ ] devcon.xml
+- [ ] devicestarter.sh
+- [ ] ECIEncoding.csv
+- [ ] IHSParser.csv
+- [ ] LabelIdentifiers.csv
+- [ ] PossumDeviceManager-1.0.jar
+7. Install necessary libraries and JPOS drivers for your hardware (i.e. Honeywell scanners require libusb)
+8. For devices not already supported, update the devcon.xml file 
 
 ## API Specs
 <details>
@@ -346,7 +376,38 @@ https://github.com/JavaPOSWorkingGroup
 
 https://repo1.maven.org/maven2/org/javapos/javapos/1.14.1/
 
+## Supported Devices
+Flatbed Scanner
+- Datalogic 2300 Scanner
+- Datalogic 3550 Scanner
+- Datalogic 8200 Scanner
+- Datalogic 8400 Scanner Scale
+- Datalogic 8400 Scanner
+- Datalogic 8405 Scale
+- Datalogic 9400 Scanner
+- Datalogic 9400 Scanner Scale
+- Zebra MP7000 Scanner
+- Zebra MP7001 Scanner Scale
 
+Handheld Scanner
+- Honeywell 1900/1950 Scanner
 
+MICR
+- NCR 7167 MICR
 
+Line Display
+- NCR 5975 LineDisplay Serial
+- NCR 5976 LineDisplay Serial
+- NCR 5976 LineDisplay USB
+- NCR 5977 LineDisplay USB
 
+Receipt Printer
+- NCR POS Printer F309
+- NCR POS Printer 7167
+- NCR POS Printer EPIC 7199
+- NCR POS Printer USB 7199
+
+Cash Drawer
+- CashDrawer ELO Computer
+- CashDrawer NCR Computer
+- CashDrawer NCR via printer port 
