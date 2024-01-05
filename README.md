@@ -79,7 +79,10 @@ Verified Supported OS:
   - LabelIdentifiers.csv
   - PossumDeviceManager-1.0.jar
 - Install necessary libraries and JPOS drivers for your hardware (i.e. Honeywell scanners require libusb)
-- For devices not already supported, update the devcon.xml file 
+- For devices not already supported, update the devcon.xml file
+- Launch POSSUM:
+  - Navigate to /opt/target/possum
+  - To run use ```sudo domenv=labs sh devicestarter.sh```
 
 ## API Specs
 <details>
