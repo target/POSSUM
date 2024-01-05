@@ -70,6 +70,7 @@ Verified Supported OS:
   - `sudo mkdir /opt/target`
   - `sudo mkdir /opt/target/possum`
   - `sudo mkdir /opt/target/possum/externalLib`
+  - NOTE: the application directory can be altered by updating the paths in devicestarter.sh (ex. /opt/target/possum => /opt/possum) and then copying the above files to the newly defined directory
 - Compile POSSUM to create a jar file
 - Copy jar file and following src/main/resource files from the development machine to the POS computer /opt/target/possum directory 
   - `devcon.xml`
@@ -399,10 +400,10 @@ MICR
 - NCR 7167 MICR
 
 Line Display
-- NCR 5975 LineDisplay Serial
-- NCR 5976 LineDisplay Serial
-- NCR 5976 LineDisplay USB
-- NCR 5977 LineDisplay USB
+- NCR 5975 Line Display Serial
+- NCR 5976 Line Display Serial
+- NCR 5976 Line Display USB
+- NCR 5977 Line Display USB
 
 Receipt Printer
 - NCR POS Printer F309
@@ -411,6 +412,6 @@ Receipt Printer
 - NCR POS Printer USB 7199
 
 Cash Drawer
-- CashDrawer ELO Computer
-- CashDrawer NCR Computer
-- CashDrawer NCR via printer port 
+- Cash Drawer ELO Computer
+- Cash Drawer NCR Computer
+- Cash Drawer NCR via printer port 
