@@ -52,7 +52,7 @@ Add origins to environment `CORS_ORIGINS` variable separated by a comma (,)
 - ```export SPRING_PROFILES_ACTIVE=local```
 - To run simulator use ```./gradlew run -DuseSimulators=true```  
 
-## Running on a POS Computer
+## Running POSSUM on a POS Computer
 Requirements:
   - Java 17
   - POS Hardware drivers (provided by the manufacturer)
