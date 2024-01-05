@@ -67,22 +67,22 @@ Verified Supported OS:
 - Install the OS on the POS computer (refer to the Supported OS list above)
 - Install Java 17 on POS computer
 - Make the following directories:
-  - sudo mkdir /opt/target
-  - sudo mkdir /opt/target/possum
-  - sudo mkdir /opt/target/possum/externalLib
+  - `sudo mkdir /opt/target`
+  - `sudo mkdir /opt/target/possum`
+  - `sudo mkdir /opt/target/possum/externalLib`
 - Compile POSSUM to create a jar file
 - Copy jar file and following src/main/resource files from the development machine to the POS computer /opt/possum directory 
-  - devcon.xml
-  - devicestarter.sh
-  - ECIEncoding.csv
-  - IHSParser.csv
-  - LabelIdentifiers.csv
-  - PossumDeviceManager-1.0.jar
+  - `devcon.xml`
+  - `devicestarter.sh`
+  - `ECIEncoding.csv`
+  - `IHSParser.csv`
+  - `LabelIdentifiers.csv`
+  - `PossumDeviceManager-1.0.jar`
 - Install necessary libraries and JPOS drivers for your hardware (i.e. Honeywell scanners require libusb)
 - For devices not already supported, update the devcon.xml file
 - Launch POSSUM:
   - Navigate to /opt/target/possum
-  - To run use ```sudo domenv=labs sh devicestarter.sh```
+  - To run use `sudo domenv=labs sh devicestarter.sh`
 
 ## API Specs
 <details>
