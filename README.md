@@ -71,7 +71,7 @@ Verified Supported OS:
   - `sudo mkdir /opt/target/possum`
   - `sudo mkdir /opt/target/possum/externalLib`
 - Compile POSSUM to create a jar file
-- Copy jar file and following src/main/resource files from the development machine to the POS computer /opt/possum directory 
+- Copy jar file and following src/main/resource files from the development machine to the POS computer /opt/target/possum directory 
   - `devcon.xml`
   - `devicestarter.sh`
   - `ECIEncoding.csv`
