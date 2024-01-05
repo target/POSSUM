@@ -54,32 +54,32 @@ Add origins to environment `CORS_ORIGINS` variable separated by a comma (,)
 
 ## Running on POS computer
 Requirements:
-Java 17
-POS Hardware drivers (provided by the manufacturer)
-Note: ensure all dependencies for physical POS devices are installed (ex: libusb for Honeywell scanners)
+  - Java 17
+  - POS Hardware drivers (provided by the manufacturer)
+  - Note: ensure all dependencies for physical POS devices are installed (i.e. libusb for Honeywell scanners)
 
 Verified Supported OS:
-CentOS 7 
-Ubuntu
-NOTE: this is a Java application and can run many OS.
+  - CentOS 7 
+  - Ubuntu
+  - NOTE: this is a Java application and can run many OS.
 
-1. Follow Running POSSUM Locally to ensure you are able to compile and run POSSUM (NOTE: this does not need to be done on the POS computer)
-2. Install the OS on the POS computer (refer to the Supported OS list above)
-3. Install Java 17 on POS computer
-4. Make the following directories:
-- [ ] sudo mkdir /opt/target
-- [ ] sudo mkdir /opt/target/possum
-- [ ] sudo mkdir /opt/target/possum/externalLib
-5. Compile POSSUM to create a jar file
-6. Copy jar file and following src/main/resource files from the development machine to the POS computer /opt/possum directory 
-- [ ] devcon.xml
-- [ ] devicestarter.sh
-- [ ] ECIEncoding.csv
-- [ ] IHSParser.csv
-- [ ] LabelIdentifiers.csv
-- [ ] PossumDeviceManager-1.0.jar
-7. Install necessary libraries and JPOS drivers for your hardware (i.e. Honeywell scanners require libusb)
-8. For devices not already supported, update the devcon.xml file 
+- Follow Running POSSUM Locally to ensure you are able to compile and run POSSUM (NOTE: this does not need to be done on the POS computer)
+- Install the OS on the POS computer (refer to the Supported OS list above)
+- Install Java 17 on POS computer
+- Make the following directories:
+  - sudo mkdir /opt/target
+  - sudo mkdir /opt/target/possum
+  - sudo mkdir /opt/target/possum/externalLib
+- Compile POSSUM to create a jar file
+- Copy jar file and following src/main/resource files from the development machine to the POS computer /opt/possum directory 
+  - devcon.xml
+  - devicestarter.sh
+  - ECIEncoding.csv
+  - IHSParser.csv
+  - LabelIdentifiers.csv
+  - PossumDeviceManager-1.0.jar
+- Install necessary libraries and JPOS drivers for your hardware (i.e. Honeywell scanners require libusb)
+- For devices not already supported, update the devcon.xml file 
 
 ## API Specs
 <details>
