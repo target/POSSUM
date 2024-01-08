@@ -63,6 +63,7 @@ Verified Supported OS:
   - Ubuntu
   - NOTE: this is a Java application and can run many OS.
 
+Setup a POS Computer:
 - Follow Running POSSUM Locally to ensure you are able to compile and run POSSUM (NOTE: this does not need to be done on a POS computer)
 - Install the OS on the POS computer (refer to the Supported OS list above)
 - Install Java 17 on POS computer
