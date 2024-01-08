@@ -46,10 +46,43 @@ Add origins to environment `CORS_ORIGINS` variable separated by a comma (,)
 - Go to your terminal, then enter "git clone (project link)"
 - Enter your credentials (if prompted)
 - Once cloned, go to your development environment and click open, and navigate to the project in your finder/folder.
+- Ensure the project is configured to build using Java 17 
 - Once opened, build the project using Gradle commands
-- To run Possum on your local machine will require spring profile environment variable
+- To run POSSUM on your local machine will require spring profile environment variable
 - ```export SPRING_PROFILES_ACTIVE=local```
 - To run simulator use ```./gradlew run -DuseSimulators=true```  
+
+## Running POSSUM on a POS Computer
+Requirements:
+  - Java 17
+  - POS Hardware drivers (provided by the manufacturer)
+  - Note: ensure all dependencies for physical POS devices are installed (i.e. libusb for Honeywell scanners)
+
+Verified Supported OS:
+  - CentOS 7 
+  - Ubuntu
+  - NOTE: this is a Java application and can run many OS.
+
+- Follow Running POSSUM Locally to ensure you are able to compile and run POSSUM (NOTE: this does not need to be done on a POS computer)
+- Install the OS on the POS computer (refer to the Supported OS list above)
+- Install Java 17 on POS computer
+- Make the following directories:
+  - `sudo mkdir /opt/target`
+  - `sudo mkdir /opt/target/possum`
+  - `sudo mkdir /opt/target/possum/externalLib`
+- Compile POSSUM to create a jar file
+- Copy jar file and following src/main/resource files from the development machine to the POS computer /opt/target/possum directory 
+  - `devcon.xml`
+  - `devicestarter.sh`
+  - `ECIEncoding.csv`
+  - `IHSParser.csv`
+  - `LabelIdentifiers.csv`
+  - `PossumDeviceManager-1.0.jar`
+- Install necessary libraries and JPOS drivers for your hardware (i.e. Honeywell scanners require libusb)
+- For devices not already supported, update the devcon.xml file
+- Launch POSSUM:
+  - Navigate to /opt/target/possum
+  - To run use `sudo domenv=labs sh devicestarter.sh`
 
 ## API Specs
 <details>
@@ -346,7 +379,38 @@ https://github.com/JavaPOSWorkingGroup
 
 https://repo1.maven.org/maven2/org/javapos/javapos/1.14.1/
 
+## Supported Devices
+Flatbed Scanner
+- Datalogic 2300 Scanner
+- Datalogic 3550 Scanner
+- Datalogic 8200 Scanner
+- Datalogic 8400 Scanner Scale
+- Datalogic 8400 Scanner
+- Datalogic 8405 Scale
+- Datalogic 9400 Scanner
+- Datalogic 9400 Scanner Scale
+- Zebra MP7000 Scanner
+- Zebra MP7001 Scanner Scale
 
+Handheld Scanner
+- Honeywell 1900/1950 Scanner
 
+MICR
+- NCR 7167 MICR
 
+Line Display
+- NCR 5975 Line Display Serial
+- NCR 5976 Line Display Serial
+- NCR 5976 Line Display USB
+- NCR 5977 Line Display USB
 
+Receipt Printer
+- NCR POS Printer F309
+- NCR POS Printer 7167
+- NCR POS Printer EPIC 7199
+- NCR POS Printer USB 7199
+
+Cash Drawer
+- Cash Drawer ELO Computer
+- Cash Drawer NCR Computer
+- Cash Drawer NCR via printer port 
