@@ -339,6 +339,7 @@ public class ScaleManagerTest {
         FormattedWeight expected = new FormattedWeight(3);
         when(mockCompletableFutureFormattedWeight.get(30000, TimeUnit.MILLISECONDS)).thenReturn(expected);
         when(mockScaleDevice.tryLock()).thenReturn(true);
+        when(scaleManager.isScaleReady()).thenReturn(true);
         //act
         FormattedWeight actual = scaleManager.getStableWeight(mockCompletableFutureFormattedWeight);
 
@@ -352,6 +353,7 @@ public class ScaleManagerTest {
     public void getStableWeight_ReturnsBusy() throws ScaleException, ExecutionException, InterruptedException, TimeoutException {
         //arrange
         when(mockScaleDevice.tryLock()).thenReturn(false);
+        when(scaleManager.isScaleReady()).thenReturn(true);
         //act
         try{
             scaleManager.getStableWeight(mockCompletableFutureFormattedWeight);
@@ -370,6 +372,7 @@ public class ScaleManagerTest {
         ExecutionException executionException = new ExecutionException(new JposException(ScaleConst.JPOS_ESCAL_UNDER_ZERO));
         when(mockCompletableFutureFormattedWeight.get(30000, TimeUnit.MILLISECONDS)).thenThrow(executionException);
         when(mockScaleDevice.tryLock()).thenReturn(true);
+        when(scaleManager.isScaleReady()).thenReturn(true);
         //act
         try {
             scaleManager.getStableWeight(mockCompletableFutureFormattedWeight);
@@ -389,6 +392,7 @@ public class ScaleManagerTest {
         InterruptedException interruptedException = new InterruptedException();
         when(mockCompletableFutureFormattedWeight.get(30000, TimeUnit.MILLISECONDS)).thenThrow(interruptedException);
         when(mockScaleDevice.tryLock()).thenReturn(true);
+        when(scaleManager.isScaleReady()).thenReturn(true);
         //act
         try {
             scaleManager.getStableWeight(mockCompletableFutureFormattedWeight);
@@ -408,6 +412,7 @@ public class ScaleManagerTest {
         TimeoutException timeoutException = new TimeoutException();
         when(mockCompletableFutureFormattedWeight.get(30000, TimeUnit.MILLISECONDS)).thenThrow(timeoutException);
         when(mockScaleDevice.tryLock()).thenReturn(true);
+        when(scaleManager.isScaleReady()).thenReturn(true);
         //act
         try {
             scaleManager.getStableWeight(mockCompletableFutureFormattedWeight);
