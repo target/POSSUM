@@ -113,7 +113,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
     }
 
     public FormattedWeight getStableWeight(CompletableFuture<FormattedWeight> stableWeightClient) throws ScaleException {
-        if (scaleDevice.tryLock()) {
+        if (scaleDevice.tryLock() && isScaleReady()) {
             //Create new future and add it to the list
             stableWeightClients.add(stableWeightClient);
             scaleDevice.startStableWeightRead(STABLE_WEIGHT_TIMEOUT_MSEC);
@@ -132,6 +132,9 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
                 scaleDevice.unlock();
             }
         } else {
+            if(!isScaleReady()){
+                throw (new ScaleException(new JposException(JposConst.JPOS_E_OFFLINE)));
+            }
             LOGGER.error("Scale Device Busy. Please Wait To Get Stable Weight.");
             throw (new ScaleException(new JposException(JposConst.JPOS_E_BUSY)));
         }
