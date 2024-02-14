@@ -203,9 +203,9 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                         return;
                 } catch (JposException jposException) {
                     if(isConnected()) {
-                        LOGGER.trace(MARKER, "Scale Failed to Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                        LOGGER.trace("Scale Failed to Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
                     } else {
-                        LOGGER.trace(MARKER, "Scale not connected in Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                        LOGGER.trace("Scale not connected in Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
                     }
                     if(jposException.getErrorCode() != JposConst.JPOS_E_TIMEOUT) {
                         fireScaleWeightErrorEvent(jposException);
