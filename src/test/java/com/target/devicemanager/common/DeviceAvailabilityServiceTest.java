@@ -75,30 +75,46 @@ class DeviceAvailabilityServiceTest {
     void Test_findDevStatus_FlatbedScanner() {
         //arrange
         List<DeviceHealthResponse> devReady = new ArrayList<>();
-        devReady.add(new DeviceHealthResponse("Flatbed", DeviceHealth.READY));
-        devReady.add(new DeviceHealthResponse("HandScanner", DeviceHealth.READY));
+        devReady.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));
+        devReady.add(new DeviceHealthResponse("HANDHELD", DeviceHealth.READY));
+        deviceAvailabilitySingleton.setScannerManager(mockScannerManager);
+        when(deviceAvailabilitySingleton.getScannerManager().getStatus()).thenReturn(devReady);
 
         //act
-        deviceAvailabilitySingleton.setScannerManager(mockScannerManager);
-
+        DeviceHealth actual = deviceAvailabilityService.findDevStatus("flatbedscanner");
         //assert
-        when(deviceAvailabilitySingleton.getScannerManager().getStatus()).thenReturn(devReady);
-        assertEquals(DeviceHealth.READY, deviceAvailabilityService.findDevStatus("flatbedscanner"));
+        assertEquals(DeviceHealth.READY, actual);
     }
 
     @Test
     void Test_findDevStatus_HandScanner() {
         //arrange
         List<DeviceHealthResponse> devReady = new ArrayList<>();
-        devReady.add(new DeviceHealthResponse("Flatbed", DeviceHealth.READY));
-        devReady.add(new DeviceHealthResponse("HandScanner", DeviceHealth.READY));
+        devReady.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));
+        devReady.add(new DeviceHealthResponse("HANDHELD", DeviceHealth.READY));
+        deviceAvailabilitySingleton.setScannerManager(mockScannerManager);
+        when(deviceAvailabilitySingleton.getScannerManager().getStatus()).thenReturn(devReady);
+
 
         //act
-        deviceAvailabilitySingleton.setScannerManager(mockScannerManager);
+        DeviceHealth actual = deviceAvailabilityService.findDevStatus("handscanner");
 
         //assert
+        assertEquals(DeviceHealth.READY, actual);
+    }
+
+    @Test
+    void Test_findDevStatus_HandheldScanner_missing() {
+        //arrange
+        List<DeviceHealthResponse> devReady = new ArrayList<>();
+        devReady.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));
+        deviceAvailabilitySingleton.setScannerManager(mockScannerManager);
         when(deviceAvailabilitySingleton.getScannerManager().getStatus()).thenReturn(devReady);
-        assertEquals(DeviceHealth.READY, deviceAvailabilityService.findDevStatus("handscanner"));
+
+        //act
+        DeviceHealth actual = deviceAvailabilityService.findDevStatus("handscanner");
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, actual);
     }
 
     @Test

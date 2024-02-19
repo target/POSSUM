@@ -111,14 +111,14 @@ public class DeviceAvailabilityService {
         switch (devName){
             case "flatbedscanner":
                 if(deviceAvailabilitySingleton.getScannerManager() != null) {
-                    healthStatus = deviceAvailabilitySingleton.getScannerManager().getStatus().get(0).getHealthStatus();
+                    healthStatus = getScannerHealthStatus(deviceAvailabilitySingleton, "FLATBED");
                 } else {
                     LOGGER.trace("Failed to Connect to " + devName);
                 }
                 break;
             case "handscanner":
                 if(deviceAvailabilitySingleton.getScannerManager() != null) {
-                    healthStatus = deviceAvailabilitySingleton.getScannerManager().getStatus().get(1).getHealthStatus();
+                    healthStatus = getScannerHealthStatus(deviceAvailabilitySingleton, "HANDHELD");
                 } else {
                     LOGGER.trace("Failed to Connect to " + devName);
                 }
@@ -150,6 +150,14 @@ public class DeviceAvailabilityService {
         return healthStatus;
     }
 
+    public DeviceHealth getScannerHealthStatus(DeviceAvailabilitySingleton deviceAvailabilitySingleton, String scannerName) {
+        for(DeviceHealthResponse deviceHealthResponse: deviceAvailabilitySingleton.getScannerManager().getStatus()) {
+            if(deviceHealthResponse.getDeviceName().equals(scannerName)) {
+                return deviceHealthResponse.getHealthStatus();
+            }
+        }
+        return new DeviceHealthResponse(scannerName, DeviceHealth.NOTREADY).getHealthStatus();
+    }
 
     public void subscribeToDeviceError(SseEmitter sseEmitter) throws IOException {
         sseEmitter.onCompletion(() -> this.deviceErrorClientList.remove(sseEmitter));
