@@ -1,6 +1,5 @@
 package com.target.devicemanager.components.scanner;
 
-import com.target.devicemanager.common.DeviceAvailabilitySingleton;
 import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealth;
