@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.scanner;
 
+import com.target.devicemanager.common.DeviceAvailabilitySingleton;
 import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.components.scanner.entities.Barcode;
 import com.target.devicemanager.components.scanner.entities.ScannerError;
@@ -212,6 +213,15 @@ public class ScannerManager {
             LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
             return getHealth(ScannerType.BOTH);
         }
+    }
+
+    public DeviceHealth getScannerHealthStatus(String scannerName) {
+        for(DeviceHealthResponse deviceHealthResponse: getStatus()) {
+            if(deviceHealthResponse.getDeviceName().equals(scannerName)) {
+                return deviceHealthResponse.getHealthStatus();
+            }
+        }
+        return new DeviceHealthResponse(scannerName, DeviceHealth.NOTREADY).getHealthStatus();
     }
 
     private void disableScanners() throws InterruptedException {

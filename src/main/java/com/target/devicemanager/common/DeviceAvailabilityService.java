@@ -111,14 +111,14 @@ public class DeviceAvailabilityService {
         switch (devName){
             case "flatbedscanner":
                 if(deviceAvailabilitySingleton.getScannerManager() != null) {
-                    healthStatus = getScannerHealthStatus(deviceAvailabilitySingleton, "FLATBED");
+                    healthStatus = deviceAvailabilitySingleton.getScannerManager().getScannerHealthStatus("FLATBED");
                 } else {
                     LOGGER.trace("Failed to Connect to " + devName);
                 }
                 break;
             case "handscanner":
                 if(deviceAvailabilitySingleton.getScannerManager() != null) {
-                    healthStatus = getScannerHealthStatus(deviceAvailabilitySingleton, "HANDHELD");
+                    healthStatus = deviceAvailabilitySingleton.getScannerManager().getScannerHealthStatus("HANDHELD");
                 } else {
                     LOGGER.trace("Failed to Connect to " + devName);
                 }
@@ -148,15 +148,6 @@ public class DeviceAvailabilityService {
                 LOGGER.trace("Not a known device. " + devName);
         }
         return healthStatus;
-    }
-
-    public DeviceHealth getScannerHealthStatus(DeviceAvailabilitySingleton deviceAvailabilitySingleton, String scannerName) {
-        for(DeviceHealthResponse deviceHealthResponse: deviceAvailabilitySingleton.getScannerManager().getStatus()) {
-            if(deviceHealthResponse.getDeviceName().equals(scannerName)) {
-                return deviceHealthResponse.getHealthStatus();
-            }
-        }
-        return new DeviceHealthResponse(scannerName, DeviceHealth.NOTREADY).getHealthStatus();
     }
 
     public void subscribeToDeviceError(SseEmitter sseEmitter) throws IOException {

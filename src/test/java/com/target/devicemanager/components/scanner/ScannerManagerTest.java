@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.scanner;
 
+import com.target.devicemanager.common.DeviceAvailabilitySingleton;
 import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealth;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -108,7 +110,7 @@ public class ScannerManagerTest {
         reconnectResults = new ArrayList<>();
         reconnectResults.add(mockFuture);
         scannerManager = new ScannerManager(scannerDevices, mockScannerLock);
-        scannerManagerCache = new ScannerManager(scannerDevices, mockScannerLock, mockCacheManager, mockExecutor, reconnectResults, true);
+        scannerManagerCache = Mockito.spy(new ScannerManager(scannerDevices, mockScannerLock, mockCacheManager, mockExecutor, reconnectResults, true));
     }
 
     @Test
@@ -554,5 +556,49 @@ public class ScannerManagerTest {
 
         //assert
         assertEquals(expectedList.toString(), deviceHealthResponseList.toString());
+    }
+
+    @Test
+    void getScannerHealthStatus_FlatbedScanner() {
+        //arrange
+        List<DeviceHealthResponse> devReady = new ArrayList<>();
+        devReady.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));
+        devReady.add(new DeviceHealthResponse("HANDHELD", DeviceHealth.READY));
+        Mockito.doReturn(devReady).when(scannerManagerCache).getStatus();
+
+        //act
+        DeviceHealth actual = scannerManagerCache.getScannerHealthStatus("HANDHELD");
+
+        //assert
+        assertEquals(DeviceHealth.READY, actual);
+    }
+
+    @Test
+    void getScannerHealthStatus_HandScanner() {
+        //arrange
+        List<DeviceHealthResponse> devReady = new ArrayList<>();
+        devReady.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));
+        devReady.add(new DeviceHealthResponse("HANDHELD", DeviceHealth.READY));
+        Mockito.doReturn(devReady).when(scannerManagerCache).getStatus();
+
+        //act
+        DeviceHealth actual = scannerManagerCache.getScannerHealthStatus("HANDHELD");
+
+        //assert
+        assertEquals(DeviceHealth.READY, actual);
+    }
+
+    @Test
+    void getScannerHealthStatus_HandheldScanner_missing() {
+        //arrange
+        List<DeviceHealthResponse> devReady = new ArrayList<>();
+        devReady.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));
+        Mockito.doReturn(devReady).when(scannerManagerCache).getStatus();
+
+        //act
+        DeviceHealth actual = scannerManagerCache.getScannerHealthStatus("HANDHELD");
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, actual);
     }
 }
