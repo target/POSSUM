@@ -1,6 +1,5 @@
 package com.target.devicemanager.components.scanner;
 
-import com.target.devicemanager.common.DeviceAvailabilitySingleton;
 import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.components.scanner.entities.Barcode;
 import com.target.devicemanager.components.scanner.entities.ScannerError;
