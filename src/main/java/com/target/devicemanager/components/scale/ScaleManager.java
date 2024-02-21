@@ -113,7 +113,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
     }
 
     public FormattedWeight getStableWeight(CompletableFuture<FormattedWeight> stableWeightClient) throws ScaleException {
-        if (scaleDevice.tryLock() && isScaleReady()) {
+        if (isScaleReady() && scaleDevice.tryLock()) {
             //Create new future and add it to the list
             stableWeightClients.add(stableWeightClient);
             scaleDevice.startStableWeightRead(STABLE_WEIGHT_TIMEOUT_MSEC);
