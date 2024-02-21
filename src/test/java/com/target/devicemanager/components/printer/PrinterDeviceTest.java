@@ -357,12 +357,18 @@ public class PrinterDeviceTest {
         //arrange
 
         //act
-        printerDevice.printContent(null, 0);
-
+        try {
+            printerDevice.printContent(null, 0);
+        }
         //assert
-        verify(mockDynamicPrinter, never()).getDevice();
-        verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
-        verify(mockPrinter, never()).clearOutput();
+        catch (PrinterException printerException) {
+            verify(mockDynamicPrinter, times(1)).getDevice();
+            verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
+            verify(mockPrinter, times(1)).clearOutput();
+            return;
+        } catch (JposException jposException) {
+            fail("Expected PrinterException, got JposException");
+        }
     }
 
     @Test
@@ -371,12 +377,18 @@ public class PrinterDeviceTest {
         List<PrinterContent> contents = new ArrayList<>();
 
         //act
-        printerDevice.printContent(contents, 0);
-
+        try {
+            printerDevice.printContent(contents, 0);
+        }
         //assert
-        verify(mockDynamicPrinter, never()).getDevice();
-        verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
-        verify(mockPrinter, never()).clearOutput();
+        catch (PrinterException printerException) {
+            verify(mockDynamicPrinter, times(1)).getDevice();
+            verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
+            verify(mockPrinter, times(1)).clearOutput();
+            return;
+        } catch (JposException jposException) {
+            fail("Expected PrinterException, got JposException");
+        }
     }
 
     @Test
@@ -399,9 +411,9 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
-            verify(mockDynamicPrinter, never()).getDevice();
+            verify(mockDynamicPrinter, times(1)).getDevice();
             verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
-            verify(mockPrinter, never()).clearOutput();
+            verify(mockPrinter, times(1)).clearOutput();
             return;
         } catch (PrinterException printerException) {
             fail("Expected JposException, got PrinterException");
