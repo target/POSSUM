@@ -165,14 +165,14 @@ public class PrinterDevice implements StatusUpdateListener{
     public Void printContent(List<PrinterContent> contents, int printerStation) throws JposException, PrinterException {
         LOGGER.debug("printContent()");
         if(tryLock()) {
-            if (contents == null || contents.isEmpty()) {
-                LOGGER.debug("Receipt contents are empty");
-                return null;
-            }
-            enable();
             POSPrinter printer;
             synchronized (printer = dynamicPrinter.getDevice()) {
                 try {
+                    if (contents == null || contents.isEmpty()) {
+                        LOGGER.debug("Receipt contents are empty");
+                        throw new PrinterException(PrinterError.INVALID_FORMAT);
+                    }
+                    enable();
                     if (printerStation != PrinterStationType.CHECK_PRINTER.getValue() && (wasPaperEmpty || paperEmptyCheck())) {
                         // Throw JPOS extended error JPOS_EPTR_REC_EMPTY
                         throw new JposException(114, 203);
