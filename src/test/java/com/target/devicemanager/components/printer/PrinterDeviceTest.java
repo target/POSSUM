@@ -362,6 +362,7 @@ public class PrinterDeviceTest {
         }
         //assert
         catch (PrinterException printerException) {
+            assert(printerException.getDeviceError().equals(PrinterError.INVALID_FORMAT));
             verify(mockDynamicPrinter, times(1)).getDevice();
             verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
             verify(mockPrinter, times(1)).clearOutput();
@@ -382,6 +383,7 @@ public class PrinterDeviceTest {
         }
         //assert
         catch (PrinterException printerException) {
+            assert(printerException.getDeviceError().equals(PrinterError.INVALID_FORMAT));
             verify(mockDynamicPrinter, times(1)).getDevice();
             verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
             verify(mockPrinter, times(1)).clearOutput();
@@ -411,6 +413,7 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
+            assert(jposException.getErrorCode() == JposConst.JPOS_E_OFFLINE);
             verify(mockDynamicPrinter, times(1)).getDevice();
             verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
             verify(mockPrinter, times(1)).clearOutput();
