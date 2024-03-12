@@ -139,7 +139,7 @@ public class LineDisplayDevice implements StatusUpdateListener {
             if(isConnected()) {
                 LOGGER.error(MARKER, "Line Display Failed to Display: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
             } else {
-                LOGGER.error("Line Display Failed to Display: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                LOGGER.trace("Line Display Failed to Display: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
             }
             throw jposException;
         }
