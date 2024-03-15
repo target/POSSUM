@@ -214,6 +214,15 @@ public class ScannerManager {
         }
     }
 
+    public DeviceHealth getScannerHealthStatus(String scannerName) {
+        for(DeviceHealthResponse deviceHealthResponse: getStatus()) {
+            if(deviceHealthResponse.getDeviceName().equals(scannerName)) {
+                return deviceHealthResponse.getHealthStatus();
+            }
+        }
+        return new DeviceHealthResponse(scannerName, DeviceHealth.NOTREADY).getHealthStatus();
+    }
+
     private void disableScanners() throws InterruptedException {
         LOGGER.trace("disableScanners(in)");
         List<Callable<Void>> taskList = new ArrayList<>();

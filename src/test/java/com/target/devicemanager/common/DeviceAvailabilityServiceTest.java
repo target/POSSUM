@@ -74,31 +74,29 @@ class DeviceAvailabilityServiceTest {
     @Test
     void Test_findDevStatus_FlatbedScanner() {
         //arrange
-        List<DeviceHealthResponse> devReady = new ArrayList<>();
-        devReady.add(new DeviceHealthResponse("Flatbed", DeviceHealth.READY));
-        devReady.add(new DeviceHealthResponse("HandScanner", DeviceHealth.READY));
+        DeviceHealth expected = new DeviceHealthResponse("FLATBED", DeviceHealth.NOTREADY).getHealthStatus();
+        deviceAvailabilitySingleton.setScannerManager(mockScannerManager);
+        when(deviceAvailabilitySingleton.getScannerManager().getScannerHealthStatus("FLATBED")).thenReturn(expected);
 
         //act
-        deviceAvailabilitySingleton.setScannerManager(mockScannerManager);
+        DeviceHealth actual = deviceAvailabilityService.findDevStatus("flatbedscanner");
 
         //assert
-        when(deviceAvailabilitySingleton.getScannerManager().getStatus()).thenReturn(devReady);
-        assertEquals(DeviceHealth.READY, deviceAvailabilityService.findDevStatus("flatbedscanner"));
+        assertEquals(expected, actual);
     }
 
     @Test
     void Test_findDevStatus_HandScanner() {
         //arrange
-        List<DeviceHealthResponse> devReady = new ArrayList<>();
-        devReady.add(new DeviceHealthResponse("Flatbed", DeviceHealth.READY));
-        devReady.add(new DeviceHealthResponse("HandScanner", DeviceHealth.READY));
+        DeviceHealth expected = new DeviceHealthResponse("HANDHELD", DeviceHealth.READY).getHealthStatus();
+        deviceAvailabilitySingleton.setScannerManager(mockScannerManager);
+        when(deviceAvailabilitySingleton.getScannerManager().getScannerHealthStatus("HANDHELD")).thenReturn(expected);
 
         //act
-        deviceAvailabilitySingleton.setScannerManager(mockScannerManager);
+        DeviceHealth actual = deviceAvailabilityService.findDevStatus("handscanner");
 
         //assert
-        when(deviceAvailabilitySingleton.getScannerManager().getStatus()).thenReturn(devReady);
-        assertEquals(DeviceHealth.READY, deviceAvailabilityService.findDevStatus("handscanner"));
+        assertEquals(expected, actual);
     }
 
     @Test
