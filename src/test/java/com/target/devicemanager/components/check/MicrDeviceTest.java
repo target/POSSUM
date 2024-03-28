@@ -1,6 +1,7 @@
 package com.target.devicemanager.components.check;
 
 import com.target.devicemanager.common.DynamicDevice;
+import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.events.ConnectionEvent;
 import com.target.devicemanager.common.events.ConnectionEventListener;
@@ -586,6 +587,24 @@ public class MicrDeviceTest {
 
         //assert
         verify(mockMicr).endInsertion();
+    }
+
+    @Test
+    public void insertCheck_InsertionExceptionAndWithdrawException() throws JposException {
+        //arrange
+        doThrow(new JposException(JposConst.JPOS_E_FAILURE)).when(mockMicr).endInsertion();
+        doThrow(new JposException(MICRConst.JPOS_EMICR_COVEROPEN)).when(mockMicr).endRemoval();
+
+        //act
+        try {
+            micrDevice.insertCheck();
+        } catch (MicrException micrException) {
+            assertEquals(micrException.getDeviceError(), DeviceError.UNEXPECTED_ERROR);
+            return;
+        }
+
+        //assert
+        fail("Expected exception, but got none");
     }
 
     @Test
