@@ -189,6 +189,13 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
                         this.micrEventListeners.forEach(listener -> listener
                                 .micrErrorEventOccurred(new MicrErrorEvent(this, jposException)));
                         setCheckCancelReceived(true);
+                        try {
+                            // Insert may fail if a check is already inserted from a previous MICR read,
+                            // calling withdraw to return the printer to a state that is ready for the next MICR read
+                            withdrawCheck();
+                        } catch (JposException jposException1) {
+                            // withdrawCheck() logs exceptions within the method, throwing original insertion exception
+                        }
                         throw new MicrException(jposException);
                     }
                 }
