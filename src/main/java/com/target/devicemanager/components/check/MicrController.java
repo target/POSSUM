@@ -70,7 +70,7 @@ public class MicrController {
                     content = @Content(schema = @Schema(implementation = DeviceError.class)))
     })
     public void print(@Parameter(description = "Check Print Data") @Valid @RequestBody List<PrinterContent> contents) throws PrinterException {
-        String url = "/v1/check";
+        String url = "POST /v1/check";
         LOGGER.info("request: " + url);
         if(contents.size() < PRINT_CONTENT_SIZE){
             try {
@@ -97,7 +97,7 @@ public class MicrController {
                     content = @Content(schema = @Schema(implementation = MicrError.class)))
     })
     public MicrData readCheck() throws MicrException {
-        String url = "/v1/check";
+        String url = "GET /v1/check";
         LOGGER.info("request: " + url);
         CompletableFuture<MicrData> micrDataClient = new CompletableFuture<>();
         try {
