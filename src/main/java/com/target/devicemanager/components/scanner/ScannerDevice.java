@@ -217,7 +217,6 @@ public class ScannerDevice {
         LOGGER.trace(getScannerType() + "enable(in)");
         if (!isConnected()) {
             JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
-            //LOGGER.error(getScannerType() + " Failed to Connect Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
             throw jposException;
         }
         deviceListener.startEventListeners();
