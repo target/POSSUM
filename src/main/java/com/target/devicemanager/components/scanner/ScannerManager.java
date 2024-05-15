@@ -63,6 +63,11 @@ public class ScannerManager {
         scanners.forEach(ScannerDevice::connect);
 
         if (connectStatus == ConnectEnum.FIRST_CONNECT) {
+            for (ScannerDevice scanner : scanners) {
+                if(!scanner.isConnected()) {
+                    LOGGER.error(scanner.getScannerType() + " Failed to Connect");
+                }
+            }
             connectStatus = ConnectEnum.CHECK_HEALTH;
         }
     }
