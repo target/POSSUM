@@ -166,7 +166,7 @@ public class PrinterManager {
 
     public DeviceHealthResponse getStatus() {
         try {
-            if (Objects.requireNonNull(cacheManager.getCache("printerHealth")).get("health") != null) {
+            if (cacheManager != null && Objects.requireNonNull(cacheManager.getCache("printerHealth")).get("health") != null) {
                 if (connectStatus == ConnectEnum.CHECK_HEALTH) {
                     connectStatus = ConnectEnum.HEALTH_UPDATED;
                     return getHealth();
