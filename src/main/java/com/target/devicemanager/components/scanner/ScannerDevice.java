@@ -217,7 +217,6 @@ public class ScannerDevice {
         LOGGER.trace(getScannerType() + "enable(in)");
         if (!isConnected()) {
             JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
-            LOGGER.error(getScannerType() + " Failed to Connect Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
             throw jposException;
         }
         deviceListener.startEventListeners();
@@ -268,7 +267,7 @@ public class ScannerDevice {
         } catch (JposException jposException) {
             if(isConnected()) {
                 LOGGER.error(MARKER, getScannerType() + " Failed to Disable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
-            } else {
+            } else if(jposException.getErrorCode() != JposConst.JPOS_E_CLOSED) {
                 LOGGER.error(getScannerType() + " Failed to Disable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
             }
             if(getScannerType().equalsIgnoreCase("HANDHELD")) {
