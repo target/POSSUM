@@ -394,6 +394,22 @@ public class MicrManagerTest {
     }
 
     @Test
+    public void getHealth_WhenCacheNull_ShouldReturnReadyHealthResponse() {
+        //arrange
+        when(mockMicrDevice.isConnected()).thenReturn(true);
+        when(mockMicrDevice.getDeviceName()).thenReturn("micr");
+        when(mockCacheManager.getCache("micrHealth")).thenReturn(null);
+        DeviceHealthResponse expected = new DeviceHealthResponse("micr", DeviceHealth.READY);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = micrManagerCacheClient.getHealth();
+
+        //assert
+        assertEquals("micr", deviceHealthResponse.getDeviceName());
+        assertEquals(DeviceHealth.READY, deviceHealthResponse.getHealthStatus());
+    }
+
+    @Test
     public void getStatus_WhenCacheExists() {
         //arrange
         when(mockCacheManager.getCache("micrHealth")).thenReturn(testCache);
@@ -446,6 +462,21 @@ public class MicrManagerTest {
         when(mockMicrDevice.isConnected()).thenReturn(true);
         when(mockMicrDevice.getDeviceName()).thenReturn("micr");
         when(mockCacheManager.getCache("micrHealth")).thenReturn(testCache);
+        DeviceHealthResponse expected = new DeviceHealthResponse("micr", DeviceHealth.READY);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = micrManagerCacheClient.getStatus();
+
+        //assert
+        assertEquals(expected.toString(), deviceHealthResponse.toString());
+    }
+
+    @Test
+    public void getStatus_WhenCacheNull_CallHealth() {
+        //arrange
+        when(mockMicrDevice.isConnected()).thenReturn(true);
+        when(mockMicrDevice.getDeviceName()).thenReturn("micr");
+        when(mockCacheManager.getCache("micrHealth")).thenReturn(null);
         DeviceHealthResponse expected = new DeviceHealthResponse("micr", DeviceHealth.READY);
 
         //act

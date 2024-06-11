@@ -332,6 +332,22 @@ public class CashDrawerManagerTest {
     }
 
     @Test
+    public void getHealth_WhenCacheFails_ShouldReturnReadyHealthResponse() {
+        //arrange
+        when(mockCashDrawerDevice.isConnected()).thenReturn(true);
+        when(mockCashDrawerDevice.getDeviceName()).thenReturn("cashDrawer");
+        when(mockCacheManager.getCache("cashDrawerHealth")).thenReturn(null);
+        DeviceHealthResponse expected = new DeviceHealthResponse("cashDrawer", DeviceHealth.READY);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = cashDrawerManagerCache.getHealth();
+
+        //assert
+        assertEquals("cashDrawer", deviceHealthResponse.getDeviceName());
+        assertEquals(DeviceHealth.READY, deviceHealthResponse.getHealthStatus());
+    }
+
+    @Test
     public void getStatus_WhenCacheExists() {
         //arrange
         when(mockCacheManager.getCache("cashDrawerHealth")).thenReturn(testCache);
@@ -384,6 +400,21 @@ public class CashDrawerManagerTest {
         when(mockCashDrawerDevice.isConnected()).thenReturn(true);
         when(mockCashDrawerDevice.getDeviceName()).thenReturn("cashDrawer");
         when(mockCacheManager.getCache("cashDrawerHealth")).thenReturn(testCache);
+        DeviceHealthResponse expected = new DeviceHealthResponse("cashDrawer", DeviceHealth.READY);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = cashDrawerManagerCache.getStatus();
+
+        //assert
+        assertEquals(expected.toString(), deviceHealthResponse.toString());
+    }
+
+    @Test
+    public void getStatus_WhenCacheNull_CallHealth() {
+        //arrange
+        when(mockCashDrawerDevice.isConnected()).thenReturn(true);
+        when(mockCashDrawerDevice.getDeviceName()).thenReturn("cashDrawer");
+        when(mockCacheManager.getCache("cashDrawerHealth")).thenReturn(null);
         DeviceHealthResponse expected = new DeviceHealthResponse("cashDrawer", DeviceHealth.READY);
 
         //act

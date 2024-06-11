@@ -434,6 +434,30 @@ public class ScannerManagerTest {
     }
 
     @Test
+    public void getHealth_CacheNull_ShouldReturnReadyHealthResponse() {
+        //arrange
+        when(mockHandheldScannerDevice.isConnected()).thenReturn(true);
+        when(mockHandheldScannerDevice.getDeviceName()).thenReturn("HANDHELD");
+        when(mockFlatbedScannerDevice.isConnected()).thenReturn(true);
+        when(mockFlatbedScannerDevice.getDeviceName()).thenReturn("FLATBED");
+        when(mockCacheManager.getCache("scannerHealth")).thenReturn(null);
+        List<DeviceHealthResponse> expectedList = new ArrayList<>();
+        expectedList.add(new DeviceHealthResponse("HANDHELD", DeviceHealth.READY));
+        expectedList.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));
+        when(mockFlatbedScannerDevice.getScannerType()).thenReturn("FLATBED");
+        when(mockHandheldScannerDevice.getScannerType()).thenReturn("HANDHELD");
+
+        //act
+        List<DeviceHealthResponse> deviceHealthResponseList = scannerManagerCache.getHealth(ScannerType.BOTH);
+
+        //assert
+        assertEquals("HANDHELD", deviceHealthResponseList.get(0).getDeviceName());
+        assertEquals(DeviceHealth.READY, deviceHealthResponseList.get(0).getHealthStatus());
+        assertEquals("FLATBED", deviceHealthResponseList.get(1).getDeviceName());
+        assertEquals(DeviceHealth.READY, deviceHealthResponseList.get(1).getHealthStatus());
+    }
+
+    @Test
     public void getHealth_WhenHandheldDeviceOnline_ShouldReturnNotReadyHealthResponse() {
         //arrange
         when(mockHandheldScannerDevice.isConnected()).thenReturn(true);
@@ -541,6 +565,26 @@ public class ScannerManagerTest {
     public void getStatus_WhenCacheNull_WhenDeviceOnline() {
         //arrange
         when(mockCacheManager.getCache("scannerHealth")).thenReturn(testCache);
+        List<DeviceHealthResponse> expectedList = new ArrayList<>();
+        expectedList.add(new DeviceHealthResponse("HANDHELD", DeviceHealth.READY));
+        expectedList.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));
+
+        when(mockHandheldScannerDevice.isConnected()).thenReturn(true);
+        when(mockFlatbedScannerDevice.isConnected()).thenReturn(true);
+        when(mockFlatbedScannerDevice.getDeviceName()).thenReturn("FLATBED");
+        when(mockHandheldScannerDevice.getDeviceName()).thenReturn("HANDHELD");
+
+        //act
+        List<DeviceHealthResponse> deviceHealthResponseList = scannerManagerCache.getStatus();
+
+        //assert
+        assertEquals(expectedList.toString(), deviceHealthResponseList.toString());
+    }
+
+    @Test
+    public void getStatus_WhenCacheNull_CheckHealth() {
+        //arrange
+        when(mockCacheManager.getCache("scannerHealth")).thenReturn(null);
         List<DeviceHealthResponse> expectedList = new ArrayList<>();
         expectedList.add(new DeviceHealthResponse("HANDHELD", DeviceHealth.READY));
         expectedList.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));

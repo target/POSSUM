@@ -305,6 +305,22 @@ public class LineDisplayManagerTest {
     }
 
     @Test
+    public void getHealth_CacheNull_ShouldReturnReadyHealthResponse() {
+        //arrange
+        when(mockLineDisplayDevice.isConnected()).thenReturn(true);
+        when(mockLineDisplayDevice.getDeviceName()).thenReturn("lineDisplay");
+        when(mockCacheManager.getCache("lineDisplayHealth")).thenReturn(null);
+        DeviceHealthResponse expected = new DeviceHealthResponse("lineDisplay", DeviceHealth.READY);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = lineDisplayManagerCache.getHealth();
+
+        //assert
+        assertEquals("lineDisplay", deviceHealthResponse.getDeviceName());
+        assertEquals(DeviceHealth.READY, deviceHealthResponse.getHealthStatus());
+    }
+
+    @Test
     public void getStatus_WhenCacheExists() {
         //arrange
         when(mockCacheManager.getCache("lineDisplayHealth")).thenReturn(testCache);
@@ -357,6 +373,21 @@ public class LineDisplayManagerTest {
         when(mockLineDisplayDevice.isConnected()).thenReturn(true);
         when(mockLineDisplayDevice.getDeviceName()).thenReturn("lineDisplay");
         when(mockCacheManager.getCache("lineDisplayHealth")).thenReturn(testCache);
+        DeviceHealthResponse expected = new DeviceHealthResponse("lineDisplay", DeviceHealth.READY);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = lineDisplayManagerCache.getStatus();
+
+        //assert
+        assertEquals(expected.toString(), deviceHealthResponse.toString());
+    }
+
+    @Test
+    public void getStatus_WhenCacheNull_CallHealth() {
+        //arrange
+        when(mockLineDisplayDevice.isConnected()).thenReturn(true);
+        when(mockLineDisplayDevice.getDeviceName()).thenReturn("lineDisplay");
+        when(mockCacheManager.getCache("lineDisplayHealth")).thenReturn(null);
         DeviceHealthResponse expected = new DeviceHealthResponse("lineDisplay", DeviceHealth.READY);
 
         //act

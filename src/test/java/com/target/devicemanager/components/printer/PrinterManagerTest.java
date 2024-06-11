@@ -445,6 +445,22 @@ public class PrinterManagerTest {
     }
 
     @Test
+    public void getHealth_CacheNull_ShouldReturnReadyHealthResponse() {
+        //arrange
+        when(mockPrinterDevice.isConnected()).thenReturn(true);
+        when(mockPrinterDevice.getDeviceName()).thenReturn("printer");
+        when(mockCacheManager.getCache("printerHealth")).thenReturn(null);
+        DeviceHealthResponse expected = new DeviceHealthResponse("printer", DeviceHealth.READY);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = printerManagerCacheFuture.getHealth();
+
+        //assert
+        assertEquals("printer", deviceHealthResponse.getDeviceName());
+        assertEquals(DeviceHealth.READY, deviceHealthResponse.getHealthStatus());
+    }
+
+    @Test
     public void getStatus_WhenCacheExists() {
         //arrange
         when(mockCacheManager.getCache("printerHealth")).thenReturn(testCache);
@@ -497,6 +513,21 @@ public class PrinterManagerTest {
         when(mockPrinterDevice.isConnected()).thenReturn(true);
         when(mockPrinterDevice.getDeviceName()).thenReturn("printer");
         when(mockCacheManager.getCache("printerHealth")).thenReturn(testCache);
+        DeviceHealthResponse expected = new DeviceHealthResponse("printer", DeviceHealth.READY);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = printerManagerCacheFuture.getStatus();
+
+        //assert
+        assertEquals(expected.toString(), deviceHealthResponse.toString());
+    }
+
+    @Test
+    public void getStatus_WhenCacheNull_CallHealth() {
+        //arrange
+        when(mockPrinterDevice.isConnected()).thenReturn(true);
+        when(mockPrinterDevice.getDeviceName()).thenReturn("printer");
+        when(mockCacheManager.getCache("printerHealth")).thenReturn(null);
         DeviceHealthResponse expected = new DeviceHealthResponse("printer", DeviceHealth.READY);
 
         //act

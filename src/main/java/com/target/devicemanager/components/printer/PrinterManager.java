@@ -156,19 +156,27 @@ public class PrinterManager {
         } else {
             deviceHealthResponse = new DeviceHealthResponse(printerDevice.getDeviceName(), DeviceHealth.NOTREADY);
         }
-        Objects.requireNonNull(cacheManager.getCache("printerHealth")).put("health", deviceHealthResponse);
+        try {
+            Objects.requireNonNull(cacheManager.getCache("printerHealth")).put("health", deviceHealthResponse);
+        } catch (Exception exception) {
+            LOGGER.error("getCache(printerHealth) Failed: " + exception.getMessage());
+        }
         return deviceHealthResponse;
     }
 
     public DeviceHealthResponse getStatus() {
-        if(Objects.requireNonNull(cacheManager.getCache("printerHealth")).get("health") != null) {
-            if(connectStatus == ConnectEnum.CHECK_HEALTH) {
-                connectStatus = ConnectEnum.HEALTH_UPDATED;
+        try {
+            if (Objects.requireNonNull(cacheManager.getCache("printerHealth")).get("health") != null) {
+                if (connectStatus == ConnectEnum.CHECK_HEALTH) {
+                    connectStatus = ConnectEnum.HEALTH_UPDATED;
+                    return getHealth();
+                }
+                return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("printerHealth")).get("health").get();
+            } else {
+                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
                 return getHealth();
             }
-            return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("printerHealth")).get("health").get();
-        } else {
-            LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+        } catch (Exception exception) {
             return getHealth();
         }
     }
