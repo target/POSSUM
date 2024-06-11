@@ -104,19 +104,27 @@ public class LineDisplayManager implements ConnectionEventListener {
         } else {
             deviceHealthResponse = new DeviceHealthResponse(lineDisplayDevice.getDeviceName(), DeviceHealth.NOTREADY);
         }
-        Objects.requireNonNull(cacheManager.getCache("lineDisplayHealth")).put("health", deviceHealthResponse);
+        try {
+            Objects.requireNonNull(cacheManager.getCache("lineDisplayHealth")).put("health", deviceHealthResponse);
+        } catch (Exception exception) {
+            LOGGER.error("getCache(lineDisplayHealth) Failed: " + exception.getMessage());
+        }
         return deviceHealthResponse;
     }
 
     public DeviceHealthResponse getStatus() {
-        if(Objects.requireNonNull(cacheManager.getCache("lineDisplayHealth")).get("health") != null) {
-            if(connectStatus == ConnectEnum.CHECK_HEALTH) {
-                connectStatus = ConnectEnum.HEALTH_UPDATED;
+        try {
+            if (cacheManager != null && Objects.requireNonNull(cacheManager.getCache("lineDisplayHealth")).get("health") != null) {
+                if (connectStatus == ConnectEnum.CHECK_HEALTH) {
+                    connectStatus = ConnectEnum.HEALTH_UPDATED;
+                    return getHealth();
+                }
+                return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("lineDisplayHealth")).get("health").get();
+            } else {
+                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
                 return getHealth();
             }
-            return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("lineDisplayHealth")).get("health").get();
-        } else {
-            LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+        } catch (Exception exception) {
             return getHealth();
         }
     }
