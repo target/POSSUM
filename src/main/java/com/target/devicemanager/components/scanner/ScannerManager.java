@@ -201,20 +201,28 @@ public class ScannerManager {
                     }
             }
         }
-        Objects.requireNonNull(cacheManager.getCache("scannerHealth")).put("health", response);
+        try {
+            Objects.requireNonNull(cacheManager.getCache("scannerHealth")).put("health", response);
+        } catch (Exception exception) {
+            LOGGER.error("getCache(scannerHealth) Failed: " + exception.getMessage());
+        }
         LOGGER.trace("getHealth(out)");
         return response;
     }
 
     public List<DeviceHealthResponse> getStatus() {
-        if(Objects.requireNonNull(cacheManager.getCache("scannerHealth")).get("health") != null) {
-            if(connectStatus == ConnectEnum.CHECK_HEALTH) {
-                connectStatus = ConnectEnum.HEALTH_UPDATED;
+        try {
+            if (cacheManager != null && Objects.requireNonNull(cacheManager.getCache("scannerHealth")).get("health") != null) {
+                if (connectStatus == ConnectEnum.CHECK_HEALTH) {
+                    connectStatus = ConnectEnum.HEALTH_UPDATED;
+                    return getHealth(ScannerType.BOTH);
+                }
+                return (List<DeviceHealthResponse>) Objects.requireNonNull(cacheManager.getCache("scannerHealth")).get("health").get();
+            } else {
+                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
                 return getHealth(ScannerType.BOTH);
             }
-            return (List<DeviceHealthResponse>) Objects.requireNonNull(cacheManager.getCache("scannerHealth")).get("health").get();
-        } else {
-            LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+        } catch (Exception exception) {
             return getHealth(ScannerType.BOTH);
         }
     }

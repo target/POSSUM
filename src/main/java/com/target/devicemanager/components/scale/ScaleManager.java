@@ -190,19 +190,27 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
         } else {
             deviceHealthResponse = new DeviceHealthResponse(scaleDevice.getDeviceName(), DeviceHealth.NOTREADY);
         }
-        Objects.requireNonNull(cacheManager.getCache("scaleHealth")).put("health", deviceHealthResponse);
+        try {
+            Objects.requireNonNull(cacheManager.getCache("scaleHealth")).put("health", deviceHealthResponse);
+        } catch (Exception exception) {
+            LOGGER.error("getCache(scaleHealth) Failed: " + exception.getMessage());
+        }
         return deviceHealthResponse;
     }
 
     public DeviceHealthResponse getStatus() {
-        if(Objects.requireNonNull(cacheManager.getCache("scaleHealth")).get("health") != null) {
-            if(connectStatus == ConnectEnum.CHECK_HEALTH) {
-                connectStatus = ConnectEnum.HEALTH_UPDATED;
+        try {
+            if (cacheManager != null && Objects.requireNonNull(cacheManager.getCache("scaleHealth")).get("health") != null) {
+                if (connectStatus == ConnectEnum.CHECK_HEALTH) {
+                    connectStatus = ConnectEnum.HEALTH_UPDATED;
+                    return getHealth();
+                }
+                return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("scaleHealth")).get("health").get();
+            } else {
+                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
                 return getHealth();
             }
-            return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("scaleHealth")).get("health").get();
-        } else {
-            LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+        } catch (Exception exception) {
             return getHealth();
         }
     }
