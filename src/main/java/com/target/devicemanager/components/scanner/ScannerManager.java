@@ -210,14 +210,18 @@ public class ScannerManager {
         return response;
     }
 
-    public List<DeviceHealthResponse> getStatus() {
+    public List<DeviceHealthResponse> getStatus(ScannerType scannerType) {
         try {
             if (cacheManager != null && Objects.requireNonNull(cacheManager.getCache("scannerHealth")).get("health") != null) {
                 if (connectStatus == ConnectEnum.CHECK_HEALTH) {
                     connectStatus = ConnectEnum.HEALTH_UPDATED;
                     return getHealth(ScannerType.BOTH);
                 }
-                return (List<DeviceHealthResponse>) Objects.requireNonNull(cacheManager.getCache("scannerHealth")).get("health").get();
+                return switch (scannerType.name()) {
+                    case "FLATBED" -> getHealth(ScannerType.FLATBED);
+                    case "HANDHELD" -> getHealth(ScannerType.HANDHELD);
+                    default -> (List<DeviceHealthResponse>) Objects.requireNonNull(cacheManager.getCache("scannerHealth")).get("health").get();
+                };
             } else {
                 LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
                 return getHealth(ScannerType.BOTH);
@@ -228,12 +232,11 @@ public class ScannerManager {
     }
 
     public DeviceHealth getScannerHealthStatus(String scannerName) {
-        for(DeviceHealthResponse deviceHealthResponse: getStatus()) {
-            if(deviceHealthResponse.getDeviceName().equals(scannerName)) {
-                return deviceHealthResponse.getHealthStatus();
-            }
-        }
-        return new DeviceHealthResponse(scannerName, DeviceHealth.NOTREADY).getHealthStatus();
+        return switch (scannerName) {
+            case "FLATBED" -> getStatus(ScannerType.FLATBED).get(0).getHealthStatus();
+            case "HANDHELD" -> getStatus(ScannerType.HANDHELD).get(0).getHealthStatus();
+            default -> new DeviceHealthResponse(scannerName, DeviceHealth.NOTREADY).getHealthStatus();
+        };
     }
 
     private void disableScanners() throws InterruptedException {

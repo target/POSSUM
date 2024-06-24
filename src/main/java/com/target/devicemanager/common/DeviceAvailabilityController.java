@@ -44,9 +44,14 @@ public class DeviceAvailabilityController {
     @GetMapping("/v1/deviceerror")
     public SseEmitter getDeviceError() throws IOException {
         LOGGER.info("GET : /v1/deviceerror");
-        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-        deviceAvailabilityService.subscribeToDeviceError(sseEmitter);
-        return sseEmitter;
+        try {
+            SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+            deviceAvailabilityService.subscribeToDeviceError(sseEmitter);
+            return sseEmitter;
+        } catch (IOException ioException) {
+            LOGGER.info("IOException in DeviceError: " + ioException.getMessage());
+            throw ioException;
+        }
     }
 
     @Operation(description = "Health status of all devices")
