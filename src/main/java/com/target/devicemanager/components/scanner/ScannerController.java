@@ -121,7 +121,7 @@ public class ScannerController {
     @GetMapping(path = "/scanner/healthstatus")
     public ResponseEntity<List<DeviceHealthResponse>> getStatus() {
         String url = "/v1/scanner/healthstatus";
-        LOGGER.info("request: " + url);        List<DeviceHealthResponse> responseList = scannerManager.getStatus();
+        LOGGER.info("request: " + url);        List<DeviceHealthResponse> responseList = scannerManager.getStatus(ScannerType.BOTH);
         for(DeviceHealthResponse deviceResponse : responseList) {
             LOGGER.info("response: " + url + " - " + deviceResponse.toString());        }
         return ResponseEntity.ok(responseList);
