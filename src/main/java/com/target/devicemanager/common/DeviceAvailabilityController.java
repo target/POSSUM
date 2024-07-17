@@ -52,7 +52,8 @@ public class DeviceAvailabilityController {
             LOGGER.info("IOException in DeviceError: " + ioException.getMessage());
             throw ioException;
         } catch (Exception exception) {
-            LOGGER.info("Exception in DeviceERROR: " + exception.getMessage());
+            LOGGER.info("Exception in DeviceError: " + exception.getMessage());
+            throw exception;
         }
     }
 
