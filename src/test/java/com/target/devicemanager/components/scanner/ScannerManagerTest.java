@@ -605,12 +605,16 @@ public class ScannerManagerTest {
     void getScannerHealthStatus_FlatbedScanner() {
         //arrange
         List<DeviceHealthResponse> devReady = new ArrayList<>();
-        devReady.add(new DeviceHealthResponse("FLATBED", DeviceHealth.READY));
-        devReady.add(new DeviceHealthResponse("HANDHELD", DeviceHealth.READY));
+        devReady.add(new DeviceHealthResponse("Zebra", DeviceHealth.READY));
+        devReady.add(new DeviceHealthResponse("Honeywell", DeviceHealth.READY));
         Mockito.doReturn(devReady).when(scannerManagerCache).getStatus();
+        Mockito.doReturn("Honeywell").when(mockHandheldScannerDevice).getDeviceName();
+        Mockito.doReturn("HANDHELD").when(mockHandheldScannerDevice).getScannerType();
+        Mockito.doReturn("Zebra").when(mockFlatbedScannerDevice).getDeviceName();
+        Mockito.doReturn("FLATBED").when(mockFlatbedScannerDevice).getScannerType();
 
         //act
-        DeviceHealth actual = scannerManagerCache.getScannerHealthStatus("HANDHELD");
+        DeviceHealth actual = scannerManagerCache.getScannerHealthStatus("FLATBED");
 
         //assert
         assertEquals(DeviceHealth.READY, actual);
