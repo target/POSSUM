@@ -227,7 +227,20 @@ public class ScannerManager {
         }
     }
 
-    public DeviceHealth getScannerHealthStatus(String scannerName) {
+    public DeviceHealth getScannerHealthStatus(String scannerType) {
+        String scannerName = "";
+        for (ScannerDevice scanner : scanners) {
+            switch (scannerType) {
+                case "FLATBED":
+                case "HANDHELD":
+                    if (scanner.getScannerType().equals(scannerType)) {
+                        scannerName = scanner.getDeviceName();
+                    }
+                    break;
+                default:
+                   scannerName = "";
+            }
+        }
         for(DeviceHealthResponse deviceHealthResponse: getStatus()) {
             if(deviceHealthResponse.getDeviceName().equals(scannerName)) {
                 return deviceHealthResponse.getHealthStatus();
