@@ -72,7 +72,7 @@ class DeviceAvailabilityServiceTest {
     }
 
     // These tests fail because of a known issue, we will revert back when a permanent solution is found
-    /*@Test
+    @Test
     void Test_findDevStatus_FlatbedScanner() {
         //arrange
         DeviceHealth expected = new DeviceHealthResponse("FLATBED", DeviceHealth.NOTREADY).getHealthStatus();
@@ -98,7 +98,7 @@ class DeviceAvailabilityServiceTest {
 
         //assert
         assertEquals(expected, actual);
-    }*/
+    }
 
     @Test
     void Test_findDevStatus_LineDisplay() {
