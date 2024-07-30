@@ -112,7 +112,6 @@ public class DeviceAvailabilityService {
             case "flatbedscanner":
                 if(deviceAvailabilitySingleton.getScannerManager() != null) {
                     healthStatus = deviceAvailabilitySingleton.getScannerManager().getScannerHealthStatus("FLATBED");
-                    //healthStatus = deviceAvailabilitySingleton.getScannerManager().getStatus().get(0).getHealthStatus();
                 } else {
                     LOGGER.trace("Failed to Connect to " + devName);
                 }
@@ -120,7 +119,6 @@ public class DeviceAvailabilityService {
             case "handscanner":
                 if(deviceAvailabilitySingleton.getScannerManager() != null) {
                     healthStatus = deviceAvailabilitySingleton.getScannerManager().getScannerHealthStatus("HANDHELD");
-                    //healthStatus = deviceAvailabilitySingleton.getScannerManager().getStatus().get(1).getHealthStatus();
                 } else {
                     LOGGER.trace("Failed to Connect to " + devName);
                 }
