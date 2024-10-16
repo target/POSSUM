@@ -29,6 +29,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator:3.2.7"
     implementation "org.springframework.boot:spring-boot-starter-validation:3.2.7"
     implementation "org.springframework.boot:spring-boot-loader:3.2.7"
+    implementation "org.springframework:spring-webmvc:6.1.13"
+    implementation "org.springframework:spring-web:6.1.12"
     implementation "io.micrometer:micrometer-registry-influx:1.9.0"
     implementation "org.javapos:javapos-config-loader:2.2.0"
     implementation "org.javapos:javapos:1.14.3"
