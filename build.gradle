@@ -22,7 +22,6 @@ sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
 }
 
 dependencies {
@@ -35,7 +34,7 @@ dependencies {
     implementation "io.micrometer:micrometer-registry-influx:1.9.0"
     implementation "org.javapos:javapos-config-loader:2.2.0"
     implementation "org.javapos:javapos:1.14.3"
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.14.0"
     implementation "com.fasterxml.jackson.core:jackson-core:2.14.0"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.14.0"
