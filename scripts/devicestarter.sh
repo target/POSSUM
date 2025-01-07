@@ -142,4 +142,4 @@ echo ""
 cd /opt/target/possum
 
 # TODO Need to check if NCRRetail form init.d and NCRLoader is running.
-java -cp $CP -Djava.library.path=$LIB_PATH -XX:ErrorFile=$POSSUM_LOG_PATH/CrashLog/hs_err_pid%p.log -XX:ReplayDataFile=$POSSUM_LOG_PATH/CrashLog/replay_pid%p.log -Dlog4j2.formatMsgNoLookups=true -Dloader.main=com.target.devicemanager.DeviceMain org.springframework.boot.loader.PropertiesLauncher
+java -cp $CP -Djava.library.path=$LIB_PATH -XX:ErrorFile=$POSSUM_LOG_PATH/CrashLog/hs_err_pid%p.log -XX:ReplayDataFile=$POSSUM_LOG_PATH/CrashLog/replay_pid%p.log -Dlog4j2.formatMsgNoLookups=true -Dloader.main=com.target.devicemanager.DeviceMain org.springframework.boot.loader.launch.PropertiesLauncher
