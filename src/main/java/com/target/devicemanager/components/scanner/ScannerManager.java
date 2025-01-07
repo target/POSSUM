@@ -174,6 +174,9 @@ public class ScannerManager {
             ScannerException scannerException = new ScannerException(ScannerError.UNEXPECTED_ERROR);
             LOGGER.trace("cancelScanRequest(out)");
             throw scannerException;
+        } catch (Exception exception) {
+            LOGGER.info("Error in cancelScanRequest: " + exception.getMessage());
+            throw new ScannerException(ScannerError.UNEXPECTED_ERROR);
         }
         LOGGER.trace("cancelScanRequest(out)");
     }
