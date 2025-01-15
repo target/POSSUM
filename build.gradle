@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'idea'
     id 'application'
-    id 'org.springframework.boot' version '3.1.11'
+    id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'de.undercouch.download' version '4.1.1'
     id 'jacoco'
@@ -25,14 +25,17 @@ repositories {
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web:3.1.11"
-    implementation "org.springframework.boot:spring-boot-starter-actuator:3.1.11"
-    implementation "org.springframework.boot:spring-boot-starter-validation:3.1.11"
-    implementation "org.springframework.boot:spring-boot-loader:3.1.11"
+    implementation "org.springframework.boot:spring-boot-starter-web:3.4.1"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:3.4.1"
+    implementation "org.springframework.boot:spring-boot-starter-validation:3.4.1"
+    implementation "org.springframework.boot:spring-boot-loader:3.4.1"
+    implementation "org.springframework:spring-webmvc:6.2.1"
+    implementation "org.springframework:spring-web:6.2.1"
+    implementation "org.junit.platform:junit-platform-launcher:1.11.4"
     implementation "io.micrometer:micrometer-registry-influx:1.9.0"
     implementation "org.javapos:javapos-config-loader:2.2.0"
     implementation "org.javapos:javapos:1.14.3"
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.14.0"
     implementation "com.fasterxml.jackson.core:jackson-core:2.14.0"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.14.0"
