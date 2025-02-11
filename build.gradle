@@ -3,12 +3,12 @@ plugins {
     id 'maven-publish'
     id 'idea'
     id 'application'
-    id 'org.springframework.boot' version '3.4.1'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'de.undercouch.download' version '4.1.1'
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'de.undercouch.download' version '5.0.4'
     id 'jacoco'
-    id 'org.barfuin.gradle.jacocolog' version '1.0.1'
-    id "com.github.johnrengelman.shadow" version "6.0.0"
+    id 'org.barfuin.gradle.jacocolog' version '2.0.0'
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 application {
@@ -25,17 +25,17 @@ repositories {
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web:3.4.1"
-    implementation "org.springframework.boot:spring-boot-starter-actuator:3.4.1"
-    implementation "org.springframework.boot:spring-boot-starter-validation:3.4.1"
-    implementation "org.springframework.boot:spring-boot-loader:3.4.1"
-    implementation "org.springframework:spring-webmvc:6.2.1"
-    implementation "org.springframework:spring-web:6.2.1"
+    implementation "org.springframework.boot:spring-boot-starter-web:3.4.2"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:3.4.2"
+    implementation "org.springframework.boot:spring-boot-starter-validation:3.4.2"
+    implementation "org.springframework.boot:spring-boot-loader:3.4.2"
+    implementation "org.springframework:spring-webmvc:6.2.2"
+    implementation "org.springframework:spring-web:6.2.2"
     implementation "org.junit.platform:junit-platform-launcher:1.11.4"
-    implementation "io.micrometer:micrometer-registry-influx:1.9.0"
-    implementation "org.javapos:javapos-config-loader:2.2.0"
-    implementation "org.javapos:javapos:1.14.3"
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0"
+    implementation "io.micrometer:micrometer-registry-influx:1.14.3"
+    implementation "org.javapos:javapos-config-loader:4.0.0"
+    implementation "org.javapos:javapos:1.15.2"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.14.0"
     implementation "com.fasterxml.jackson.core:jackson-core:2.14.0"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.14.0"
@@ -47,12 +47,12 @@ dependencies {
     implementation "jakarta.validation:jakarta.validation-api:3.0.2"
     implementation "jakarta.annotation:jakarta.annotation-api:2.1.1"
 
-    implementation "net.logstash.logback:logstash-logback-encoder:6.4"
-    implementation "org.yaml:snakeyaml:2.0"
+    implementation "net.logstash.logback:logstash-logback-encoder:8.0"
+    implementation "org.yaml:snakeyaml:2.3"
 
     implementation "org.springframework.boot:spring-boot-starter-cache:3.1.11"
-    implementation "com.github.ben-manes.caffeine:caffeine:2.9.3"
-    implementation "io.github.classgraph:classgraph:4.8.147"
+    implementation "com.github.ben-manes.caffeine:caffeine:3.2.0"
+    implementation "io.github.classgraph:classgraph:4.8.179"
     testImplementation "org.springframework.boot:spring-boot-starter-test:3.1.11"
 }
 
@@ -70,7 +70,7 @@ test {
 }
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = "1.2.4"
     reportsDirectory = layout.buildDirectory.dir('customJacocoReportDir')
 }
 
