@@ -50,10 +50,10 @@ dependencies {
     implementation "net.logstash.logback:logstash-logback-encoder:8.0"
     implementation "org.yaml:snakeyaml:2.3"
 
-    implementation "org.springframework.boot:spring-boot-starter-cache:3.1.11"
+    implementation "org.springframework.boot:spring-boot-starter-cache:3.4.2"
     implementation "com.github.ben-manes.caffeine:caffeine:3.2.0"
     implementation "io.github.classgraph:classgraph:4.8.179"
-    testImplementation "org.springframework.boot:spring-boot-starter-test:3.1.11"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.2"
 }
 
 tasks.withType(JavaExec){
