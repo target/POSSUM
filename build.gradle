@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'idea'
     id 'application'
-    id 'org.springframework.boot' version '3.4.3'
+    id 'org.springframework.boot' version '3.4.4'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'de.undercouch.download' version '5.6.0'
     id 'jacoco'
@@ -25,19 +25,19 @@ repositories {
 }
 
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-web:3.4.3"
-    implementation "org.springframework.boot:spring-boot-starter-actuator:3.4.3"
-    implementation "org.springframework.boot:spring-boot-starter-validation:3.4.3"
-    implementation "org.springframework.boot:spring-boot-loader:3.4.3"
-    implementation "org.springframework:spring-webmvc:6.2.3"
-    implementation "org.springframework:spring-web:6.2.3"
-    implementation "org.junit.platform:junit-platform-launcher:1.12.0"
-    implementation "org.junit.platform:junit-platform-commons:1.12.0"
-    implementation "org.junit.platform:junit-platform-engine:1.12.0"
-    implementation "io.micrometer:micrometer-registry-influx:1.14.4"
+    implementation "org.springframework.boot:spring-boot-starter-web:3.4.4"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:3.4.4"
+    implementation "org.springframework.boot:spring-boot-starter-validation:3.4.4"
+    implementation "org.springframework.boot:spring-boot-loader:3.4.4"
+    implementation "org.springframework:spring-webmvc:6.2.5"
+    implementation "org.springframework:spring-web:6.2.5"
+    implementation "org.junit.platform:junit-platform-launcher:1.12.1"
+    implementation "org.junit.platform:junit-platform-commons:1.12.1"
+    implementation "org.junit.platform:junit-platform-engine:1.12.1"
+    implementation "io.micrometer:micrometer-registry-influx:1.14.5"
     implementation "org.javapos:javapos-config-loader:4.0.1"
     implementation "org.javapos:javapos:1.15.5"
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.18.3"
     implementation "com.fasterxml.jackson.core:jackson-core:2.18.3"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.18.3"
@@ -52,10 +52,10 @@ dependencies {
     implementation "net.logstash.logback:logstash-logback-encoder:8.0"
     implementation "org.yaml:snakeyaml:2.4"
 
-    implementation "org.springframework.boot:spring-boot-starter-cache:3.4.3"
+    implementation "org.springframework.boot:spring-boot-starter-cache:3.4.4"
     implementation "com.github.ben-manes.caffeine:caffeine:3.2.0"
     implementation "io.github.classgraph:classgraph:4.8.179"
-    testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.3"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.4"
 }
 
 tasks.withType(JavaExec){
