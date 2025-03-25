@@ -98,6 +98,15 @@ shadowJar{
     archiveClassifier.set("")
 }
 
+bootJar {
+    archiveClassifier.set("")
+    manifest {
+        attributes(
+                'Main-Class': 'org.springframework.boot.loader.launch.PropertiesLauncher'
+        )
+    }
+}
+
 task generatePom {
     doLast {
         pom {
