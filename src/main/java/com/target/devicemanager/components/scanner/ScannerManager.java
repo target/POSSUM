@@ -118,6 +118,12 @@ public class ScannerManager {
         LOGGER.trace("enableScanners(in)");
         List<Callable<Barcode>> taskList = new ArrayList<>();
         for (ScannerDevice scanner : scanners) {
+            if(!scanner.getDeviceConnected()){
+                LOGGER.error("Scanner not connected: " + scanner.getDeviceName());
+                ScannerException scannerException = new ScannerException(ScannerError.DEVICE_OFFLINE);
+                LOGGER.trace("enableScanners(out)");
+                throw scannerException;
+            }
             switch (scannerType.name()) {
                 case "FLATBED":
                 case "HANDHELD":
@@ -253,6 +259,15 @@ public class ScannerManager {
 
     private void disableScanners() throws InterruptedException {
         LOGGER.trace("disableScanners(in)");
+        // Check scanner.getDeviceConnected() for both scanners
+        for (ScannerDevice scanner : scanners) {
+            if(!scanner.getDeviceConnected()){
+                LOGGER.error("Scanner not connected: " + scanner.getDeviceName());
+                ScannerException scannerException = new ScannerException(ScannerError.DEVICE_OFFLINE);
+                LOGGER.trace("disableScanners(out)");
+                return;
+            }
+        }
         List<Callable<Void>> taskList = new ArrayList<>();
         try {
             scanners.forEach(scanner -> taskList.add(scanner::cancelScannerData));
