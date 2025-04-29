@@ -29,17 +29,7 @@ function SpringProfile() {
   fi
 }
 
-function cleanStartDevices() {
-    # restart NCRRetail service
-    systemctl restart NCRRetail
-    sleep 5
-}
-
 # function zone end
-
-# Restart supporting services(if required) example NCRRetail
-cleanStartDevices
-
 echo ""
 echo "################################"
 echo "Verify Environment Settings..."
@@ -54,13 +44,32 @@ export PATH=$PATH:$JAVA_HOME/bin
 # change it to dev for ATM
 
 # Define all class path here
-CP=$CLASSPATH
-#========== Datalogic ==========#
-CP=$CP:/usr/local/Datalogic/JavaPOS/*
-CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/*
+CP=$CP:/usr/local/Datalogic/JavaPOS/JavaPOS.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/appframework-1.0.3.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/beansbinding-1.2.1.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/CMDFW.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/commons-lang3-3.8.1.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/DLRFIDLibrary.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jargs.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/JavaPOSTest.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jcl.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jna-5.2.0.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jna-platform-5.2.0.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jpos114.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jpos-dls-ext.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jsr80.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jsr80_linux.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jsr80-ri.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jssc.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/nrjavaserial-3.9.3.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/swing-layout-1.0.3.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/swing-layout-1.0.4.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/swing-worker-1.1.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/xercesImpl-2.12.0.jar
+CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/xml-apis-2.12.0.jar
 #========== NCR PSL ============#
-CP=$CP:/usr/local/ncr/platform
 CP=$CP:/usr/local/ncr/platform/jpos/NcrJavaPosControls.jar
+CP=$CP:/usr/local/ncr/platform/jpos/NcrJavaPosEmulators.jar
 CP=$CP:/usr/local/ncr/platform/jpos/NcrJavaPosServices.jar
 CP=$CP:/usr/local/ncr/platform/jpos/javapos.jar
 CP=$CP:/usr/local/ncr/platform/jpos/json-simple-1.1.jar
@@ -69,36 +78,23 @@ CP=$CP:/usr/local/ncr/platform/jpos/NCRLogger.jar
 CP=$CP:/usr/local/ncr/platform/ncrdeviceassistant/NcrDeviceAssistantConsole.jar
 CP=$CP:/usr/local/ncr/platform/PlatformRuntime.jar
 CP=$CP:/usr/local/ncr/platform_utilities/NcrAuthentication.jar
-CP=$CP:/usr/local/ncr/platform_utilities/TransactionTool.jar
 CP=$CP:/usr/local/ncr/platform_utilities/DeviceConfigTool.jar
 CP=$CP:/usr/local/ncr/platform_utilities/LogCollectorLib.jar
 CP=$CP:/usr/local/ncr/platform_utilities/LogCollector.jar
+CP=$CP:/usr/local/ncr/platform_utilities/fastt/FASTT.jar
+CP=$CP:/usr/local/ncr/platform_utilities/ThirdPartyDeviceIntegrator.jar
 #========== Honeywell ==========#
 CP=$CP:/usr/local/Honeywell/HWHydraSO.jar
-CP=$CP:/usr/local/Honeywell/honeywelljpos.jar
 CP=$CP:/usr/local/Honeywell/jpos113.jar
 CP=$CP:/usr/local/Honeywell/JAI.jar
 CP=$CP:/usr/local/Honeywell/jcl.jar
 CP=$CP:/usr/local/Honeywell/jpos113-controls.jar
 CP=$CP:/usr/local/Honeywell/JavaPOSSuite.jar
 CP=$CP:/usr/local/Honeywell/jpos111.jar
-CP=$CP:/usr/local/Honeywell/log4j-api-2.17.1.jar
-CP=$CP:/usr/local/Honeywell/log4j-core-2.17.1.jar
-CP=$CP:/usr/local/Honeywell/log4j-1.2-api-2.17.1.jar
 CP=$CP:/usr/local/Honeywell/RXTXcomm.jar
 CP=$CP:/usr/local/Honeywell/xerces.jar
-#========== NCR RPSL ==========#
-CP=$CP:/usr/local/NCRRetail
-CP=$CP:/usr/local/NCRRetail/jar/NCRRetailCommon.jar
-CP=$CP:/usr/local/NCRRetail/jar/xerces.jar
-CP=$CP:/usr/local/NCRRetail/jar/NCRConfigManager.jar
-CP=$CP:/usr/local/NCRRetail/jar/jpos.jar
-CP=$CP:/usr/local/NCRRetail/jar/NCRJavaPOS.jar
-CP=$CP:/usr/local/NCRRetail/jar/NCRJavaPOS316.jar
 #========== ZEBRA ==========#
 CP=$CP:/usr/lib/zebra-scanner/javapos/jpos/javaPOS114.jar
-CP=$CP:/usr/share/zebra-scanner/javapos/xml
-CP=$CP:/usr/share/zebra-scanner/javapos/config
 CP=$CP:/usr/lib/zebra-scanner/javapos/jpos/JposLogger.jar
 CP=$CP:/usr/lib/zebra-scanner/javapos/jpos/JposServiceJniScale.jar
 CP=$CP:/usr/lib/zebra-scanner/javapos/jpos/JposServiceJniScanner.jar
@@ -110,6 +106,8 @@ CP=$CP:/usr/lib/zebra-scanner/javapos/jpos/JposServiceScale.jar
 CP=$CP:/usr/local/ELO/jar/eloJPosService114.jar
 #========== Possum ==========#
 CP=$CP:/opt/target/possum/$(find PossumDeviceManager*)
+CP=$CP:$(find /usr/local/target/log4j-1.2-api-*.jar)
+CP=$CP:$(find /usr/local/target/log4j-api-*.jar)
 CP=$CP:.
 
 #Define all LIB path here
