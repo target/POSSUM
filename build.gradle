@@ -88,8 +88,9 @@ build {
     dependsOn("copyRuntimeJars")
 }
 
-tasks.processResources {
-    from(configurations.runtimeClasspath).include("*.jar")
+task copyRuntimeJars(type: Copy) {
+    from configurations.runtimeClasspath
+    into "$buildDir/libs"
 }
 
 ext['log4j2.version'] = '2.24.3'
