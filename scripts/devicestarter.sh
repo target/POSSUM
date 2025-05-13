@@ -108,6 +108,7 @@ CP=$CP:/usr/local/ELO/jar/eloJPosService114.jar
 CP=$CP:/opt/target/possum/$(find PossumDeviceManager*)
 CP=$CP:$(find /usr/local/target/log4j-1.2-api-*.jar)
 CP=$CP:$(find /usr/local/target/log4j-api-*.jar)
+CP=$CP:$(find /usr/local/target/javapos-1.*.jar)
 CP=$CP:.
 
 #Define all LIB path here
