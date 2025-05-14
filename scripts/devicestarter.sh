@@ -44,6 +44,7 @@ export PATH=$PATH:$JAVA_HOME/bin
 # change it to dev for ATM
 
 # Define all class path here
+#========== Datalogic ==========#
 CP=$CP:/usr/local/Datalogic/JavaPOS/JavaPOS.jar
 CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/appframework-1.0.3.jar
 CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/beansbinding-1.2.1.jar
@@ -55,7 +56,6 @@ CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/JavaPOSTest.jar
 CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jcl.jar
 CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jna-5.2.0.jar
 CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jna-platform-5.2.0.jar
-CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jpos114.jar
 CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jpos-dls-ext.jar
 CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jsr80.jar
 CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/jsr80_linux.jar
@@ -71,7 +71,6 @@ CP=$CP:/usr/local/Datalogic/JavaPOS/SupportJars/xml-apis-2.12.0.jar
 CP=$CP:/usr/local/ncr/platform/jpos/NcrJavaPosControls.jar
 CP=$CP:/usr/local/ncr/platform/jpos/NcrJavaPosEmulators.jar
 CP=$CP:/usr/local/ncr/platform/jpos/NcrJavaPosServices.jar
-CP=$CP:/usr/local/ncr/platform/jpos/javapos.jar
 CP=$CP:/usr/local/ncr/platform/jpos/json-simple-1.1.jar
 CP=$CP:/usr/local/ncr/platform/jpos/xerces.jar
 CP=$CP:/usr/local/ncr/platform/jpos/NCRLogger.jar
@@ -85,7 +84,6 @@ CP=$CP:/usr/local/ncr/platform_utilities/fastt/FASTT.jar
 CP=$CP:/usr/local/ncr/platform_utilities/ThirdPartyDeviceIntegrator.jar
 #========== Honeywell ==========#
 CP=$CP:/usr/local/Honeywell/HWHydraSO.jar
-CP=$CP:/usr/local/Honeywell/jpos113.jar
 CP=$CP:/usr/local/Honeywell/JAI.jar
 CP=$CP:/usr/local/Honeywell/jcl.jar
 CP=$CP:/usr/local/Honeywell/jpos113-controls.jar
@@ -94,7 +92,6 @@ CP=$CP:/usr/local/Honeywell/jpos111.jar
 CP=$CP:/usr/local/Honeywell/RXTXcomm.jar
 CP=$CP:/usr/local/Honeywell/xerces.jar
 #========== ZEBRA ==========#
-CP=$CP:/usr/lib/zebra-scanner/javapos/jpos/javaPOS114.jar
 CP=$CP:/usr/lib/zebra-scanner/javapos/jpos/JposLogger.jar
 CP=$CP:/usr/lib/zebra-scanner/javapos/jpos/JposServiceJniScale.jar
 CP=$CP:/usr/lib/zebra-scanner/javapos/jpos/JposServiceJniScanner.jar
