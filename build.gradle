@@ -50,9 +50,9 @@ dependencies {
     implementation "jakarta.servlet:jakarta.servlet-api:6.1.0"
     implementation "jakarta.validation:jakarta.validation-api:3.1.1"
     implementation "jakarta.annotation:jakarta.annotation-api:3.0.0"
-    implementation "org.apache.logging.log4j:log4j-api:${log4j2.version}"
-    implementation "org.apache.logging.log4j:log4j-core:${log4j2.version}"
-    implementation "org.apache.logging.log4j:log4j-1.2-api:${log4j2.version}"
+    implementation "org.apache.logging.log4j:log4j-api:2.24.3"
+    implementation "org.apache.logging.log4j:log4j-core:2.24.3"
+    implementation "org.apache.logging.log4j:log4j-1.2-api:2.24.3"
 
     implementation "net.logstash.logback:logstash-logback-encoder:8.1"
     implementation "org.yaml:snakeyaml:2.4"
