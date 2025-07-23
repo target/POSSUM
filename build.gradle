@@ -21,7 +21,7 @@ version '1.0'
 sourceCompatibility = '17'
 
 repositories {
-    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://binrepo.target.com/artifactory/maven-central" }
 }
 
 
