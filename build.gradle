@@ -21,7 +21,7 @@ version '1.0'
 sourceCompatibility = '17'
 
 repositories {
-    mavenCentral()
+    maven { url 'https://binrepo.target.com/artifactory/maven-central' }
 }
 
 ext['log4j2.version'] = '2.24.3'
