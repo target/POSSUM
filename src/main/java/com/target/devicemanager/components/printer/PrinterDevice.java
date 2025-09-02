@@ -449,6 +449,9 @@ public class PrinterDevice implements StatusUpdateListener{
                 break;
             case POSPrinterConst.PTR_SUE_REC_NEAREMPTY:
                 LOGGER.warn("Status Update: Receipt printer paper near empty");
+                if (getWasPaperEmpty()) {
+                    setWasPaperEmpty(false);
+                }
                 break;
             case POSPrinterConst.PTR_SUE_REC_PAPEROK:
                 LOGGER.debug("Status Update: Receipt paper OK");
