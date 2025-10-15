@@ -82,7 +82,7 @@ Verified Supported OS:
 - Launch POSSUM:
   - Navigate to /opt/target/possum
   - To run use `sudo domenv=labs sh devicestarter.sh`
-  - NOTE: `$domenv` can be set to either `labs` or `stores` and is used to set the spring profile.  `labs` coincides with the `dev` environment and `stores` coincides with the `prod` environment.  These environments are used to determine the kind of logging that will be present when running the application.  Check out the `logback-spring.xml` file for which logs will be present for each environment.
+  - NOTE: `$domenv` is an environment variable set in the platform and can be set to either `labs` or `stores`.  It is used in `devicestarter.sh` to set the spring profile.  `labs` coincides with the `dev` environment and `stores` coincides with the `prod` environment.  These environments are used to determine the kind of logging that will be present when running the application.  Check out the `logback-spring.xml` file for which logs will be present for each environment.
 
 ## API Specs
 <details>
