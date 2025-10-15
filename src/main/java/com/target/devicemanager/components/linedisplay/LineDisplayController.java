@@ -4,7 +4,6 @@ import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealthResponse;
 import com.target.devicemanager.components.linedisplay.entities.LineDisplayData;
-import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/v1/linedisplay")
 @Tag(name = "Line Display (2x20)")
-@Timed
 @Profile({"local","dev","prod"})
 public class LineDisplayController {
 

@@ -5,7 +5,6 @@ import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealthResponse;
 import com.target.devicemanager.components.printer.entities.PrinterContent;
 import com.target.devicemanager.components.printer.entities.PrinterError;
-import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,7 +26,6 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/v1")
 @Tag(name = "Printer")
-@Timed
 public class PrinterController {
 
     private final PrinterManager printerManager;
