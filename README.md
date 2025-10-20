@@ -48,8 +48,7 @@ Add origins to environment `CORS_ORIGINS` variable separated by a comma (,)
 - Once cloned, go to your development environment and click open, and navigate to the project in your finder/folder.
 - Ensure the project is configured to build using Java 17 
 - Once opened, build the project using Gradle commands
-- To run POSSUM on your local machine will require spring profile environment variable
-- ```export SPRING_PROFILES_ACTIVE=local```
+- To run POSSUM on your local machine will require spring profile environment variable ```export SPRING_PROFILES_ACTIVE=local```
 - To run simulator use ```./gradlew run -DuseSimulators=true```  
 
 ## Running POSSUM on a POS Computer
@@ -83,6 +82,7 @@ Verified Supported OS:
 - Launch POSSUM:
   - Navigate to /opt/target/possum
   - To run use `sudo domenv=labs sh devicestarter.sh`
+  - NOTE: `$domenv` is an environment variable set in the platform and can be set to either `labs` or `stores`.  It is used in `devicestarter.sh` to set the spring profile.  `labs` coincides with the `dev` environment and `stores` coincides with the `prod` environment.  These environments are used to determine the kind of logging that will be present when running the application.  Check out the `logback-spring.xml` file for which logs will be present for each environment.
 
 ## API Specs
 <details>
