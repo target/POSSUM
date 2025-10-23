@@ -469,6 +469,57 @@ componentname
 └── ComponentNameManager
 ```
 
+##### componentname
+
+This is the component folder named after the component.  It should be all lowercase.
+
+##### entities
+
+This subfolder is used to hold any classes that are necessary for device functionality but are specific to that component.
+
+##### simulator *
+
+This subfolder is used to hold all classes specific to the simulator.  The simulator is intended to act like a device would and is used in conjunction with the device API to 
+
+##### ComponentNameSimulatorController
+
+The API for the simulator.  Contains API endpoints which are intended to provide device specific responses to requests made by the device API (detailed in the ComponentNameController class).  All API endpoints should call a method in the SimulatedJposComponentName class for the endpoint's functionality.
+
+##### SimulatedJposComponentName
+
+The helper class for the simulator API.  Contains all functionality for the simulated API endpoints.  
+
+##### ComponentNameConfig
+
+Configures the component to ensure it is linked to its JPOS entry in the devcon.xml.  This class is also used to differentiate whether simulation mode is being used or not.  Each config file should be similar, please use an existing config file as a template for any new config file.
+
+##### ComponentNameController
+
+The API for the component.  Contains API endpoints which are intended to be exposed to provide device functionality.  Every controller should include:
+
+- POST /reconnect
+- GET /health
+- GET /healthstatus
+- any additional API endpoints specific to device functionality
+
+All API endpoints should call a method in the ComponentNameManager class for the endpoint's functionality.
+
+##### ComponentNameDevice
+
+Used to directly call the JPOS service object for the device.  All methods should be specific to device functionality as detailed in the documentation for the device's service object (as long as that service object is in compliance with JPOS standards for that device).
+
+##### ComponentNameListener (if necessary)
+
+Can either be a Device Listener class or an Event Listener interface.  
+
+A Device Listener class is used to listen for specific status updates from the device, which should be listed in the class.
+
+An Event Listener interface should have any methods implemented in the ComponentNameManager and is used to listen for new event occurrences in the device.
+
+##### ComponentNameManager
+
+The intermediary class between the ComponentNameController and ComponentNameDevice.  Contains any code necessary for the API endpoint to work as intended and calls the ComponentNameDevice class for anything related to specific device functionality as it relates to the device's JPOS compliant service object.
+
 ### Testing
 
 POSSUM relies heavily on physical device testing to ensure that production environments are not impacted.  As noted in our PR template, we request that contributers:
