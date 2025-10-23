@@ -450,7 +450,7 @@ As noted earlier POSSUM should be able to function with other devices in the cat
 
 Please note that changes to device classes are not intended to be specific to a particular manufacturer.  Each component is intended to function regardless of manufacturer.  
 
-#### Adding a New Device
+#### Adding a New Device Component
 
 Insert new device documentation here
 
@@ -462,6 +462,7 @@ POSSUM relies heavily on physical device testing to ensure that production envir
 - Test on physical devices to ensure that existing functionality is not impacted (and note which devices are being tested in the 'Description of Testing' section)
 
 We understand that testing on a physical device is not always possible.  Please reach out to an engineer to test code changes on physical devices:
+
 @arpal7
 @LizZhang-00
 @AwesomestChris
