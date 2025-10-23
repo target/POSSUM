@@ -381,7 +381,7 @@ https://repo1.maven.org/maven2/org/javapos/javapos/1.14.1/
 
 ## Supported Devices
 
-Please note that POSSUM should be able to function with other devices in the categories listed provided the device is compatible with JPOS standards.  In order to onboard a new device from one of these categories, add the device entry to the devcon.xml and ensure the device is able to communicate with its service object provided by the device manufacturer.  
+Please note that POSSUM should be able to function with other devices in the component categories listed provided the device is compatible with JPOS standards.  In order to onboard a new device from one of these components, add the device entry to the devcon.xml and ensure the device is able to communicate with its service object provided by the device manufacturer.  
 
 Flatbed Scanner
 - Datalogic 2300 Scanner
@@ -442,7 +442,7 @@ Please ensure that all Pull Requests follow the provided template.  If you belie
 
 #### Device Changes Within Provided Components
 
-As noted earlier POSSUM should be able to function with other devices in the categories listed provided the device is compatible with JPOS standards.
+As previously noted POSSUM should be able to function with other devices in the components listed provided the device is compatible with JPOS standards.
 
 - Ensure proper unit tests are created corresponding to the device classes
 - Verify that the changes do not impact simulator functionality
@@ -461,8 +461,7 @@ POSSUM relies heavily on physical device testing to ensure that production envir
 - Utilize the existing simulator to test functionality
 - Test on physical devices to ensure that existing functionality is not impacted (and note which devices are being tested in the 'Description of Testing' section)
 
-We understand that testing on a physical device is not always possible.  Please reach out to an engineer to test code changes on physical devices:
-
+We understand that testing on a physical device is not always possible.  Please reach out to an engineer to test code changes on physical devices:\
 **@arpal7\
 @LizZhang-00\
 @AwesomestChris\
