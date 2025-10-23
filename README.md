@@ -381,7 +381,7 @@ https://repo1.maven.org/maven2/org/javapos/javapos/1.14.1/
 
 ## Supported Devices
 
-Please note that Possum should be able to function with other devices in the categories listed provided the device is compatible with JPOS standards.  In order to onboard a new device from one of these categories, add the device entry to the devcon.xml and ensure the device is able to communicate with its service object provided by the device manufacturer.  
+Please note that POSSUM should be able to function with other devices in the categories listed provided the device is compatible with JPOS standards.  In order to onboard a new device from one of these categories, add the device entry to the devcon.xml and ensure the device is able to communicate with its service object provided by the device manufacturer.  
 
 Flatbed Scanner
 - Datalogic 2300 Scanner
@@ -417,3 +417,53 @@ Cash Drawer
 - Cash Drawer ELO Computer
 - Cash Drawer NCR Computer
 - Cash Drawer NCR via printer port 
+
+## Contributing to POSSUM
+
+We welcome feature requests, bug reports and contributions for code and documentation.
+
+### Reporting Issues
+
+Reporting bugs can be done in the GitHub [issue tracker](https://github.com/target/possum/issues). Please search for existing issues first to help prevent duplicates.
+
+### Code Contribution
+
+POSSUM is already used in production environments, so any new changes/features/functionality must, where possible:
+
+- Not alter existing behavior without an explicit config change
+- Co-exist with older versions without disruption
+- Must have a safe way to disable/roll-back
+
+### Pull Requests
+
+Patches are welcome, but we ask that any significant change start as an [issue](https://github.com/target/possum/issues/new) in the tracker, preferably before work is started.
+
+Please ensure that all Pull Requests follow the provided template.  If you believe a particular test does not need to be done for your PR please note [na] next to the checkbox.
+
+#### Device Changes Within Provided Components
+
+As noted earlier POSSUM should be able to function with other devices in the categories listed provided the device is compatible with JPOS standards.
+
+- Ensure proper unit tests are created corresponding to the device classes
+- Verify that the changes do not impact simulator functionality
+- Reach out to a Code Owner to test changes on physical devices
+
+Please note that changes to device classes are not intended to be specific to a particular manufacturer.  Each component is intended to function regardless of manufacturer.  
+
+#### Adding a New Device
+
+Insert new device documentation here
+
+### Testing
+
+POSSUM relies heavily on physical device testing to ensure that production environments are not impacted.  As noted in our PR template, we request that contributers:
+- Write proper unit tests with Mockito
+- Utilize the existing simulator to test functionality
+- Test on physical devices to ensure that existing functionality is not impacted (and note which devices are being tested in the 'Description of Testing' section)
+
+We understand that testing on a physical device is not always possible.  Please reach out to an engineer to test code changes on physical devices:
+@arpal7
+@LizZhang-00
+@AwesomestChris
+@rrenkor
+@bmcecilia3
