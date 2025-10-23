@@ -463,8 +463,8 @@ POSSUM relies heavily on physical device testing to ensure that production envir
 
 We understand that testing on a physical device is not always possible.  Please reach out to an engineer to test code changes on physical devices:
 
-@arpal7/
-@LizZhang-00/
-@AwesomestChris/
-@rrenkor/
-@bmcecilia3/
+@arpal7\
+@LizZhang-00\
+@AwesomestChris\
+@rrenkor\
+@bmcecilia3
