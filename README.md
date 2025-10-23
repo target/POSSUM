@@ -454,7 +454,8 @@ Please note that changes to device classes are not intended to be specific to a 
 
 Each new Component added to POSSUM requires a set of classes to be compliant with existing code structure.
 
-```componentname
+```
+componentname
 ├── entities
 │   └── any classes necessary for a the particular device
 ├── simulator
