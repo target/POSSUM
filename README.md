@@ -452,7 +452,21 @@ Please note that changes to device classes are not intended to be specific to a 
 
 #### Adding a New Device Component
 
-Insert new device documentation here
+Each new Component added to POSSUM requires a set of classes to be compliant with existing code structure.
+
+```componentname
+├── entities
+│   └── any classes necessary for a the particular device
+├── simulator
+│   ├── ComponentNameSimulatorController
+│   ├── SimulatedJposComponentName
+│   └── any other classes necessary for simulator functionality
+├── ComponentNameConfig
+├── ComponentNameController
+├── ComponentNameDevice
+├── ComponentNameListener (if necessary)
+└── ComponentNameManager
+```
 
 ### Testing
 
