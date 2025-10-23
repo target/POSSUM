@@ -477,9 +477,9 @@ This is the component folder named after the component.  It should be all lowerc
 
 This subfolder is used to hold any classes that are necessary for device functionality but are specific to that component.
 
-##### simulator *
+##### simulator
 
-This subfolder is used to hold all classes specific to the simulator.  The simulator is intended to act like a device would and is used in conjunction with the device API to 
+This subfolder is used to hold all classes specific to the simulator.  The simulator is intended to act like a device would and is used in conjunction with the device API.  
 
 ##### ComponentNameSimulatorController
 
