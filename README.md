@@ -502,13 +502,15 @@ The API for the component.  Contains API endpoints which are intended to be expo
 - GET /healthstatus
 - any additional API endpoints specific to device functionality
 
-All API endpoints should call a method in the ComponentNameManager class for the endpoint's functionality.\
-This class needs a unit testing class named ComponentNameControllerTest
+All API endpoints should call a method in the ComponentNameManager class for the endpoint's functionality.
+
+This class needs a unit testing class named ComponentNameControllerTest.
 
 ##### ComponentNameDevice
 
-Used to directly call the JPOS service object for the device.  All methods should be specific to device functionality as detailed in the documentation for the device's service object (as long as that service object is in compliance with JPOS standards for that device).\
-This class needs a unit testing class named ComponentNameDeviceTest
+Used to directly call the JPOS service object for the device.  All methods should be specific to device functionality as detailed in the documentation for the device's service object (as long as that service object is in compliance with JPOS standards for that device).
+
+This class needs a unit testing class named ComponentNameDeviceTest.
 
 ##### ComponentNameListener (if necessary)
 
@@ -520,8 +522,9 @@ An Event Listener interface should have any methods implemented in the Component
 
 ##### ComponentNameManager
 
-The intermediary class between the ComponentNameController and ComponentNameDevice.  Contains any code necessary for the API endpoint to work as intended and calls the ComponentNameDevice class for anything related to specific device functionality as it relates to the device's JPOS compliant service object.\
-This class needs a unit testing class named ComponentNameManagerTest
+The intermediary class between the ComponentNameController and ComponentNameDevice.  Contains any code necessary for the API endpoint to work as intended and calls the ComponentNameDevice class for anything related to specific device functionality as it relates to the device's JPOS compliant service object.
+
+This class needs a unit testing class named ComponentNameManagerTest.
 
 ### Testing
 
