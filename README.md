@@ -381,7 +381,7 @@ https://repo1.maven.org/maven2/org/javapos/javapos/1.14.1/
 
 ## Supported Devices
 
-Please note that Possum should be able to function with other devices in the categories listed provided the device is compatible with JPOS standards.  In order to onboard a new device from one of these categories, add the device entry to the devcon.xml and ensure the device is able to communicate with its service object provided by the device manufacturer.  
+Please note that POSSUM should be able to function with other devices in the component categories listed provided the device is compatible with JPOS standards.  In order to onboard a new device from one of these components, add the device entry to the devcon.xml and ensure the device is able to communicate with its service object provided by the device manufacturer.  
 
 Flatbed Scanner
 - Datalogic 2300 Scanner
@@ -417,3 +417,125 @@ Cash Drawer
 - Cash Drawer ELO Computer
 - Cash Drawer NCR Computer
 - Cash Drawer NCR via printer port 
+
+## Contributing to POSSUM
+
+We welcome feature requests, bug reports and contributions for code and documentation.
+
+### Reporting Issues
+
+Reporting bugs can be done in the GitHub [issue tracker](https://github.com/target/possum/issues). Please search for existing issues first to help prevent duplicates.
+
+### Code Contribution
+
+POSSUM is already used in production environments, so any new changes/features/functionality must, where possible:
+
+- Not alter existing behavior without an explicit config change
+- Co-exist with older versions without disruption
+- Must have a safe way to disable/roll-back
+
+### Pull Requests
+
+Patches are welcome, but we ask that any significant change start as an [issue](https://github.com/target/possum/issues/new) in the tracker, preferably before work is started.
+
+Please ensure that all Pull Requests follow the provided template.  If you believe a particular test does not need to be done for your PR please note [na] next to the checkbox.
+
+#### Device Changes Within Provided Components
+
+As previously noted POSSUM should be able to function with other devices in the components listed provided the device is compatible with JPOS standards.
+
+- Ensure proper unit tests are created corresponding to the device classes
+- Verify that the changes do not impact simulator functionality
+- Reach out to a Code Owner to test changes on physical devices
+
+Please note that changes to device classes are not intended to be specific to a particular manufacturer.  Each component is intended to function regardless of manufacturer.  
+
+#### Adding a New Device Component
+
+Each new Component added to POSSUM requires a set of classes to be compliant with existing code structure.
+
+```
+componentname
+├── entities
+│   └── any classes necessary for a the particular device
+├── simulator
+│   ├── ComponentNameSimulatorController
+│   ├── SimulatedJposComponentName
+│   └── any other classes necessary for simulator functionality
+├── ComponentNameConfig
+├── ComponentNameController
+├── ComponentNameDevice
+├── ComponentNameListener (if necessary)
+└── ComponentNameManager
+```
+
+##### componentname
+
+This is the component folder named after the component.  It should be all lowercase.
+
+##### entities
+
+This subfolder is used to hold any classes that are necessary for device functionality but are specific to that component.
+
+##### simulator
+
+This subfolder is used to hold all classes specific to the simulator.  The simulator is intended to act like a device would and is used in conjunction with the device API.  
+
+##### ComponentNameSimulatorController
+
+The API for the simulator.  Contains API endpoints which are intended to provide device specific responses to requests made by the device API (detailed in the ComponentNameController class).  All API endpoints should call a method in the SimulatedJposComponentName class for the endpoint's functionality.
+
+##### SimulatedJposComponentName
+
+The helper class for the simulator API.  Contains all functionality for the simulated API endpoints.  
+
+##### ComponentNameConfig
+
+Configures the component to ensure it is linked to its JPOS entry in the devcon.xml.  This class is also used to differentiate whether simulation mode is being used or not.  Each config file should be similar, please use an existing config file as a template for any new config file.
+
+##### ComponentNameController
+
+The API for the component.  Contains API endpoints which are intended to be exposed to provide device functionality.  Every controller should include:
+
+- POST /reconnect
+- GET /health
+- GET /healthstatus
+- any additional API endpoints specific to device functionality
+
+All API endpoints should call a method in the ComponentNameManager class for the endpoint's functionality.
+
+This class needs a unit testing class named ComponentNameControllerTest.
+
+##### ComponentNameDevice
+
+Used to directly call the JPOS service object for the device.  All methods should be specific to device functionality as detailed in the documentation for the device's service object (as long as that service object is in compliance with JPOS standards for that device).
+
+This class needs a unit testing class named ComponentNameDeviceTest.
+
+##### ComponentNameListener (if necessary)
+
+Can either be a Device Listener class or an Event Listener interface.  
+
+A Device Listener class is used to listen for specific status updates from the device, which should be listed in the class.
+
+An Event Listener interface should have any methods implemented in the ComponentNameManager and is used to listen for new event occurrences in the device.
+
+##### ComponentNameManager
+
+The intermediary class between the ComponentNameController and ComponentNameDevice.  Contains any code necessary for the API endpoint to work as intended and calls the ComponentNameDevice class for anything related to specific device functionality as it relates to the device's JPOS compliant service object.
+
+This class needs a unit testing class named ComponentNameManagerTest.
+
+### Testing
+
+POSSUM relies heavily on physical device testing to ensure that production environments are not impacted.  As noted in our PR template, we request that contributers:
+- Write proper unit tests with Mockito
+- Utilize the existing simulator to test functionality
+- Test on physical devices to ensure that existing functionality is not impacted (and note which devices are being tested in the 'Description of Testing' section)
+
+We understand that testing on a physical device is not always possible.  Please reach out to an engineer to test code changes on physical devices:\
+**@arpal7\
+@LizZhang-00\
+@AwesomestChris\
+@rrenkor\
+@bmcecilia3**
