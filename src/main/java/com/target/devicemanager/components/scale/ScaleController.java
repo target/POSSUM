@@ -6,7 +6,6 @@ import com.target.devicemanager.common.entities.DeviceHealthResponse;
 import com.target.devicemanager.components.scale.entities.FormattedWeight;
 import com.target.devicemanager.components.scale.entities.ScaleError;
 import com.target.devicemanager.components.scale.entities.ScaleException;
-import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping(value = "/v1")
 @Tag(name = "Scale")
-@Timed
+
 public class ScaleController {
 
     private final ScaleManager scaleManager;
