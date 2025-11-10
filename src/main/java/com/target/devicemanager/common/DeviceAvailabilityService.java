@@ -17,6 +17,11 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +47,21 @@ public class DeviceAvailabilityService {
         if(applicationConfig != null && applicationConfig.IsSimulationMode()){
             deviceAvailabilityResponse.possumversion = "possum_simulator";
             deviceAvailabilityResponse.confirmversion = "confirm_simulator";
-            jsonConfirm = new File(this.getClass().getClassLoader().getResource("simulator_confirmout.json").getFile());
+            // stream then temp file to handle resource in jar
+            try (InputStream in = this.getClass().getClassLoader()
+                    .getResourceAsStream("simulator_confirmout.json")) {
+
+                if (in == null) {
+                    throw new IllegalStateException("simulator_confirmout.json not found as resource");
+                }
+
+                Path tempFile = Files.createTempFile("simulator_confirmout-", ".json");
+                Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
+                jsonConfirm = tempFile.toFile();
+                jsonConfirm.deleteOnExit();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to load resource file", e);
+            }
         } else {
             deviceAvailabilityResponse.possumversion = System.getenv("POSSUM_VERSION");
             deviceAvailabilityResponse.confirmversion = System.getenv("CONFIRM_VERSION");
