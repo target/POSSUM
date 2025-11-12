@@ -382,6 +382,7 @@ https://repo1.maven.org/maven2/org/javapos/javapos/1.14.1/
 ## Supported Devices
 
 Please note that POSSUM should be able to function with other devices in the component categories listed provided the device is compatible with JPOS standards.  In order to onboard a new device from one of these components, add the device entry to the devcon.xml and ensure the device is able to communicate with its service object provided by the device manufacturer.  
+For information on how to be added to this accepted device list, please read the [Accepted Devices](./AcceptedDevices.md) documentation.
 
 Flatbed Scanner
 - Datalogic 2300 Scanner
