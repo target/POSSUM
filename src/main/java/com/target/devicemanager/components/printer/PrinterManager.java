@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.printer;
 
+import com.target.devicemanager.common.LogPayloadBuilder;
 import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.components.printer.entities.PrinterContent;
 import com.target.devicemanager.components.printer.entities.PrinterError;
@@ -117,14 +118,45 @@ public class PrinterManager {
             else {  // JposException
                 printerException = new PrinterException((JposException) cause);
             }
-            LOGGER.error(printerException.getDeviceError().getDescription());
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "Printer")
+                .add(LogField.EVENT_SEVERITY, 17)
+                .add(LogField.COMPONENT, "PrinterManager")
+                .add(LogField.EVENT_ACTION, "printReceipt")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_CODE, printerException.getDeviceError().getCode())
+                .add(LogField.ERROR_MESSAGE, printerException.getDeviceError().getDescription())
+                .add(LogField.ERROR_TYPE, "PrinterException")
+                .logError(LOGGER);
             throw printerException;
         } catch (TimeoutException timeoutException) {
             LOGGER.error("printContent() exceeded timeout value");
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "Printer")
+                .add(LogField.EVENT_SEVERITY, 17)
+                .add(LogField.COMPONENT, "PrinterManager")
+                .add(LogField.EVENT_ACTION, "printReceipt")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_CODE, PrinterError.PRINTER_TIME_OUT.getCode())
+                .add(LogField.ERROR_MESSAGE, PrinterError.PRINTER_TIME_OUT.getDescription())
+                .add(LogField.ERROR_TYPE, "TimeoutException")
+                .add(LogField.MESSAGE, "printContent() exceeded timeout value")
+                .logError(LOGGER);
             throw new PrinterException(PrinterError.PRINTER_TIME_OUT);
         } catch (InterruptedException exception) {
-            LOGGER.error("printContent() interrupted");
-            throw new PrinterException(new JposException(JposConst.JPOS_E_FAILURE));
+            PrinterException printerException = new PrinterException(new JposException(JposConst.JPOS_E_FAILURE));
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "Printer")
+                .add(LogField.EVENT_SEVERITY, 17)
+                .add(LogField.COMPONENT, "PrinterManager")
+                .add(LogField.EVENT_ACTION, "printReceipt")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_CODE, printerException.getDeviceError().getCode())
+                .add(LogField.ERROR_MESSAGE, printerException.getDeviceError().getDescription())
+                .add(LogField.ERROR_TYPE, "InterruptedException")
+                .add(LogField.MESSAGE, "printContent() interrupted")
+                .logError(LOGGER);
+            throw printerException;
         } finally {
             if (executorService != null) {
                 executorService.shutdown();
@@ -159,7 +191,16 @@ public class PrinterManager {
         try {
             Objects.requireNonNull(cacheManager.getCache("printerHealth")).put("health", deviceHealthResponse);
         } catch (Exception exception) {
-            LOGGER.error("getCache(printerHealth) Failed: " + exception.getMessage());
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "Printer")
+                .add(LogField.EVENT_SEVERITY, 17)
+                .add(LogField.COMPONENT, "PrinterManager")
+                .add(LogField.EVENT_ACTION, "getHealth")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_MESSAGE, exception.getMessage())
+                .add(LogField.ERROR_TYPE, "Exception")
+                .add(LogField.MESSAGE, "getCache(printerHealth) Failed")
+                .logError(LOGGER);
         }
         return deviceHealthResponse;
     }
@@ -173,7 +214,13 @@ public class PrinterManager {
                 }
                 return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("printerHealth")).get("health").get();
             } else {
-                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+                new LogPayloadBuilder()
+                        .add(LogField.SERVICE_NAME, "Printer")
+                        .add(LogField.EVENT_SEVERITY, 5)
+                        .add(LogField.COMPONENT, "PrinterManager")
+                        .add(LogField.EVENT_ACTION, "getStatus")
+                        .add(LogField.MESSAGE, "Not able to retrieve from cache, checking getHealth()")
+                        .logDebug(LOGGER);
                 return getHealth();
             }
         } catch (Exception exception) {
