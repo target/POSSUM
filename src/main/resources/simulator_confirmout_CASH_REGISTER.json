@@ -1,0 +1,55 @@
+{
+  "handscanner": [
+    {
+      "vidpid": "0c2e:0907",
+      "usbport": "bus=1:addr=11:port=4",
+      "manufacturer": "Honeywell Imaging \u0026 Mobility    ",
+      "model": "1900",
+      "config": "",
+      "firmware": "BI001195BAA",
+      "serialnumber": "12107B1FD2"
+    }
+  ],
+  "flatbedscanner": [
+    {
+      "vidpid": "05f9:1512",
+      "usbport": "bus=1:addr=6:port=3",
+      "manufacturer": "Datalogic USA Inc.",
+      "model": "941045312-00053",
+      "config": "DR9610723",
+      "firmware": "DR9401337-1006",
+      "serialnumber": "F19C03083"
+    }
+  ],
+  "scale": null,
+  "cash": null,
+  "cashacceptor": null,
+  "cashdispenser": null,
+  "coin": null,
+  "touchscreen": [
+    {
+      "vidpid": "03eb:8a6e",
+      "usbport": "bus=1:addr=10:port=3",
+      "manufacturer": "Atmel",
+      "model": "ELO 1502 RevA ProG",
+      "config": "PCFG0073 v4.0",
+      "firmware": "10.34",
+      "serialnumber": "A19H001575"
+    }
+  ],
+  "printer": [
+    {
+      "vidpid": "0404:0386",
+      "usbport": "bus=1:addr=8:port=6",
+      "manufacturer": "NCR Corporation",
+      "model": "7169-7011-9001",
+      "config": "",
+      "firmware": "6922",
+      "serialnumber": "5860946619"
+    }
+  ],
+  "linedisplay": null,
+  "lanelight": null,
+  "camera": null,
+  "keypad": null
+}

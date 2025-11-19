@@ -17,6 +17,10 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,29 +32,90 @@ public class DeviceAvailabilityService {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceAvailabilityService.class);
     public static final List<SseEmitter> deviceErrorClientList = new CopyOnWriteArrayList<>();
     ApplicationConfig applicationConfig;
+    private String simulatorRegisterType = "default";
+    private String customConfigPath;
 
     public DeviceAvailabilityService(){}
-
     @Autowired
     public DeviceAvailabilityService(ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
     }
 
+    public void setSimulatorRegisterType(String registerType) {
+        this.simulatorRegisterType = registerType;
+    }
+
+    public String getSimulatorRegisterType() {
+        return this.simulatorRegisterType;
+    }
+
     public DeviceAvailabilityResponse getAvailableDevices(String confirmOutLoc) {
         DeviceAvailabilityResponse deviceAvailabilityResponse = new DeviceAvailabilityResponse();
         File jsonConfirm = null;
-        if(applicationConfig != null && applicationConfig.IsSimulationMode()){
+
+        if(applicationConfig != null && applicationConfig.IsSimulationMode()) {
             deviceAvailabilityResponse.possumversion = "possum_simulator";
             deviceAvailabilityResponse.confirmversion = "confirm_simulator";
-            jsonConfirm = new File(this.getClass().getClassLoader().getResource("simulator_confirmout.json").getFile());
+            LOGGER.info("Simulator register type: " + simulatorRegisterType);
+
+            if (!simulatorRegisterType.equals("default")) {
+                if ("CUSTOM".equals(simulatorRegisterType) && customConfigPath != null && !customConfigPath.isEmpty()) {
+                    jsonConfirm = new File(customConfigPath);
+                    if (!jsonConfirm.exists()) {
+                        LOGGER.warn("Custom config path doesn't exist: " + customConfigPath);
+                    }
+                }
+
+                if (jsonConfirm == null || !jsonConfirm.exists()) {
+                    String fileName = "simulator_confirmout_" + simulatorRegisterType + ".json";
+                    jsonConfirm = new File("src/main/resources/" + fileName);
+
+                    if (!jsonConfirm.exists()) {
+                        try (InputStream in = this.getClass().getClassLoader()
+                                .getResourceAsStream(fileName)) {
+
+                            if (in == null) {
+                                throw new IllegalStateException(fileName + " not found as resource");
+                            }
+
+                            Path tempFile = Files.createTempFile("simulator_confirmout-", ".json");
+                            Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
+                            jsonConfirm = tempFile.toFile();
+                            jsonConfirm.deleteOnExit();
+                        } catch (IOException e) {
+                            throw new RuntimeException("Failed to load resource file: " + fileName, e);
+                        }
+                    }
+                }
+            } else {
+                jsonConfirm = new File("src/main/resources/simulator_confirmout.json");
+
+                if (!jsonConfirm.exists()) {
+                    try (InputStream in = this.getClass().getClassLoader()
+                            .getResourceAsStream("simulator_confirmout.json")) {
+
+                        if (in == null) {
+                            throw new IllegalStateException("simulator_confirmout.json not found as resource");
+                        }
+
+                        Path tempFile = Files.createTempFile("simulator_confirmout-", ".json");
+                        Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
+                        jsonConfirm = tempFile.toFile();
+                        jsonConfirm.deleteOnExit();
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to load resource file", e);
+                    }
+                }
+            }
         } else {
             deviceAvailabilityResponse.possumversion = System.getenv("POSSUM_VERSION");
             deviceAvailabilityResponse.confirmversion = System.getenv("CONFIRM_VERSION");
             jsonConfirm = new File(confirmOutLoc);
         }
+
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            if(jsonConfirm.exists() && jsonConfirm.isFile()){
+            if(jsonConfirm != null && jsonConfirm.exists() && jsonConfirm.isFile()){
                 JsonNode rootDevNode = objectMapper.readTree(jsonConfirm);
                 Iterator<String> fieldNames = rootDevNode.fieldNames();
 
@@ -59,7 +124,7 @@ public class DeviceAvailabilityService {
                     JsonNode devices = rootDevNode.path(devName);
                     if(devices.isArray()) {
                         for (JsonNode device : devices) {
-                            if (devName != "scale") {
+                            if (!devName.equals("scale")) {
                                 deviceAvailabilityResponse.devicelist.add(new DeviceConfigResponse(
                                         devName,
                                         device.get("vidpid").asText(),
@@ -70,7 +135,7 @@ public class DeviceAvailabilityService {
                                         device.get("firmware").asText(),
                                         device.get("serialnumber").asText(),
                                         findDevStatus(devName) == DeviceHealth.READY,
-                                        device.get("vidpid").asText().toUpperCase() != ""
+                                        !device.get("vidpid").asText().isEmpty()
                                 ));
                             } else {
                                 deviceAvailabilityResponse.devicelist.add(new ScaleConfigResponse(
@@ -83,7 +148,7 @@ public class DeviceAvailabilityService {
                                         device.get("firmware").asText(),
                                         device.get("serialnumber").asText(),
                                         findDevStatus(devName) == DeviceHealth.READY,
-                                        device.get("vidpid").asText().toUpperCase() != "",
+                                        !device.get("vidpid").asText().isEmpty(),
                                         device.hasNonNull("calibrated")?device.get("calibrated").asBoolean():null,
                                         device.hasNonNull("calibrated_count")?device.get("calibrated_count").asInt():null,
                                         device.hasNonNull("has_remote_display")?device.get("has_remote_display").asBoolean():null
@@ -93,13 +158,13 @@ public class DeviceAvailabilityService {
                     }
                 }
             } else {
-                LOGGER.error("JSON is in wrong format");
+                LOGGER.error("JSON file not found or invalid");
             }
-            return (deviceAvailabilityResponse);
         } catch (IOException ioException) {
             LOGGER.error("Received IOException " + ioException.getMessage());
-            return (deviceAvailabilityResponse);
         }
+
+        return deviceAvailabilityResponse;
     }
 
     public DeviceHealth findDevStatus(String devName) {
@@ -196,5 +261,13 @@ public class DeviceAvailabilityService {
                 responseList.addAll(DeviceAvailabilitySingleton.getDeviceAvailabilitySingleton().getScannerManager().getHealth(ScannerType.BOTH));
         }
         return ResponseEntity.ok(responseList);
+    }
+
+    public void setCustomConfigPath(String path) {
+        this.customConfigPath = path;
+    }
+
+    public String getCustomConfigPath() {
+        return this.customConfigPath;
     }
 }

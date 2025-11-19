@@ -1,0 +1,55 @@
+{
+  "handscanner": [
+    {
+      "vidpid": "0c2e:1007",
+      "usbport": "bus=1:addr=11:port=4",
+      "manufacturer": "Honeywell",
+      "model": "1950g",
+      "config": "",
+      "firmware": "EV000883BAA",
+      "serialnumber": "21751N0337"
+    }
+  ],
+  "flatbedscanner": null,
+  "scale": null,
+  "cash": null,
+  "cashacceptor": null,
+  "cashdispenser": null,
+  "coin": null,
+  "touchscreen": [
+    {
+      "vidpid": "03eb:8a6e",
+      "usbport": "bus=1:addr=10:port=3",
+      "manufacturer": "Atmel",
+      "model": "ELO 1502 RevA ProF",
+      "config": "PCFG0221 v1.0",
+      "firmware": "10.34",
+      "serialnumber": "B22H009603"
+    }
+  ],
+  "printer": [
+    {
+      "vidpid": "0404:0386",
+      "usbport": "bus=1:addr=8:port=6",
+      "manufacturer": "NCR Corporation",
+      "model": "7169-7011-9001",
+      "config": "",
+      "firmware": "6922",
+      "serialnumber": "5858472146"
+    }
+  ],
+  "linedisplay": [
+    {
+      "vidpid": "0404:035f",
+      "usbport": "bus=1:addr=6:port=2",
+      "manufacturer": "(c) 2011 NCR Corporation.",
+      "model": "NCR 5977",
+      "config": "",
+      "firmware": "",
+      "serialnumber": ""
+    }
+  ],
+  "lanelight": null,
+  "camera": null,
+  "keypad": null
+}
