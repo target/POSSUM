@@ -4,7 +4,6 @@ import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealthResponse;
 import com.target.devicemanager.components.cashdrawer.entities.CashDrawerError;
-import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/cashdrawer")
 @Tag(name = "Cash Drawer")
-@Timed
 @Profile({"local", "dev", "prod"})
 public class CashDrawerController {
 

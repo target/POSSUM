@@ -15,14 +15,6 @@
         </rollingPolicy>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
-    <appender name="MICROMETER" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/micrometer.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/micrometer.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
-    </appender>
     <appender name="POSSUM" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/possum.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -65,9 +57,6 @@
         <logger name="org.springframework" level="INFO" additivity="false">
             <appender-ref ref="SPRING"/>
         </logger>
-        <logger name="io.micrometer" level="DEBUG" additivity="false">
-            <appender-ref ref="MICROMETER"/>
-        </logger>
         <logger name="com.target.devicemanager" level="DEBUG" additivity="false">
             <appender-ref ref="POSSUM"/>
         </logger>
@@ -84,9 +73,6 @@
     <springProfile name="prod,prodATM,prod7350,prodATM7350">
         <logger name="org.springframework" level="INFO" additivity="false">
             <appender-ref ref="SPRING"/>
-        </logger>
-        <logger name="io.micrometer" level="INFO" additivity="false">
-            <appender-ref ref="MICROMETER"/>
         </logger>
         <logger name="com.target.devicemanager" level="INFO" additivity="false">
             <appender-ref ref="POSSUM"/>
