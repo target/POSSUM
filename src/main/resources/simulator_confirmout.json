@@ -38,10 +38,30 @@
       "vidpid": "05e0:0890"
     }
   ],
-  "cash": null,
+  "cash": [
+    {
+      "vidpid": "0bed:0a00",
+      "usbport": "bus=1:addr=2:port=1",
+      "manufacturer": "MEI",
+      "model": "MEI BNR",
+      "config": "",
+      "firmware": "tgt_configuration_221FWUS1-5003-X4YOT_2022_03_02.zcf",
+      "serialnumber": "249901000440"
+    }
+  ],
   "cashacceptor": null,
   "cashdispenser": null,
-  "coin": null,
+  "coin": [
+    {
+      "vidpid": "106f:000c",
+      "usbport": "bus=1:addr=3:port=4",
+      "manufacturer": "Crane Payment Innovations",
+      "model": "Xchange",
+      "config": "XCC-E1-00-01",
+      "firmware": "XCC-V1-00-03",
+      "serialnumber": "24"
+    }
+  ],
   "touchscreen": [
     {
       "vidpid": "03eb:8a6e",

@@ -8,5 +8,4 @@ public class DeviceSelection {
     public Map<String, String> getDevices() {
         return devices;
     }
-
 }
