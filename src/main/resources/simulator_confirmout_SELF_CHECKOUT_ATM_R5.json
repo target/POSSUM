@@ -1,0 +1,85 @@
+{
+  "handscanner": [
+    {
+      "vidpid": "0c2e:0907",
+      "usbport": "bus=2:addr=10:port=5",
+      "manufacturer": "Honeywell Imaging & Mobility    ",
+      "model": "1900",
+      "config": "",
+      "firmware": "BI001195BAA",
+      "serialnumber": "16026B03C1"
+    }
+  ],
+  "flatbedscanner": [
+    {
+      "vidpid": "05e0:0890",
+      "usbport": "bus=2:addr=6:port=7",
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "MP7000-LHS0M18WW",
+      "config": "TgtMP70_21_04_13",
+      "firmware": "PAADGS00-004-R02",
+      "serialnumber": "20246010557575"
+    }
+  ],
+  "scale": null,
+  "cash": null,
+  "cashacceptor": [
+    {
+      "vidpid": "0bed:1100",
+      "usbport": "bus=2:addr=9:port=4",
+      "manufacturer": "Silicon Labs",
+      "model": "SCN6628R",
+      "config": "",
+      "firmware": "520077407",
+      "serialnumber": "10390800477"
+    }
+  ],
+  "cashdispenser": [
+    {
+      "vidpid": "04c5:1090",
+      "usbport": "bus=2:addr=5:port=6",
+      "manufacturer": "Fujitsu_F53",
+      "model": "F53",
+      "config": "",
+      "firmware": "UA0801",
+      "serialnumber": ""
+    }
+  ],
+  "coin": [
+    {
+      "vidpid": "106f:0003",
+      "usbport": "bus=2:addr=4:port=5",
+      "manufacturer": "MoneyControls_BCR",
+      "model": "EAGLE",
+      "config": "",
+      "firmware": "4950003",
+      "serialnumber": "7551115"
+    }
+  ],
+  "touchscreen": [
+    {
+      "vidpid": "07dd:0001",
+      "usbport": "bus=1:addr=5:port=1",
+      "manufacturer": "Hampshire Company",
+      "model": "TSHARC Capacitive",
+      "config": "",
+      "firmware": "",
+      "serialnumber": ""
+    }
+  ],
+  "printer": [
+    {
+      "vidpid": "0404:035b",
+      "usbport": "bus=1:addr=4:port=2",
+      "manufacturer": "NCR Corporation",
+      "model": "734X-F309",
+      "config": "",
+      "firmware": "3420",
+      "serialnumber": "49350190"
+    }
+  ],
+  "linedisplay": null,
+  "lanelight": null,
+  "camera": null,
+  "keypad": null
+}

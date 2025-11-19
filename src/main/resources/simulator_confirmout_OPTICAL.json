@@ -1,0 +1,80 @@
+{
+  "handscanner": [
+    {
+      "vidpid": "0c2e:0907",
+      "usbport": "bus=1:addr=11:port=4",
+      "manufacturer": "Honeywell Imaging \u0026 Mobility    ",
+      "model": "1900",
+      "config": "",
+      "firmware": "BI001195BAA",
+      "serialnumber": "12105B29A4"
+    }
+  ],
+  "flatbedscanner": [
+    {
+      "vidpid": "05e0:0890",
+      "usbport": "bus=1:addr=8:port=5",
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "MP7000-LHS0M18WW",
+      "config": "TgtMP70_21_08_30",
+      "firmware": "PAADGS00-004-R00",
+      "serialnumber": "20234010555568"
+    }
+  ],
+  "scale": [
+    {
+      "attached": true,
+      "calibrated": true,
+      "calibrated_count": 1,
+      "config": "TgtMP71_21_04_13",
+      "devicename": "scale",
+      "firmware": "PAADGS00-004-R00",
+      "has_remote_display": null,
+      "isFunctional": true,
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "MP7001-LHS0M18US",
+      "serialnumber": "20253010561759",
+      "usbport": "bus=2:addr=6:port=7",
+      "vidpid": "05e0:0890"
+    }
+  ],
+  "cash": null,
+  "cashacceptor": null,
+  "cashdispenser": null,
+  "coin": null,
+  "touchscreen": [
+    {
+      "vidpid": "03eb:8a6e",
+      "usbport": "bus=1:addr=10:port=3",
+      "manufacturer": "Atmel",
+      "model": "ELO 1502 RevA ProG",
+      "config": "PCFG0073 v4.0",
+      "firmware": "10.34",
+      "serialnumber": "L18H016647"
+    }
+  ],
+  "printer": [
+    {
+      "vidpid": "0404:036d",
+      "usbport": "bus=1:addr=9:port=6",
+      "manufacturer": "NCR Corporation",
+      "model": "7199-USB",
+      "config": "",
+      "firmware": "",
+      "serialnumber": "          "
+    }
+  ],
+  "linedisplay": [
+     {
+       "vidpid": "0404:0335",
+       "usbport": "bus=1:addr=6:port=2",
+       "manufacturer": "(c) 2011 NCR Corporation.",
+       "model": "NCR 5976",
+       "config": "",
+       "firmware": "",
+       "serialnumber": ""
+     }
+  ],
+  "lanelight": null,
+  "camera": null
+}

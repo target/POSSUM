@@ -1,0 +1,55 @@
+{
+  "handscanner": [
+    {
+      "vidpid": "0c2e:0907",
+      "usbport": "bus=1:addr=7:port=6",
+      "manufacturer": "Honeywell Imaging \u0026 Mobility    ",
+      "model": "1900",
+      "config": "",
+      "firmware": "",
+      "serialnumber": "16328B09E3"
+    }
+  ],
+  "flatbedscanner": [
+    {
+      "vidpid": "05e0:0890",
+      "usbport": "bus=2:addr=6:port=8",
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "MP7000-MHS0M18WW",
+      "config": "TgtMP70_21_04_13",
+      "firmware": "PAADGS00-006-R01",
+      "serialnumber": "21020010558678"
+    }
+  ],
+  "scale": null,
+  "cash": null,
+  "cashacceptor": null,
+  "cashdispenser": null,
+  "coin": null,
+  "touchscreen": [
+    {
+      "vidpid": "07dd:0001",
+      "usbport": "bus=1:addr=6:port=1",
+      "manufacturer": "Hampshire Company",
+      "model": "TSHARC Capacitive",
+      "config": "",
+      "firmware": "",
+      "serialnumber": ""
+    }
+  ],
+  "printer": [
+    {
+      "vidpid": "0404:035b",
+      "usbport": "bus=1:addr=4:port=2",
+      "manufacturer": "NCR Corporation",
+      "model": "7346-F309",
+      "config": "",
+      "firmware": "3420",
+      "serialnumber": "60496346"
+    }
+  ],
+  "linedisplay": null,
+  "lanelight": null,
+  "camera": null,
+  "keypad": null
+}

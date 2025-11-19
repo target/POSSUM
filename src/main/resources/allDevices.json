@@ -1,0 +1,233 @@
+{
+  "printer": [
+    {
+      "vidpid": "0404:0386",
+      "usbport": "bus=1:addr=8:port=6",
+      "manufacturer": "NCR Corporation",
+      "model": "7169-7011-9001",
+      "config": "",
+      "firmware": "6922",
+      "serialnumber": "5860946591"
+    },
+    {
+      "vidpid": "0404:036d",
+      "usbport": "bus=1:addr=10:port=6",
+      "manufacturer": "NCR Corporation",
+      "model": "7199-7201-9001",
+      "config": "",
+      "firmware": "9936",
+      "serialnumber": "5857276952"
+    },
+    {
+      "vidpid": "0404:035b",
+      "usbport": "bus=1:addr=4:port=2",
+      "manufacturer": "NCR Corporation",
+      "model": "734X-F309",
+      "config": "",
+      "firmware": "3420",
+      "serialnumber": "49350190"
+    }
+  ],
+  "flatbedscanner": [
+    {
+      "vidpid": "05f9:1512",
+      "usbport": "bus=1:addr=7:port=4",
+      "manufacturer": "Datalogic USA Inc.",
+      "model": "941045312-00053",
+      "config": "DR9610723",
+      "firmware": "DR9401337-1006",
+      "serialnumber": "F18I07281"
+    },
+    {
+      "vidpid": "05e0:0890",
+      "usbport": "bus=2:addr=6:port=7",
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "MP7000-LHS0M18WW",
+      "config": "TgtMP70_21_04_13",
+      "firmware": "PAADGS00-004-R02",
+      "serialnumber": "20246010557575"
+    },
+    {
+      "vidpid": "05e0:0890",
+      "usbport": "bus=1:addr=7:port=2",
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "MP7000-LHS0M18WW",
+      "config": "TgtMP70_21_04_13",
+      "firmware": "PAADGS00-006-R01",
+      "serialnumber": "20317010552907"
+    }
+  ],
+  "handscanner": [
+    {
+      "vidpid": "0c2e:0907",
+      "usbport": "bus=1:addr=10:port=2",
+      "manufacturer": "Honeywell Imaging & Mobility    ",
+      "model": "1900",
+      "config": "",
+      "firmware": "BI001195BAA",
+      "serialnumber": "12107B1FC2"
+    },
+    {
+      "vidpid": "0c2e:0907",
+      "usbport": "bus=1:addr=12:port=4",
+      "manufacturer": "Honeywell Imaging & Mobility    ",
+      "model": "1900",
+      "config": "",
+      "firmware": "",
+      "serialnumber": "12107B1FD5"
+    },
+    {
+      "vidpid": "0c2e:1007",
+      "usbport": "bus=1:addr=11:port=4",
+      "manufacturer": "Honeywell",
+      "model": "1950g",
+      "config": "",
+      "firmware": "EV000883BAA",
+      "serialnumber": "21751N0337"
+    },
+    {
+      "vidpid": "05e0:08cc",
+      "usbport": "bus=1:addr=12:port=4",
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "DS8208-SR40104VZWW",
+      "config": "TgtDS82_22_10_25",
+      "firmware": "PAAGLS00-001-N29",
+      "serialnumber": "25262525180046"
+    }
+  ],
+  "touchscreen": [
+    {
+      "vidpid": "03eb:8a6e",
+      "usbport": "bus=1:addr=11:port=3",
+      "manufacturer": "Atmel",
+      "model": "ELO 1502 RevA ProG",
+      "config": "PCFG0073 v4.0",
+      "firmware": "10.34",
+      "serialnumber": "A19H001575"
+    },
+    {
+      "vidpid": "03eb:8a6e",
+      "usbport": "bus=1:addr=10:port=3",
+      "manufacturer": "Atmel",
+      "model": "ELO 1502 RevA ProF",
+      "config": "PCFG0221 v1.0",
+      "firmware": "10.34",
+      "serialnumber": "B22H009603"
+    },
+    {
+      "vidpid": "0404:037c",
+      "usbport": "bus=1:addr=10:port=4",
+      "manufacturer": "NCR Corporation",
+      "model": "NCR 5919",
+      "config": "",
+      "firmware": "",
+      "serialnumber": ""
+    },
+    {
+      "vidpid": "07dd:0001",
+      "usbport": "bus=1:addr=5:port=1",
+      "manufacturer": "Hampshire Company",
+      "model": "TSHARC Capacitive",
+      "config": "",
+      "firmware": "",
+      "serialnumber": ""
+    }
+  ],
+  "linedisplay": [
+    {
+      "vidpid": "0404:035f",
+      "usbport": "bus=1:addr=7:port=3",
+      "manufacturer": "(c) 2011 NCR Corporation.",
+      "model": "NCR 5977",
+      "config": "",
+      "firmware": "",
+      "serialnumber": ""
+    }
+  ],
+  "lanelight": [
+    {
+      "vidpid": "0483:5710",
+      "usbport": "bus=1:addr=6:port=1",
+      "manufacturer": "STMicroelectronics",
+      "model": "Lynx",
+      "config": "",
+      "firmware": "",
+      "serialnumber": "205537745742"
+    },
+    {
+      "vidpid": "0e8f:ff8f",
+      "usbport": "bus=1:addr=2:port=1",
+      "manufacturer": "GASIA",
+      "model": "Southern Imperial",
+      "config": "",
+      "firmware": "",
+      "serialnumber": ""
+    }
+  ],
+  "cash": [
+    {
+      "vidpid": "0bed:0a00",
+      "usbport": "bus=1:addr=3:port=4",
+      "manufacturer": "MEI",
+      "model": "MEI BNR",
+      "config": "",
+      "firmware": "tgt_configuration_230FWUS481-1-5003-X4YOT_2023_02_17.zcf",
+      "serialnumber": "180001001900"
+    }
+  ],
+  "cashacceptor": [
+    {
+      "vidpid": "0bed:1100",
+      "usbport": "bus=2:addr=9:port=4",
+      "manufacturer": "Silicon Labs",
+      "model": "SCN6628R",
+      "config": "",
+      "firmware": "520077407",
+      "serialnumber": "10390800477"
+    }
+  ],
+  "cashdispenser": [
+    {
+      "vidpid": "04c5:1090",
+      "usbport": "bus=2:addr=5:port=6",
+      "manufacturer": "Fujitsu_F53",
+      "model": "F53",
+      "config": "",
+      "firmware": "UA0801",
+      "serialnumber": ""
+    }
+  ],
+  "coin": [
+    {
+      "vidpid": "106f:000c",
+      "usbport": "bus=1:addr=2:port=3",
+      "manufacturer": "Crane Payment Innovations",
+      "model": "Xchange",
+      "config": "XCC-E1-00-04",
+      "firmware": "XCC-V1-00-03",
+      "serialnumber": "66012"
+    },
+    {
+      "vidpid": "106f:0003",
+      "usbport": "bus=2:addr=4:port=5",
+      "manufacturer": "MoneyControls_BCR",
+      "model": "EAGLE",
+      "config": "",
+      "firmware": "4950003",
+      "serialnumber": "7551115"
+    }
+  ],
+  "keypad": [
+    {
+      "vidpid": "04e7:a150",
+      "usbport": "bus=1:addr=11:port=1",
+      "manufacturer": "C-Media Electronics Inc.",
+      "model": "Elo CM6542 Ada Controller",
+      "config": "orca-keymap.mac",
+      "firmware": "V0401",
+      "serialnumber": "unknown"
+    }
+  ],
+  "camera": null,
+  "scale": null
+}

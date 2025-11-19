@@ -1,0 +1,65 @@
+{
+  "handscanner": [
+    {
+      "vidpid": "0c2e:0907",
+      "usbport": "bus=1:addr=3:port=9",
+      "manufacturer": "Honeywell Imaging \u0026 Mobility    ",
+      "model": "1900",
+      "config": "",
+      "firmware": "",
+      "serialnumber": "18138B4137"
+    }
+  ],
+  "flatbedscanner": [
+    {
+      "vidpid": "05f9:1512",
+      "usbport": "bus=1:addr=6:port=3",
+      "manufacturer": "Datalogic USA Inc.",
+      "model": "941042312-00053",
+      "config": "DR9610723",
+      "firmware": "DR9401337-1006",
+      "serialnumber": "F18E01283"
+    }
+  ],
+  "scale": null,
+  "cash": null,
+  "cashacceptor": null,
+  "cashdispenser": null,
+  "coin": null,
+  "touchscreen": [
+    {
+      "vidpid": "0404:037c",
+      "usbport": "bus=1:addr=10:port=4",
+      "manufacturer": "NCR Corporation ",
+      "model": "NCR 5919",
+      "config": "",
+      "firmware": "",
+      "serialnumber": ""
+    }
+  ],
+  "printer": [
+    {
+      "vidpid": "0404:0386",
+      "usbport": "bus=1:addr=4:port=10",
+      "manufacturer": "NCR Corporation",
+      "model": "7169-7011-9001",
+      "config": "",
+      "firmware": "6922",
+      "serialnumber": "5862355054"
+    }
+  ],
+  "linedisplay": null,
+  "lanelight": [
+    {
+      "vidpid": "0e8f:ff8f",
+      "usbport": "bus=1:addr=2:port=1",
+      "manufacturer": "GASIA",
+      "model": "Southern Imperial",
+      "config": "",
+      "firmware": "",
+      "serialnumber": ""
+    }
+  ],
+  "camera": null,
+  "keypad": null
+}
