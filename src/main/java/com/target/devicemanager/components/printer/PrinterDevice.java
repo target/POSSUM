@@ -52,7 +52,7 @@ public class PrinterDevice implements StatusUpdateListener{
         if (dynamicPrinter == null) {
             new LogPayloadBuilder()
                 .add(LogField.SERVICE_NAME, "Printer")
-                .add(LogField.EVENT_SEVERITY, 21)
+                .add(LogField.EVENT_SEVERITY, 18)
                 .add(LogField.COMPONENT, "PrinterDevice")
                 .add(LogField.EVENT_ACTION, "Constructor")
                 .add(LogField.EVENT_OUTCOME, "failure")
@@ -64,7 +64,7 @@ public class PrinterDevice implements StatusUpdateListener{
         if (deviceListener == null) {
             new LogPayloadBuilder()
                     .add(LogField.SERVICE_NAME, "Printer")
-                    .add(LogField.EVENT_SEVERITY, 21)
+                    .add(LogField.EVENT_SEVERITY, 18)
                     .add(LogField.COMPONENT, "PrinterDevice")
                     .add(LogField.EVENT_ACTION, "Constructor")
                     .add(LogField.EVENT_OUTCOME, "failure")
@@ -176,7 +176,7 @@ public class PrinterDevice implements StatusUpdateListener{
             JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
             new LogPayloadBuilder()
                     .add(LogField.SERVICE_NAME, "Printer")
-                    .add(LogField.EVENT_SEVERITY, 21)
+                    .add(LogField.EVENT_SEVERITY, 18)
                     .add(LogField.COMPONENT, "PrinterDevice")
                     .add(LogField.EVENT_ACTION, "enable")
                     .add(LogField.EVENT_OUTCOME, "failure")
@@ -243,7 +243,7 @@ public class PrinterDevice implements StatusUpdateListener{
                 } catch (JposException jposException) {
                     new LogPayloadBuilder()
                         .add(LogField.SERVICE_NAME, "Printer")
-                        .add(LogField.EVENT_SEVERITY, 21)
+                        .add(LogField.EVENT_SEVERITY, 18)
                         .add(LogField.COMPONENT, "PrinterDevice")
                         .add(LogField.EVENT_ACTION, "printContent")
                         .add(LogField.EVENT_OUTCOME, "failure")
@@ -358,7 +358,7 @@ public class PrinterDevice implements StatusUpdateListener{
         } catch (JposException jposException) {
             new LogPayloadBuilder()
                 .add(LogField.SERVICE_NAME, "Printer")
-                .add(LogField.EVENT_SEVERITY, 21)
+                .add(LogField.EVENT_SEVERITY, 18)
                 .add(LogField.COMPONENT, "PrinterDevice")
                 .add(LogField.EVENT_ACTION, "printBarcode")
                 .add(LogField.EVENT_OUTCOME, "failure")
@@ -388,7 +388,7 @@ public class PrinterDevice implements StatusUpdateListener{
         } catch (JposException jposException) {
             new LogPayloadBuilder()
                 .add(LogField.SERVICE_NAME, "Printer")
-                .add(LogField.EVENT_SEVERITY, 21)
+                .add(LogField.EVENT_SEVERITY, 18)
                 .add(LogField.COMPONENT, "PrinterDevice")
                 .add(LogField.EVENT_ACTION, "printImage")
                 .add(LogField.EVENT_OUTCOME, "failure")
@@ -414,7 +414,7 @@ public class PrinterDevice implements StatusUpdateListener{
         } catch (JposException jposException) {
             new LogPayloadBuilder()
                     .add(LogField.SERVICE_NAME, "Printer")
-                    .add(LogField.EVENT_SEVERITY, 21)
+                    .add(LogField.EVENT_SEVERITY, 18)
                     .add(LogField.COMPONENT, "PrinterDevice")
                     .add(LogField.EVENT_ACTION, "printNormal")
                     .add(LogField.EVENT_OUTCOME, "failure")
@@ -441,7 +441,7 @@ public class PrinterDevice implements StatusUpdateListener{
         } catch (JposException jposException) {
             new LogPayloadBuilder()
                 .add(LogField.SERVICE_NAME, "Printer")
-                .add(LogField.EVENT_SEVERITY, 21)
+                .add(LogField.EVENT_SEVERITY, 18)
                 .add(LogField.COMPONENT, "PrinterDevice")
                 .add(LogField.EVENT_ACTION, "withdrawCheck")
                 .add(LogField.EVENT_OUTCOME, "failure")
@@ -573,7 +573,7 @@ public class PrinterDevice implements StatusUpdateListener{
             case JposConst.JPOS_SUE_POWER_OFFLINE:
                 new LogPayloadBuilder()
                     .add(LogField.SERVICE_NAME, "Printer")
-                    .add(LogField.EVENT_SEVERITY, 21)
+                    .add(LogField.EVENT_SEVERITY, 18)
                     .add(LogField.COMPONENT, "PrinterDevice")
                     .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
                     .add(LogField.EVENT_OUTCOME, "failure")
