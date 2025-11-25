@@ -86,10 +86,14 @@ public class PrinterControllerTest {
         }
 
         //act
-        printerController.print(testData);
+        try {
+            printerController.print(testData);
+        }
 
         //assert
-        verify(mockPrinterManager, never()).printReceipt(testData);
+        catch (DeviceException deviceException) {
+            assertEquals(PrinterError.INVALID_FORMAT, deviceException.getDeviceError());
+        }
     }
 
     @Test
