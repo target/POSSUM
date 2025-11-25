@@ -6,7 +6,6 @@ import com.target.devicemanager.common.entities.DeviceHealthResponse;
 import com.target.devicemanager.components.scanner.entities.Barcode;
 import com.target.devicemanager.components.scanner.entities.ScannerException;
 import com.target.devicemanager.components.scanner.entities.ScannerType;
-import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/v1")
 @Tag(name = "Scanner")
-@Timed
+
 public class ScannerController {
 
     private final ScannerManager scannerManager;

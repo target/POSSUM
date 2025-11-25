@@ -1,0 +1,95 @@
+{
+  "handscanner": [
+    {
+      "vidpid": "05e0:08cc",
+      "usbport": "bus=1:addr=12:port=4",
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "DS8208-SR40104VZWW",
+      "config": "TgtDS82_22_10_25",
+      "firmware": "PAAGLS00-001-N29",
+      "serialnumber": "25262525180046"
+    }
+  ],
+  "flatbedscanner": [
+    {
+      "vidpid": "05e0:0890",
+      "usbport": "bus=1:addr=7:port=2",
+      "manufacturer": "Symbol Technologies, Inc, 2008",
+      "model": "MP7000-LHS0M18WW",
+      "config": "TgtMP70_21_04_13",
+      "firmware": "PAADGS00-006-R01",
+      "serialnumber": "20317010552907"
+    }
+  ],
+  "scale": null,
+  "cash": [
+    {
+      "vidpid": "0bed:0a00",
+      "usbport": "bus=1:addr=3:port=4",
+      "manufacturer": "MEI",
+      "model": "MEI BNR",
+      "config": "",
+      "firmware": "tgt_configuration_230FWUS481-1-5003-X4YOT_2023_02_17.zcf",
+      "serialnumber": "180001001900"
+    }
+  ],
+  "cashacceptor": null,
+  "cashdispenser": null,
+  "coin": [
+    {
+      "vidpid": "106f:000c",
+      "usbport": "bus=1:addr=2:port=3",
+      "manufacturer": "Crane Payment Innovations",
+      "model": "Xchange",
+      "config": "XCC-E1-00-04",
+      "firmware": "XCC-V1-00-03",
+      "serialnumber": "66012"
+    }
+  ],
+  "touchscreen": [
+    {
+      "vidpid": "03eb:8a6e",
+      "usbport": "bus=1:addr=13:port=3",
+      "manufacturer": "Atmel",
+      "model": "ELO 1502 RevA ProG",
+      "config": "PCFG0073 v4.0",
+      "firmware": "10.34",
+      "serialnumber": "A19H002177"
+    }
+  ],
+  "printer": [
+    {
+      "vidpid": "0404:036d",
+      "usbport": "bus=1:addr=10:port=6",
+      "manufacturer": "NCR Corporation",
+      "model": "7199-7201-9001",
+      "config": "",
+      "firmware": "9936",
+      "serialnumber": "5857276952"
+    }
+  ],
+  "linedisplay": null,
+  "lanelight": [
+    {
+      "vidpid": "0483:5710",
+      "usbport": "bus=1:addr=6:port=1",
+      "manufacturer": "STMicroelectronics",
+      "model": "Lynx",
+      "config": "",
+      "firmware": "",
+      "serialnumber": "205537745742"
+    }
+  ],
+  "camera": null,
+  "keypad": [
+    {
+      "vidpid": "04e7:a150",
+      "usbport": "bus=1:addr=11:port=1",
+      "manufacturer": "C-Media Electronics Inc.",
+      "model": "Elo CM6542 Ada Controller",
+      "config": "orca-keymap.mac",
+      "firmware": "V0401",
+      "serialnumber": "unknown"
+    }
+  ]
+}
