@@ -20,13 +20,35 @@ public class LogPayloadBuilder {
 
     private final Map<String, Object> root = new HashMap<>();
 
+    private boolean hasMessage = false;
+    private String errorMessageFallback = null;
+
     public LogPayloadBuilder() { }
 
     /** Add a LogField with a value (value may be String, Number, Map, List, etc). */
     public LogPayloadBuilder add(LogField field, Object value) {
         if (field == null || value == null) return this;
+
+        if (field == LogField.MESSAGE) {
+            hasMessage = true;
+        } else if (field == LogField.ERROR_MESSAGE) {
+            // Cache non-empty error message for potential fallback
+            String v = String.valueOf(value);
+            if (!v.isEmpty()) {
+                errorMessageFallback = v;
+            }
+        }
+
         field.insertInto(root, value);
         return this;
+    }
+
+    // Ensure that a "message" field is populated, if not populates with error.message if it exists
+    private void ensureMessage() {
+        if (!hasMessage && errorMessageFallback != null) {
+            this.add(LogField.MESSAGE, errorMessageFallback);
+            hasMessage = true;
+        }
     }
 
     /** Return JSON string representation (reused ObjectMapper). */
@@ -44,6 +66,7 @@ public class LogPayloadBuilder {
     /** Log at INFO: logs the JSON payload as the message. */
     public void logInfo(Logger logger) {
         if (logger == null) return;
+        ensureMessage();
         this.add(LogField.LOG_LEVEL, "info");
         logger.info(toJson());
     }
@@ -51,6 +74,7 @@ public class LogPayloadBuilder {
     /** Log at TRACE */
     public void logTrace(Logger logger) {
         if (logger == null) return;
+        ensureMessage();
         this.add(LogField.LOG_LEVEL, "trace");
         logger.trace(toJson());
     }
@@ -58,6 +82,7 @@ public class LogPayloadBuilder {
     /** Log at DEBUG */
     public void logDebug(Logger logger) {
         if (logger == null) return;
+        ensureMessage();
         this.add(LogField.LOG_LEVEL, "debug");
         logger.debug(toJson());
     }
@@ -65,6 +90,7 @@ public class LogPayloadBuilder {
     /** Log at WARN */
     public void logWarn(Logger logger) {
         if (logger == null) return;
+        ensureMessage();
         this.add(LogField.LOG_LEVEL, "warn");
         logger.warn(toJson());
     }
@@ -72,6 +98,7 @@ public class LogPayloadBuilder {
     /** Log at ERROR */
     public void logError(Logger logger) {
         if (logger == null) return;
+        ensureMessage();
         this.add(LogField.LOG_LEVEL, "error");
         logger.error(toJson());
     }
