@@ -2,6 +2,8 @@ package com.target.devicemanager.components.printer;
 
 import com.target.devicemanager.common.DeviceListener;
 import com.target.devicemanager.common.DynamicDevice;
+import com.target.devicemanager.common.LogPayloadBuilder;
+import com.target.devicemanager.common.entities.LogField;
 import com.target.devicemanager.components.printer.entities.*;
 import jpos.JposConst;
 import jpos.JposException;
@@ -11,9 +13,8 @@ import jpos.events.StatusUpdateEvent;
 import jpos.events.StatusUpdateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +37,6 @@ public class PrinterDevice implements StatusUpdateListener{
     private boolean isLocked = false;
     private final int[] ref = new int[1];
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterDevice.class);
-    private static final Marker MARKER = MarkerFactory.getMarker("FATAL");
 
     /**
      * constructor
@@ -50,11 +50,27 @@ public class PrinterDevice implements StatusUpdateListener{
 
     public PrinterDevice(DynamicDevice<? extends POSPrinter> dynamicPrinter, DeviceListener deviceListener, ReentrantLock connectLock) {
         if (dynamicPrinter == null) {
-            LOGGER.error(MARKER, "Printer Failed in Constructor: dynamicPrinter cannot be null");
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "Printer")
+                .add(LogField.EVENT_SEVERITY, 18)
+                .add(LogField.COMPONENT, "PrinterDevice")
+                .add(LogField.EVENT_ACTION, "Constructor")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_MESSAGE, "Printer Failed in Constructor: dynamicPrinter cannot be null")
+                .add(LogField.ERROR_TYPE, "IllegalArgumentException")
+                .logError(LOGGER);
             throw new IllegalArgumentException("dynamicPrinter cannot be null");
         }
         if (deviceListener == null) {
-            LOGGER.error(MARKER, "Printer Failed in Constructor: deviceListener cannot be null");
+            new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 18)
+                    .add(LogField.COMPONENT, "PrinterDevice")
+                    .add(LogField.EVENT_ACTION, "Constructor")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.ERROR_MESSAGE, "Printer Failed in Constructor: deviceListener cannot be null")
+                    .add(LogField.ERROR_TYPE, "IllegalArgumentException")
+                    .logError(LOGGER);
             throw new IllegalArgumentException("deviceListener cannot be null");
         }
         this.dynamicPrinter = dynamicPrinter;
@@ -134,7 +150,16 @@ public class PrinterDevice implements StatusUpdateListener{
                     printer.setDeviceEnabled(false);
                 }
             } catch (JposException jposException) {
-                LOGGER.error(getDeviceName() + " Unable to disable : " + jposException.getMessage());
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 17)
+                    .add(LogField.COMPONENT, "PrinterDevice")
+                    .add(LogField.EVENT_ACTION, "disable")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.ERROR_MESSAGE, getDeviceName() + " Unable to disable : " + jposException.getMessage())
+                    .add(LogField.ERROR_TYPE, "JposException")
+                    .add(LogField.ERROR_CODE, jposException.getErrorCode())
+                    .logError(LOGGER);
             }
         }
         dynamicPrinter.disconnect();
@@ -149,7 +174,16 @@ public class PrinterDevice implements StatusUpdateListener{
     private void enable() throws JposException {
         if (!isConnected()) {
             JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
-            LOGGER.error(MARKER, "Printer Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 18)
+                    .add(LogField.COMPONENT, "PrinterDevice")
+                    .add(LogField.EVENT_ACTION, "enable")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.ERROR_TYPE, "JposException")
+                    .add(LogField.ERROR_CODE, jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                    .add(LogField.ERROR_MESSAGE, "Printer Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                    .logError(LOGGER);
             throw jposException;
         }
         deviceListener.startEventListeners();
@@ -163,14 +197,24 @@ public class PrinterDevice implements StatusUpdateListener{
      */
 
     public Void printContent(List<PrinterContent> contents, int printerStation) throws JposException, PrinterException {
-        LOGGER.debug("printContent()");
         if(tryLock()) {
             POSPrinter printer;
             synchronized (printer = dynamicPrinter.getDevice()) {
                 try {
                     if (contents == null || contents.isEmpty()) {
-                        LOGGER.debug("Receipt contents are empty");
-                        throw new PrinterException(PrinterError.INVALID_FORMAT);
+                        PrinterException printerException = new PrinterException(PrinterError.INVALID_FORMAT);
+                        new LogPayloadBuilder()
+                            .add(LogField.SERVICE_NAME, "Printer")
+                            .add(LogField.EVENT_SEVERITY, 5)
+                            .add(LogField.COMPONENT, "PrinterDevice")
+                            .add(LogField.EVENT_ACTION, "printContent")
+                            .add(LogField.EVENT_OUTCOME, "failure")
+                            .add(LogField.ERROR_MESSAGE, printerException.getDeviceError().getDescription())
+                            .add(LogField.ERROR_CODE, printerException.getDeviceError().getCode())
+                            .add(LogField.ERROR_TYPE, "PrinterException")
+                            .add(LogField.MESSAGE, "Receipt contents are empty")
+                            .logDebug(LOGGER);
+                        throw printerException;
                     }
                     enable();
                     if (printerStation != PrinterStationType.CHECK_PRINTER.getValue() && (wasPaperEmpty || paperEmptyCheck())) {
@@ -197,15 +241,47 @@ public class PrinterDevice implements StatusUpdateListener{
                     deviceListener.waitForOutputToComplete();
 
                 } catch (JposException jposException) {
-                    LOGGER.error(MARKER, "Printer Failed to Print Content: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                    new LogPayloadBuilder()
+                        .add(LogField.SERVICE_NAME, "Printer")
+                        .add(LogField.EVENT_SEVERITY, 18)
+                        .add(LogField.COMPONENT, "PrinterDevice")
+                        .add(LogField.EVENT_ACTION, "printContent")
+                        .add(LogField.EVENT_OUTCOME, "failure")
+                        .add(LogField.ERROR_CODE, jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                        .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                        .add(LogField.ERROR_TYPE, "JposException")
+                        .add(LogField.MESSAGE, "Printer Failed to Print Content: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                        .logError(LOGGER);
 
                     boolean failureOrDisabledError = jposException.getErrorCode() == 111 || jposException.getErrorCode() == 105;
                     boolean badPrintContentError = jposException.getErrorCode() == 106 || (jposException.getErrorCode() == 114 && jposException.getErrorCodeExtended() == 207);
                     // If failureOrDisabledError or badPrintContentError occur, disconnect and reconnect the printer then throw exception
                     if ((failureOrDisabledError || badPrintContentError)) {
-                        LOGGER.error("Received Printer " + jposException.getErrorCode() + " error.  Disconnecting device.");
+                        new LogPayloadBuilder()
+                            .add(LogField.SERVICE_NAME, "Printer")
+                            .add(LogField.EVENT_SEVERITY, 17)
+                            .add(LogField.COMPONENT, "PrinterDevice")
+                            .add(LogField.EVENT_ACTION, "printContent")
+                            .add(LogField.EVENT_OUTCOME, "failure")
+                            .add(LogField.ERROR_CODE, jposException.getErrorCode())
+                            .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                            .add(LogField.MESSAGE, "Received Printer " + jposException.getErrorCode() + " error.  Disconnecting device.")
+                            .add(LogField.ERROR_TYPE, "JposException")
+                            .add(LogField.TAGS, "DISCONNECT")
+                            .logError(LOGGER);
                         disconnect();
-                        LOGGER.error("Received Printer " + jposException.getErrorCode() + " error.  Reconnecting device.");
+                        new LogPayloadBuilder()
+                                .add(LogField.SERVICE_NAME, "Printer")
+                                .add(LogField.EVENT_SEVERITY, 17)
+                                .add(LogField.COMPONENT, "PrinterDevice")
+                                .add(LogField.EVENT_ACTION, "printContent")
+                                .add(LogField.EVENT_OUTCOME, "failure")
+                                .add(LogField.ERROR_CODE, jposException.getErrorCode())
+                                .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                                .add(LogField.MESSAGE, "Received Printer " + jposException.getErrorCode() + " error.  Reconnecting device.")
+                                .add(LogField.ERROR_TYPE, "JposException")
+                                .add(LogField.TAGS, "RECONNECT")
+                                .logError(LOGGER);
                         connect();
                         if (badPrintContentError) {
                             throw new PrinterException(PrinterError.INVALID_FORMAT);
@@ -217,7 +293,17 @@ public class PrinterDevice implements StatusUpdateListener{
                     try {
                         printer.clearOutput();
                     } catch (JposException exception) {
-                        LOGGER.error("Received printer " + exception.getErrorCode() + " error during clearOutput()");
+                        new LogPayloadBuilder()
+                            .add(LogField.SERVICE_NAME, "Printer")
+                            .add(LogField.EVENT_SEVERITY, 17)
+                            .add(LogField.COMPONENT, "PrinterDevice")
+                            .add(LogField.EVENT_ACTION, "clearOutput")
+                            .add(LogField.EVENT_OUTCOME, "failure")
+                            .add(LogField.ERROR_CODE, exception.getErrorCode())
+                            .add(LogField.ERROR_MESSAGE, exception.getMessage())
+                            .add(LogField.ERROR_TYPE, "JposException")
+                            .add(LogField.MESSAGE, "Received printer " + exception.getErrorCode() + " error during clearOutput()")
+                            .logError(LOGGER);
                         jposException = exception;
                     }
                     // if an exception is thrown during print, make sure check is spit out.
@@ -225,7 +311,17 @@ public class PrinterDevice implements StatusUpdateListener{
                         try {
                             withdrawCheck();
                         } catch (JposException exception) {
-                            LOGGER.error("Received printer " + exception.getErrorCode() + " error during withdrawCheck()");
+                            new LogPayloadBuilder()
+                                    .add(LogField.SERVICE_NAME, "Printer")
+                                    .add(LogField.EVENT_SEVERITY, 17)
+                                    .add(LogField.COMPONENT, "PrinterDevice")
+                                    .add(LogField.EVENT_ACTION, "withdrawCheck")
+                                    .add(LogField.EVENT_OUTCOME, "failure")
+                                    .add(LogField.ERROR_CODE, exception.getErrorCode())
+                                    .add(LogField.ERROR_MESSAGE, exception.getMessage())
+                                    .add(LogField.ERROR_TYPE, "JposException")
+                                    .add(LogField.MESSAGE, "Received printer " + exception.getErrorCode() + " error during withdrawCheck()")
+                                    .logError(LOGGER);
                             if (jposException == null) {
                                 jposException = exception;
                             }
@@ -260,7 +356,17 @@ public class PrinterDevice implements StatusUpdateListener{
                     content.barcodeAlign.getValue(),
                     content.textLocation.getValue());
         } catch (JposException jposException) {
-            LOGGER.error(MARKER, "Printer Failed to Print Barcode: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "Printer")
+                .add(LogField.EVENT_SEVERITY, 18)
+                .add(LogField.COMPONENT, "PrinterDevice")
+                .add(LogField.EVENT_ACTION, "printBarcode")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_CODE, jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                .add(LogField.ERROR_TYPE, "JposException")
+                .add(LogField.MESSAGE, "Printer Failed to Print Barcode: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                .logError(LOGGER);
             throw jposException;
         }
     }
@@ -280,7 +386,17 @@ public class PrinterDevice implements StatusUpdateListener{
                 POSPrinterConst.PTR_BM_ASIS,
                 POSPrinterConst.PTR_BM_CENTER);
         } catch (JposException jposException) {
-            LOGGER.error(MARKER, "Printer Failed to Print Image: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "Printer")
+                .add(LogField.EVENT_SEVERITY, 18)
+                .add(LogField.COMPONENT, "PrinterDevice")
+                .add(LogField.EVENT_ACTION, "printImage")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_CODE, jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                .add(LogField.ERROR_TYPE, "JposException")
+                .add(LogField.MESSAGE, "Printer Failed to Print Image: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                .logError(LOGGER);
             throw jposException;
         }
     }
@@ -296,7 +412,17 @@ public class PrinterDevice implements StatusUpdateListener{
         try {
             printer.printNormal(printerStation, data);
         } catch (JposException jposException) {
-            LOGGER.error(MARKER, "Printer Failed to Print Data: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 18)
+                    .add(LogField.COMPONENT, "PrinterDevice")
+                    .add(LogField.EVENT_ACTION, "printNormal")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.ERROR_CODE, jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                    .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                    .add(LogField.ERROR_TYPE, "JposException")
+                    .add(LogField.MESSAGE, "Printer Failed to Print Data: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                    .logError(LOGGER);
             throw jposException;
         }
     }
@@ -313,7 +439,17 @@ public class PrinterDevice implements StatusUpdateListener{
                 printer.endRemoval();
             }
         } catch (JposException jposException) {
-            LOGGER.error(MARKER, "Printer Failed to Remove Check: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "Printer")
+                .add(LogField.EVENT_SEVERITY, 18)
+                .add(LogField.COMPONENT, "PrinterDevice")
+                .add(LogField.EVENT_ACTION, "withdrawCheck")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_CODE, jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                .add(LogField.ERROR_TYPE, "JposException")
+                .add(LogField.MESSAGE, "Printer Failed to Remove Check: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                .logError(LOGGER);
             throw jposException;
         }
     }
@@ -367,7 +503,13 @@ public class PrinterDevice implements StatusUpdateListener{
         POSPrinter printer;
         synchronized (printer = dynamicPrinter.getDevice()) {
             if(printer.getPhysicalDeviceName().contains(R5PrinterName) && getIsReconnectNeeded()) {
-                LOGGER.info("Reconnecting R5 printer");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 9)
+                    .add(LogField.COMPONENT, "PrinterDevice")
+                    .add(LogField.EVENT_ACTION, "reconnectR5Printer")
+                    .add(LogField.MESSAGE, "Reconnecting R5 printer")
+                    .logInfo(LOGGER);
                 disconnect();
                 connect();
                 setIsReconnectNeeded(false);
@@ -394,7 +536,14 @@ public class PrinterDevice implements StatusUpdateListener{
                 printer.directIO(105, ref, null);
                 // The particular R5 kiosk printer uses this reference number to check whether the paper is empty in the printer
                 if (this.ref[0] == -2147482880) {
-                    LOGGER.info("paperEmptyCheck(): true");
+                    new LogPayloadBuilder()
+                            .add(LogField.SERVICE_NAME, "Printer")
+                            .add(LogField.EVENT_SEVERITY, 9)
+                            .add(LogField.COMPONENT, "PrinterDevice")
+                            .add(LogField.EVENT_ACTION, "paperEmptyCheck")
+                            .add(LogField.TAGS, "true")
+                            .add(LogField.MESSAGE, "paperEmptyCheck(): true")
+                            .logInfo(LOGGER);
                     return true;
                 }
             }
@@ -408,28 +557,63 @@ public class PrinterDevice implements StatusUpdateListener{
      */
     @Override
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
-        LOGGER.trace("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
+        new LogPayloadBuilder()
+            .add(LogField.SERVICE_NAME, "Printer")
+            .add(LogField.EVENT_SEVERITY, 1)
+            .add(LogField.COMPONENT, "PrinterDevice")
+            .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+            .add(LogField.TAGS, statusUpdateEvent.getStatus())
+            .add(LogField.MESSAGE, "statusUpdateOccurred(): " + statusUpdateEvent.getStatus())
+            .logTrace(LOGGER);
         int status = statusUpdateEvent.getStatus();
         PrinterErrorHandlingSingleton printerErrorHandlingSingleton = PrinterErrorHandlingSingleton.getPrinterErrorHandlingSingleton();
         switch (status) {
             case JposConst.JPOS_SUE_POWER_OFF:
             case JposConst.JPOS_SUE_POWER_OFF_OFFLINE:
             case JposConst.JPOS_SUE_POWER_OFFLINE:
-                LOGGER.error(MARKER, "Printer Status Update: Power offline");
-                LOGGER.error("Printer: power offline");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 18)
+                    .add(LogField.COMPONENT, "PrinterDevice")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.TAGS, "POWER_OFFLINE")
+                    .add(LogField.MESSAGE, "Printer Status Update: Power offline")
+                    .logError(LOGGER);
                 deviceConnected = false;
                 break;
             case JposConst.JPOS_SUE_POWER_ONLINE:
-                LOGGER.debug("Status Update: Power online");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 5)
+                    .add(LogField.COMPONENT, "statusUpdateOccurred")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.TAGS, "POWER_ONLINE")
+                    .add(LogField.MESSAGE, "Printer Status Update: Power offline")
+                    .logDebug(LOGGER);
                 deviceConnected = true;
                 break;
             case POSPrinterConst.PTR_SUE_COVER_OPEN:
-                LOGGER.warn("Status Update: Printer cover is open");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 13)
+                    .add(LogField.COMPONENT, "statusUpdateOccurred")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.TAGS, "COVER_OPEN")
+                    .add(LogField.MESSAGE, "Status Update: Printer cover is open")
+                    .logWarn(LOGGER);
                 setWasDoorOpened(true);
                 setIsReconnectNeeded(false);
                 break;
             case POSPrinterConst.PTR_SUE_COVER_OK:
-                LOGGER.debug("Status Update: Printer cover OK");
+                new LogPayloadBuilder()
+                        .add(LogField.SERVICE_NAME, "Printer")
+                        .add(LogField.EVENT_SEVERITY, 5)
+                        .add(LogField.COMPONENT, "statusUpdateOccurred")
+                        .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                        .add(LogField.TAGS, "COVER_OK")
+                        .add(LogField.MESSAGE, "Status Update: Printer cover OK")
+                        .logDebug(LOGGER);
                 if (printerErrorHandlingSingleton.getError() != null) {
                     printerErrorHandlingSingleton.clearError();
                 }
@@ -439,22 +623,49 @@ public class PrinterDevice implements StatusUpdateListener{
                 }
                 break;
             case POSPrinterConst.PTR_SUE_REC_EMPTY:
-                LOGGER.warn("Status Update: Receipt paper is empty");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 13)
+                    .add(LogField.COMPONENT, "statusUpdateOccurred")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.TAGS, "PAPER_EMPTY")
+                    .add(LogField.MESSAGE, "Status Update: Receipt paper is empty")
+                    .logWarn(LOGGER);
                 if (printerErrorHandlingSingleton.getError() == null) {
                     printerErrorHandlingSingleton.setError(new PrinterException(PrinterError.OUT_OF_PAPER));
                 }
-                LOGGER.info("SINGLETON: " + PrinterErrorHandlingSingleton.getPrinterErrorHandlingSingleton().getError());
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 5)
+                    .add(LogField.COMPONENT, "statusUpdateOccurred")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.MESSAGE, "SINGLETON: " + PrinterErrorHandlingSingleton.getPrinterErrorHandlingSingleton().getError())
+                    .logWarn(LOGGER);
                 setWasPaperEmpty(true);
                 setIsReconnectNeeded(false);
                 break;
             case POSPrinterConst.PTR_SUE_REC_NEAREMPTY:
-                LOGGER.warn("Status Update: Receipt printer paper near empty");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 5)
+                    .add(LogField.COMPONENT, "statusUpdateOccurred")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.TAGS, "PAPER_NEAREMPTY")
+                    .add(LogField.MESSAGE, "Status Update: Receipt printer paper near empty")
+                    .logWarn(LOGGER);
                 if (getWasPaperEmpty()) {
                     setWasPaperEmpty(false);
                 }
                 break;
             case POSPrinterConst.PTR_SUE_REC_PAPEROK:
-                LOGGER.debug("Status Update: Receipt paper OK");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 5)
+                    .add(LogField.COMPONENT, "statusUpdateOccurred")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.TAGS, "PAPER_OK")
+                    .add(LogField.MESSAGE, "Status Update: Receipt paper OK")
+                    .logDebug(LOGGER);
                 if (printerErrorHandlingSingleton.getError() != null) {
                     printerErrorHandlingSingleton.clearError();
                 }
@@ -465,10 +676,25 @@ public class PrinterDevice implements StatusUpdateListener{
                 break;
             case POSPrinterConst.PTR_SUE_SLP_EMPTY:
                 LOGGER.debug("Status Update: No check present");
+                new LogPayloadBuilder()
+                        .add(LogField.SERVICE_NAME, "Printer")
+                        .add(LogField.EVENT_SEVERITY, 5)
+                        .add(LogField.COMPONENT, "statusUpdateOccurred")
+                        .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                        .add(LogField.TAGS, "NO_CHECK_PRESENT")
+                        .add(LogField.MESSAGE, "Status Update: No check present")
+                        .logDebug(LOGGER);
                 setIsCheckInserted(false);
                 break;
             case POSPrinterConst.PTR_SUE_SLP_PAPEROK:
-                LOGGER.debug("Status Update: Check inserted");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 5)
+                    .add(LogField.COMPONENT, "statusUpdateOccurred")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.TAGS, "CHECK_INSERTED")
+                    .add(LogField.MESSAGE, "Status Update: Check inserted")
+                    .logDebug(LOGGER);
                 setIsCheckInserted(true);
                 break;
             default:
@@ -507,9 +733,26 @@ public class PrinterDevice implements StatusUpdateListener{
     public boolean tryLock() {
         try {
             isLocked = connectLock.tryLock(TRY_LOCK_TIMEOUT, TimeUnit.SECONDS);
-            LOGGER.trace("Lock: " + isLocked);
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "Printer")
+                .add(LogField.EVENT_SEVERITY, 1)
+                .add(LogField.COMPONENT, "tryLock")
+                .add(LogField.EVENT_ACTION, "tryLock")
+                .add(LogField.EVENT_OUTCOME, isLocked ? "success" : "failed")
+                .add(LogField.MESSAGE, "Lock: " + isLocked)
+                .logTrace(LOGGER);
         } catch(InterruptedException interruptedException) {
-            LOGGER.error("Lock Failed: " + interruptedException.getMessage());
+            new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "Printer")
+                    .add(LogField.EVENT_SEVERITY, 17)
+                    .add(LogField.COMPONENT, "tryLock")
+                    .add(LogField.EVENT_ACTION, "tryLock")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.ERROR_TYPE, "InterruptedException")
+                    .add(LogField.ERROR_MESSAGE, interruptedException.getMessage())
+                    .add(LogField.ERROR_STACK_TRACE, Arrays.toString(interruptedException.getStackTrace()))
+                    .add(LogField.MESSAGE, "Lock Failed: " + interruptedException.getMessage())
+                    .logError(LOGGER);
         }
         return isLocked;
     }
