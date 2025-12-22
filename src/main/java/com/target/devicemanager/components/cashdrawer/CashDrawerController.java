@@ -173,7 +173,7 @@ public class CashDrawerController {
         new LogPayloadBuilder()
             .add(LogField.URL_PATH, url)
             .add(LogField.SERVICE_NAME, "CashDrawer")
-            .add(LogField.EVENT_SEVERITY, 9)
+            .add(LogField.EVENT_SEVERITY, 1)
             .add(LogField.COMPONENT, "CashDrawerController")
             .add(LogField.EVENT_ACTION, "getStatus")
             .add(LogField.MESSAGE, "API Request Received")
