@@ -323,7 +323,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
     private void waitForCashDrawerClose() {
         new LogPayloadBuilder()
             .add(LogField.SERVICE_NAME, "CashDrawer")
-            .add(LogField.EVENT_SEVERITY, 9)
+            .add(LogField.EVENT_SEVERITY, 1)
             .add(LogField.COMPONENT, "CashDrawerDevice")
             .add(LogField.EVENT_ACTION, "waitForCashDrawerClose")
             .add(LogField.MESSAGE, "Waiting for cash drawer to close...")
