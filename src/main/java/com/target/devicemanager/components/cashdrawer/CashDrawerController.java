@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.target.devicemanager.common.LogPayloadBuilder;
+import com.target.devicemanager.common.entities.LogField;
 
 @RestController
 @RequestMapping("/v1/cashdrawer")
@@ -51,12 +53,39 @@ public class CashDrawerController {
     })
     public void openCashDrawer() throws DeviceException {
         String url = "/v1/cashdrawer/open";
-        LOGGER.info("request: " + url );
+        new LogPayloadBuilder()
+            .add(LogField.URL_PATH, url)
+            .add(LogField.SERVICE_NAME, "CashDrawer")
+            .add(LogField.EVENT_SEVERITY, 9)
+            .add(LogField.COMPONENT, "CashDrawerController")
+            .add(LogField.EVENT_ACTION, "openCashDrawer")
+            .add(LogField.MESSAGE, "API Request Received")
+            .logInfo(LOGGER);
         try {
             cashDrawerManager.openCashDrawer();
-            LOGGER.info("response: " + url  + " - 200 OK");
+            new LogPayloadBuilder()
+                .add(LogField.URL_PATH, url)
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 9)
+                .add(LogField.COMPONENT, "CashDrawerController")
+                .add(LogField.EVENT_ACTION, "openCashDrawer")
+                .add(LogField.EVENT_OUTCOME, "success")
+                .add(LogField.HTTP_RESPONSE_STATUS_CODE, 200)
+                .add(LogField.HTTP_RESPONSE_BODY_CONTENT, "OK")
+                .add(LogField.MESSAGE, "API Request Completed Successfully")
+                .logInfo(LOGGER);
         } catch (DeviceException deviceException) {
-            LOGGER.info("response: " + url + " - " + deviceException.getDeviceError().getStatusCode().toString() + ", " + deviceException.getDeviceError());
+            new LogPayloadBuilder()
+                .add(LogField.URL_PATH, url)
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 17)
+                .add(LogField.COMPONENT, "CashDrawerController")
+                .add(LogField.EVENT_ACTION, "openCashDrawer")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.HTTP_RESPONSE_STATUS_CODE, deviceException.getDeviceError().getStatusCode().value())
+                .add(LogField.HTTP_RESPONSE_BODY_CONTENT, deviceException.getDeviceError().toString())
+                .add(LogField.MESSAGE, "API Request Failed with DeviceException")
+                .logError(LOGGER);
             throw deviceException;
         }
     }
@@ -72,12 +101,39 @@ public class CashDrawerController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/cashdrawer/reconnect";
-        LOGGER.info("request: " + url);
+        new LogPayloadBuilder()
+            .add(LogField.URL_PATH, url)
+            .add(LogField.SERVICE_NAME, "CashDrawer")
+            .add(LogField.EVENT_SEVERITY, 9)
+            .add(LogField.COMPONENT, "CashDrawerController")
+            .add(LogField.EVENT_ACTION, "reconnect")
+            .add(LogField.MESSAGE, "API Request Received")
+            .logInfo(LOGGER);
         try {
             cashDrawerManager.reconnectDevice();
-            LOGGER.info("response: " + url + " - 200 OK");
+            new LogPayloadBuilder()
+                .add(LogField.URL_PATH, url)
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 9)
+                .add(LogField.COMPONENT, "CashDrawerController")
+                .add(LogField.EVENT_ACTION, "reconnect")
+                .add(LogField.EVENT_OUTCOME, "success")
+                .add(LogField.HTTP_RESPONSE_STATUS_CODE, 200)
+                .add(LogField.HTTP_RESPONSE_BODY_CONTENT, "OK")
+                .add(LogField.MESSAGE, "API Request Completed Successfully")
+                .logInfo(LOGGER);
         } catch (DeviceException deviceException) {
-            LOGGER.info("response: " + url + " - " + deviceException.getDeviceError().getStatusCode().toString() + ", " + deviceException.getDeviceError());
+            new LogPayloadBuilder()
+                .add(LogField.URL_PATH, url)
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 17)
+                .add(LogField.COMPONENT, "CashDrawerController")
+                .add(LogField.EVENT_ACTION, "reconnect")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.HTTP_RESPONSE_STATUS_CODE, deviceException.getDeviceError().getStatusCode().value())
+                .add(LogField.HTTP_RESPONSE_BODY_CONTENT, deviceException.getDeviceError().toString())
+                .add(LogField.MESSAGE, "API Request Failed with DeviceException")
+                .logError(LOGGER);
             throw deviceException;
         }
     }
@@ -86,9 +142,27 @@ public class CashDrawerController {
     @GetMapping("/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/cashdrawer/health";
-        LOGGER.info("request: " + url);
+        new LogPayloadBuilder()
+            .add(LogField.URL_PATH, url)
+            .add(LogField.SERVICE_NAME, "CashDrawer")
+            .add(LogField.EVENT_SEVERITY, 9)
+            .add(LogField.COMPONENT, "CashDrawerController")
+            .add(LogField.EVENT_ACTION, "getHealth")
+            .add(LogField.MESSAGE, "API Request Received")
+            .logInfo(LOGGER);
         DeviceHealthResponse response = cashDrawerManager.getHealth();
-        LOGGER.info("response: " + url + " - " + response.toString());
+        new LogPayloadBuilder()
+            .add(LogField.URL_PATH, url)
+            .add(LogField.SERVICE_NAME, "CashDrawer")
+            .add(LogField.EVENT_SEVERITY, 9)
+            .add(LogField.COMPONENT, "CashDrawerController")
+            .add(LogField.EVENT_ACTION, "getHealth")
+            .add(LogField.EVENT_OUTCOME, "success")
+            .add(LogField.HTTP_RESPONSE_STATUS_CODE, 200)
+            .add(LogField.HTTP_RESPONSE_BODY_CONTENT, response.toString())
+            .add(LogField.TAGS, response.getHealthStatus().toString())
+            .add(LogField.MESSAGE, "API Request Completed Successfully")
+            .logInfo(LOGGER);
         return response;
     }
 
@@ -96,9 +170,27 @@ public class CashDrawerController {
     @GetMapping("/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/cashdrawer/healthstatus";
-        LOGGER.info("request: " + url);
+        new LogPayloadBuilder()
+            .add(LogField.URL_PATH, url)
+            .add(LogField.SERVICE_NAME, "CashDrawer")
+            .add(LogField.EVENT_SEVERITY, 9)
+            .add(LogField.COMPONENT, "CashDrawerController")
+            .add(LogField.EVENT_ACTION, "getStatus")
+            .add(LogField.MESSAGE, "API Request Received")
+            .logInfo(LOGGER);
         DeviceHealthResponse response = cashDrawerManager.getStatus();
-        LOGGER.info("response: " + url + " - " + response.toString());
+        new LogPayloadBuilder()
+            .add(LogField.URL_PATH, url)
+            .add(LogField.SERVICE_NAME, "CashDrawer")
+            .add(LogField.EVENT_SEVERITY, 9)
+            .add(LogField.COMPONENT, "CashDrawerController")
+            .add(LogField.EVENT_ACTION, "getStatus")
+            .add(LogField.EVENT_OUTCOME, "success")
+            .add(LogField.HTTP_RESPONSE_STATUS_CODE, 200)
+            .add(LogField.HTTP_RESPONSE_BODY_CONTENT, response.toString())
+            .add(LogField.TAGS, response.getHealthStatus().toString())
+            .add(LogField.MESSAGE, "API Request Completed Successfully")
+            .logInfo(LOGGER);
         return response;
     }
 }

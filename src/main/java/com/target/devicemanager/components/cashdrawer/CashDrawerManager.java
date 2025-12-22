@@ -14,6 +14,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
+import com.target.devicemanager.common.LogPayloadBuilder;
+import com.target.devicemanager.common.entities.LogField;
 
 @Profile({"local", "dev", "prod"})
 @EnableScheduling
@@ -105,7 +107,16 @@ public class CashDrawerManager {
         try {
             Objects.requireNonNull(cacheManager.getCache("cashDrawerHealth")).put("health", deviceHealthResponse);
         } catch (Exception exception) {
-            LOGGER.error("getCache(cashDrawerHealth) Failed: " + exception.getMessage());
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 17)
+                .add(LogField.COMPONENT, "CashDrawerManager")
+                .add(LogField.EVENT_ACTION, "getHealth")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_MESSAGE, exception.getMessage())
+                .add(LogField.ERROR_TYPE, "Exception")
+                .add(LogField.MESSAGE, "getCache(cashDrawerHealth) Failed:" + exception.getMessage())
+                .logError(LOGGER);
         }
         return deviceHealthResponse;
     }
@@ -119,11 +130,16 @@ public class CashDrawerManager {
                 }
                 return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("cashDrawerHealth")).get("health").get();
             } else {
-                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+                new LogPayloadBuilder()
+                        .add(LogField.SERVICE_NAME, "CashDrawer")
+                        .add(LogField.EVENT_SEVERITY, 5)
+                        .add(LogField.COMPONENT, "CashDrawerManager")
+                        .add(LogField.EVENT_ACTION, "getStatus")
+                        .add(LogField.MESSAGE, "Not able to retrieve from cache, checking getHealth()")
+                        .logDebug(LOGGER);
                 return getHealth();
             }
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             return getHealth();
         }
     }

@@ -12,12 +12,13 @@ import jpos.events.StatusUpdateEvent;
 import jpos.events.StatusUpdateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.context.annotation.Profile;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import com.target.devicemanager.common.LogPayloadBuilder;
+import com.target.devicemanager.common.entities.LogField;
 
 @Profile({"local", "dev", "prod"})
 public class CashDrawerDevice implements StatusUpdateListener{
@@ -30,8 +31,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
     private boolean isLocked = false;
     private static final int DRAWER_STATUS_CHECK_INTERVAL = 500;
     private static final Logger LOGGER = LoggerFactory.getLogger(CashDrawerDevice.class);
-    private static final Marker MARKER = MarkerFactory.getMarker("FATAL");
-   
+
     /**
      * Makes sure everything is connected and online.
      * @param dynamicCashDrawer
@@ -43,11 +43,27 @@ public class CashDrawerDevice implements StatusUpdateListener{
 
     public CashDrawerDevice(DynamicDevice<? extends CashDrawer> dynamicCashDrawer, DeviceListener deviceListener, ReentrantLock connectLock) {
         if (dynamicCashDrawer == null) {
-            LOGGER.error(MARKER, "Cash Drawer Failed in Constructor: simpleCashDrawer cannot be null");
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 18)
+                .add(LogField.COMPONENT, "CashDrawerDevice")
+                .add(LogField.EVENT_ACTION, "Constructor")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_MESSAGE, "Cash Drawer Failed in Constructor: simpleCashDrawer cannot be null")
+                .add(LogField.ERROR_TYPE, "IllegalArgumentException")
+                .logError(LOGGER);
             throw new IllegalArgumentException("simpleCashDrawer cannot be null");
         }
         if (deviceListener == null) {
-            LOGGER.error(MARKER, "Cash Drawer Failed in Constructor: deviceListener cannot be null");
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 18)
+                .add(LogField.COMPONENT, "CashDrawerDevice")
+                .add(LogField.EVENT_ACTION, "Constructor")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_MESSAGE, "Cash Drawer Failed in Constructor: deviceListener cannot be null")
+                .add(LogField.ERROR_TYPE, "IllegalArgumentException")
+                .logError(LOGGER);
             throw new IllegalArgumentException("deviceListener cannot be null");
         }
         this.dynamicCashDrawer = dynamicCashDrawer;
@@ -148,7 +164,17 @@ public class CashDrawerDevice implements StatusUpdateListener{
                         deviceConnected = false;
                     }
                 } catch (JposException jposException) {
-                    LOGGER.error(MARKER, "Cash Drawer Failed to Disconnect: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                    new LogPayloadBuilder()
+                        .add(LogField.SERVICE_NAME, "CashDrawer")
+                        .add(LogField.EVENT_SEVERITY, 18)
+                        .add(LogField.COMPONENT, "CashDrawerDevice")
+                        .add(LogField.EVENT_ACTION, "disable")
+                        .add(LogField.EVENT_OUTCOME, "failure")
+                        .add(LogField.ERROR_TYPE, "JposException")
+                        .add(LogField.ERROR_CODE, jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                        .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                        .add(LogField.MESSAGE, "Cash Drawer Failed to Disconnect: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                        .logError(LOGGER);
                 }
             }
         }
@@ -168,7 +194,17 @@ public class CashDrawerDevice implements StatusUpdateListener{
                     deviceConnected = true;
                 }
             } catch (JposException jposException) {
-                LOGGER.error(MARKER, "Cash Drawer Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "CashDrawer")
+                    .add(LogField.EVENT_SEVERITY, 18)
+                    .add(LogField.COMPONENT, "CashDrawerDevice")
+                    .add(LogField.EVENT_ACTION, "enable")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.ERROR_TYPE, "JposException")
+                    .add(LogField.ERROR_CODE, jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                    .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                    .add(LogField.MESSAGE, "Cash Drawer Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                    .logError(LOGGER);
                 deviceConnected = false;
             }
         }
@@ -186,14 +222,40 @@ public class CashDrawerDevice implements StatusUpdateListener{
         CashDrawer cashDrawer;
         synchronized (cashDrawer = dynamicCashDrawer.getDevice()) {
             if (cashDrawerOpen) {
-                LOGGER.error(MARKER, "Cash Drawer is already open: " + CashDrawerError.ALREADY_OPEN.getDescription());
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "CashDrawer")
+                    .add(LogField.EVENT_SEVERITY, 18)
+                    .add(LogField.COMPONENT, "CashDrawerDevice")
+                    .add(LogField.EVENT_ACTION, "openCashDrawer")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.ERROR_TYPE, "DeviceException")
+                    .add(LogField.ERROR_MESSAGE, CashDrawerError.ALREADY_OPEN.getDescription())
+                    .add(LogField.ERROR_CODE, CashDrawerError.ALREADY_OPEN.getCode())
+                    .add(LogField.MESSAGE,"Cash Drawer is already open: " + CashDrawerError.ALREADY_OPEN.getDescription())
+                    .logError(LOGGER);
                 throw new DeviceException(CashDrawerError.ALREADY_OPEN);
             }
-            LOGGER.info("Opening cash drawer...");
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 9)
+                .add(LogField.COMPONENT, "CashDrawerDevice")
+                .add(LogField.EVENT_ACTION, "openCashDrawer")
+                .add(LogField.MESSAGE, "Opening cash drawer...")
+                .logInfo(LOGGER);
             cashDrawer.openDrawer();
             waitForCashDrawerClose();
             if(!deviceConnected) {
-                LOGGER.error(MARKER, "Cash Drawer is offline after closing: " + CashDrawerError.DEVICE_OFFLINE.getDescription());
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "CashDrawer")
+                    .add(LogField.EVENT_SEVERITY, 18)
+                    .add(LogField.COMPONENT, "CashDrawerDevice")
+                    .add(LogField.EVENT_ACTION, "openCashDrawer")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.ERROR_TYPE, "DeviceException")
+                    .add(LogField.ERROR_MESSAGE, CashDrawerError.DEVICE_OFFLINE.getDescription())
+                    .add(LogField.ERROR_CODE, CashDrawerError.DEVICE_OFFLINE.getCode())
+                    .add(LogField.MESSAGE,  "Cash Drawer is offline after closing: " + CashDrawerError.DEVICE_OFFLINE.getDescription())
+                    .logError(LOGGER);
                 throw new DeviceException(CashDrawerError.DEVICE_OFFLINE);
             }
         }
@@ -206,7 +268,17 @@ public class CashDrawerDevice implements StatusUpdateListener{
     private void enable() throws JposException {
         if (!isConnected()) {
             JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
-            LOGGER.error(MARKER, "Cash Drawer is not connected: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 18)
+                .add(LogField.COMPONENT, "CashDrawerDevice")
+                .add(LogField.EVENT_ACTION, "enable")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_TYPE, "JposException")
+                .add(LogField.ERROR_CODE, jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                .add(LogField.ERROR_MESSAGE, jposException.getMessage())
+                .add(LogField.MESSAGE, "Cash Drawer is not connected: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended())
+                .logError(LOGGER);
             throw jposException;
         }
         deviceListener.startEventListeners();
@@ -249,7 +321,13 @@ public class CashDrawerDevice implements StatusUpdateListener{
      * Waits for CashDrawer to close or check interval.
      */
     private void waitForCashDrawerClose() {
-        LOGGER.info("Waiting for cash drawer to close...");
+        new LogPayloadBuilder()
+            .add(LogField.SERVICE_NAME, "CashDrawer")
+            .add(LogField.EVENT_SEVERITY, 9)
+            .add(LogField.COMPONENT, "CashDrawerDevice")
+            .add(LogField.EVENT_ACTION, "waitForCashDrawerClose")
+            .add(LogField.MESSAGE, "Waiting for cash drawer to close...")
+            .logTrace(LOGGER);
         //This do/while is necessary for status to stabilize when cash drawer opens
         do {
             try {
@@ -268,25 +346,60 @@ public class CashDrawerDevice implements StatusUpdateListener{
     @Override
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
         int status = statusUpdateEvent.getStatus();
-        LOGGER.trace("Cash Drawer statusUpdateOccurred(): " + status);
+        new LogPayloadBuilder()
+            .add(LogField.SERVICE_NAME, "CashDrawer")
+            .add(LogField.EVENT_SEVERITY, 1)
+            .add(LogField.COMPONENT, "CashDrawerDevice")
+            .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+            .add(LogField.TAGS, status)
+            .add(LogField.MESSAGE, "Cash Drawer statusUpdateOccurred(): " + status)
+            .logTrace(LOGGER);
         switch(status) {
             case JposConst.JPOS_SUE_POWER_OFF:
             case JposConst.JPOS_SUE_POWER_OFF_OFFLINE:
             case JposConst.JPOS_SUE_POWER_OFFLINE:
-                LOGGER.error(MARKER, "Cash Drawer Status Update: Power offline");
-                LOGGER.debug("Status Update: Power offline");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "CashDrawer")
+                    .add(LogField.EVENT_SEVERITY, 18)
+                    .add(LogField.COMPONENT, "CashDrawerDevice")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.EVENT_OUTCOME, "failure")
+                    .add(LogField.TAGS, "POWER_OFFLINE")
+                    .add(LogField.MESSAGE, "Cash Drawer Status Update: Power offline")
+                    .logError(LOGGER);
                 deviceConnected = false;
                 break;
             case JposConst.JPOS_SUE_POWER_ONLINE:
-                LOGGER.debug("Status Update: Power online");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "CashDrawer")
+                    .add(LogField.EVENT_SEVERITY, 5)
+                    .add(LogField.COMPONENT, "CashDrawerDevice")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.TAGS, "POWER_ONLINE")
+                    .add(LogField.MESSAGE, "Status Update: Power online")
+                    .logDebug(LOGGER);
                 deviceConnected = true;
                 break;
             case CashDrawerConst.CASH_SUE_DRAWEROPEN:
-                LOGGER.info("Cash drawer opened");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "CashDrawer")
+                    .add(LogField.EVENT_SEVERITY, 9)
+                    .add(LogField.COMPONENT, "CashDrawerDevice")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.TAGS, "DRAWER_OPEN")
+                    .add(LogField.MESSAGE, "Cash drawer opened")
+                    .logInfo(LOGGER);
                 cashDrawerOpen = true;
                 break;
             case CashDrawerConst.CASH_SUE_DRAWERCLOSED:
-                LOGGER.info("Cash drawer closed");
+                new LogPayloadBuilder()
+                    .add(LogField.SERVICE_NAME, "CashDrawer")
+                    .add(LogField.EVENT_SEVERITY, 9)
+                    .add(LogField.COMPONENT, "CashDrawerDevice")
+                    .add(LogField.EVENT_ACTION, "statusUpdateOccurred")
+                    .add(LogField.TAGS, "DRAWER_CLOSED")
+                    .add(LogField.MESSAGE, "Cash drawer closed")
+                    .logInfo(LOGGER);
                 cashDrawerOpen = false;
                 break;
             default:
@@ -301,9 +414,26 @@ public class CashDrawerDevice implements StatusUpdateListener{
     public boolean tryLock() {
         try {
             isLocked = connectLock.tryLock(10, TimeUnit.SECONDS);
-            LOGGER.trace("Lock: " + isLocked);
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 1)
+                .add(LogField.COMPONENT, "CashDrawerDevice")
+                .add(LogField.EVENT_ACTION, "tryLock")
+                .add(LogField.EVENT_OUTCOME, isLocked ? "success" : "failed")
+                .add(LogField.MESSAGE, "Lock: " + isLocked)
+                .logTrace(LOGGER);
         } catch(InterruptedException interruptedException) {
-            LOGGER.error("Lock Failed: " + interruptedException.getMessage());
+            new LogPayloadBuilder()
+                .add(LogField.SERVICE_NAME, "CashDrawer")
+                .add(LogField.EVENT_SEVERITY, 17)
+                .add(LogField.COMPONENT, "CashDrawerDevice")
+                .add(LogField.EVENT_ACTION, "tryLock")
+                .add(LogField.EVENT_OUTCOME, "failure")
+                .add(LogField.ERROR_TYPE, "InterruptedException")
+                .add(LogField.ERROR_MESSAGE, interruptedException.getMessage())
+                .add(LogField.ERROR_STACK_TRACE, Arrays.toString(interruptedException.getStackTrace()))
+                .add(LogField.MESSAGE, "Lock Failed: " + interruptedException.getMessage())
+                .logError(LOGGER);
         }
         return isLocked;
     }
