@@ -67,7 +67,7 @@ public class LogPayloadBuilder {
     public void logInfo(Logger logger) {
         if (logger == null) return;
         ensureMessage();
-        this.add(LogField.LOG_LEVEL, "info");
+        this.add(LogField.LOG_LEVEL, "INFO");
         logger.info(toJson());
     }
 
@@ -75,7 +75,7 @@ public class LogPayloadBuilder {
     public void logTrace(Logger logger) {
         if (logger == null) return;
         ensureMessage();
-        this.add(LogField.LOG_LEVEL, "trace");
+        this.add(LogField.LOG_LEVEL, "TRACE");
         logger.trace(toJson());
     }
 
@@ -83,7 +83,7 @@ public class LogPayloadBuilder {
     public void logDebug(Logger logger) {
         if (logger == null) return;
         ensureMessage();
-        this.add(LogField.LOG_LEVEL, "debug");
+        this.add(LogField.LOG_LEVEL, "DEBUG");
         logger.debug(toJson());
     }
 
@@ -91,7 +91,7 @@ public class LogPayloadBuilder {
     public void logWarn(Logger logger) {
         if (logger == null) return;
         ensureMessage();
-        this.add(LogField.LOG_LEVEL, "warn");
+        this.add(LogField.LOG_LEVEL, "WARN");
         logger.warn(toJson());
     }
 
@@ -99,7 +99,7 @@ public class LogPayloadBuilder {
     public void logError(Logger logger) {
         if (logger == null) return;
         ensureMessage();
-        this.add(LogField.LOG_LEVEL, "error");
+        this.add(LogField.LOG_LEVEL, "ERROR");
         logger.error(toJson());
     }
 }
