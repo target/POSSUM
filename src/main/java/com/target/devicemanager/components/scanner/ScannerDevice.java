@@ -311,6 +311,10 @@ public class ScannerDevice {
     public String getScannerType() {
         return this.scannerType.toString();
     }
+    // Returns the elapsed time, need this for handscanner timeout/slow scan issue
+    // when we enable the handscanner - if this process takes longer than 1sec something went wrong
+    // and the handscanner timed out. We want to know the total time taken to enable the scanner, so we know
+    // whether we need to disconnect and reconnect the handscanner
 
     /**
      * Reconnects the handheld scanner.
