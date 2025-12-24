@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.scanner;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealthResponse;
@@ -24,11 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/v1")
 @Tag(name = "Scanner")
-
 public class ScannerController {
 
     private final ScannerManager scannerManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScannerController.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Scanner", "ScannerController", LOGGER);
 
     @Autowired
     public ScannerController(ScannerManager scannerManager) {
@@ -51,27 +52,27 @@ public class ScannerController {
                     content = @Content(schema = @Schema( implementation = DeviceError.class)))
     })
     public Barcode getScannerData(@Parameter(description = "Scanner to Call") @PathVariable(required = false) ScannerType scannerType) throws ScannerException {
-        String url = "";
-        if(scannerType == null) {
+        String url;
+        if (scannerType == null) {
             url = "/v1/scan";
-            LOGGER.info("request : " + url);
+            log.success("API Request Received", 9);
             try {
                 Barcode data = scannerManager.getData(ScannerType.BOTH);
-                LOGGER.info("response: " + url + " - 200 OK");
+                log.successAPI("API Request Completed Successfully", 9, url, data == null ? null : data.toString(), 200);
                 return data;
             } catch (ScannerException scannerException) {
-                LOGGER.info("response: " + url + " - " + scannerException.getDeviceError().getStatusCode().toString() + ", " + scannerException.getDeviceError());
+                log.failureAPI("API Request Failed with ScannerException", 17, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
                 throw scannerException;
             }
         } else {
             url = "/v1/scan/" + scannerType;
-            LOGGER.info("request: " + url);
+            log.success("API Request Received", 9);
             try {
                 Barcode data = scannerManager.getData(scannerType);
-                LOGGER.info("response: " + url + " - 200 OK");
+                log.successAPI("API Request Completed Successfully", 9, url, data == null ? null : data.toString(), 200);
                 return data;
             } catch (ScannerException scannerException) {
-                LOGGER.info("response: " + url + " - " + scannerException.getDeviceError().getStatusCode().toString() + ", " + scannerException.getDeviceError());
+                log.failureAPI("API Request Failed with ScannerException", 17, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
                 throw scannerException;
             }
         }
@@ -86,12 +87,12 @@ public class ScannerController {
     })
     public void cancelScanRequest() throws ScannerException {
         String url = "/v1/scan";
-        LOGGER.info("request: DELETE - " + url );
+        log.success("API Request Received", 9);
         try {
             scannerManager.cancelScanRequest();
-            LOGGER.info("response: " + "DELETE " + url + " - 200 OK");
+            log.successAPI("API Request Completed Successfully", 9, url, "OK", 200);
         } catch (ScannerException scannerException) {
-            LOGGER.info("response: " + url + " - " + scannerException.getDeviceError().getStatusCode().toString() + ", " + scannerException.getDeviceError());
+            log.failureAPI("API Request Failed with ScannerException", 17, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
             throw scannerException;
         }
     }
@@ -100,18 +101,19 @@ public class ScannerController {
     @GetMapping(path = {"/scanner/health", "/scanner/health/{scannerType}"})
     public ResponseEntity<List<DeviceHealthResponse>> getHealth(@Parameter(description = "Scanner to Call") @PathVariable(required = false) ScannerType scannerType) {
         List<DeviceHealthResponse> responseList;
-        String url = "";
-        if(scannerType == null) {
+        String url;
+        if (scannerType == null) {
             url = "/v1/scanner/health";
-            LOGGER.info("request: " + url);
+            log.success("API Request Received", 9);
             responseList = scannerManager.getHealth(ScannerType.BOTH);
         } else {
             url = "/v1/scanner/health/" + scannerType;
-            LOGGER.info("request: " + url);
+            log.success("API Request Received", 9);
             responseList = scannerManager.getHealth(scannerType);
         }
-        for(DeviceHealthResponse deviceResponse : responseList) {
-            LOGGER.info("response: " + url + " - " + deviceResponse.toString());
+
+        for (DeviceHealthResponse deviceResponse : responseList) {
+            log.successAPI("API Request Completed Successfully", 9, url, deviceResponse == null ? null : deviceResponse.toString(), 200);
         }
         return ResponseEntity.ok(responseList);
     }
@@ -120,9 +122,13 @@ public class ScannerController {
     @GetMapping(path = "/scanner/healthstatus")
     public ResponseEntity<List<DeviceHealthResponse>> getStatus() {
         String url = "/v1/scanner/healthstatus";
-        LOGGER.info("request: " + url);        List<DeviceHealthResponse> responseList = scannerManager.getStatus();
-        for(DeviceHealthResponse deviceResponse : responseList) {
-            LOGGER.info("response: " + url + " - " + deviceResponse.toString());        }
+        log.success("API Request Received", 9);
+
+        List<DeviceHealthResponse> responseList = scannerManager.getStatus();
+
+        for (DeviceHealthResponse deviceResponse : responseList) {
+            log.successAPI("API Request Completed Successfully", 9, url, deviceResponse == null ? null : deviceResponse.toString(), 200);
+        }
         return ResponseEntity.ok(responseList);
     }
 
@@ -139,12 +145,12 @@ public class ScannerController {
     })
     void reconnect() throws DeviceException {
         String url = "/v1/scanner/reconnect";
-        LOGGER.info("request: " + url);
+        log.success("API Request Received", 9);
         try {
             scannerManager.reconnectScanners();
-            LOGGER.info("response: " + url + " - 200 OK");
+            log.successAPI("API Request Completed Successfully", 9, url, "OK", 200);
         } catch (DeviceException deviceException) {
-            LOGGER.info("response: " + url + " - " + deviceException.getDeviceError().getStatusCode().toString() + ", " + deviceException.getDeviceError());
+            log.failureAPI("API Request Failed with DeviceException", 17, url, deviceException.getDeviceError() == null ? null : deviceException.getDeviceError().toString(), deviceException.getDeviceError() == null ? 0 : deviceException.getDeviceError().getStatusCode().value(), deviceException);
             throw deviceException;
         }
     }

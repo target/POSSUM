@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.scanner;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.DeviceListener;
 import com.target.devicemanager.common.DynamicDevice;
 import com.target.devicemanager.common.entities.DeviceError;
@@ -13,8 +14,6 @@ import jpos.Scanner;
 import jpos.events.DataEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import java.nio.charset.Charset;
 import java.time.Duration;
@@ -28,7 +27,7 @@ public class ScannerDevice {
     private final ScannerType scannerType;
     private boolean deviceConnected = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScannerDevice.class);
-    private static final Marker MARKER = MarkerFactory.getMarker("FATAL");
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Scanner", "ScannerDevice", LOGGER);
     private static final int MAX_RETRIES = 3;
     private static final int SCANNER_CMD_TIMEOUT = 999;
     private final ReentrantLock connectLock;
@@ -48,15 +47,15 @@ public class ScannerDevice {
 
     public ScannerDevice(DeviceListener deviceListener, DynamicDevice<? extends Scanner> dynamicScanner, ScannerType scannerType, ReentrantLock connectLock, ApplicationConfig applicationConfig) {
         if(scannerType == null) {
-            LOGGER.error(MARKER, "Failed in Constructor: scannerType cannot be null");
+            log.failure("Failed in Constructor: scannerType cannot be null", 17, null);
             throw new IllegalArgumentException("scannerType cannot be null");
         }
         if (deviceListener == null) {
-            LOGGER.error(MARKER, scannerType + " Failed in Constructor: deviceListener cannot be null");
+            log.failure(scannerType + " Failed in Constructor: deviceListener cannot be null", 17, null);
             throw new IllegalArgumentException("deviceListener cannot be null");
         }
         if(dynamicScanner == null){
-            LOGGER.error(MARKER, scannerType + " Failed in Constructor: dynamicScanner cannot be null");
+            log.failure(scannerType + " Failed in Constructor: dynamicScanner cannot be null", 17, null);
             throw new IllegalArgumentException("dynamicScanner cannot be null");
         }
         this.dynamicScanner = dynamicScanner;
@@ -123,13 +122,14 @@ public class ScannerDevice {
      * @throws JposException
      */
     public Barcode getScannerData() throws JposException {
-        LOGGER.trace(getScannerType() + "getScannerData(in)");
+        log.success(getScannerType() + " getScannerData(in)", 1);
         enable();
         //waitForData can potentially block forever
         try {
             DataEvent dataEvent = deviceListener.waitForData();
             return handleDataEvent(dataEvent);
         } catch (JposException jposException) {
+            log.failure(getScannerType() + " getScannerData: exception waiting for data", 17, jposException);
             throw jposException;
         }
     }
@@ -142,10 +142,10 @@ public class ScannerDevice {
      */
     private Barcode handleDataEvent(DataEvent dataEvent) throws JposException {
         if (!(dataEvent.getSource() instanceof Scanner)) {
-            LOGGER.trace(getScannerType() + "getScannerData(out)");
+            log.success(getScannerType() + " getScannerData(out)", 1);
             JposException jposException = new JposException(JposConst.JPOS_E_FAILURE);
-            LOGGER.error(MARKER, getScannerType() + " Failed to Handle Data: " + jposException.getMessage());
-            throw new JposException(JposConst.JPOS_E_FAILURE);
+            log.failure(getScannerType() + " Failed to Handle Data: " + jposException.getMessage(), 17, jposException);
+            throw jposException;
         }
         try {
             String data;
@@ -162,11 +162,11 @@ public class ScannerDevice {
                 }
             }
             Barcode barcode = new Barcode(data, type, source);
-            LOGGER.info(barcode.source + " - returning scanned data type: " + barcode.type + " of size " + data.length());
-            LOGGER.trace(barcode.source + "getScannerData(out)");
+            log.success(barcode.source + " - returning scanned data type: " + barcode.type + " of size " + data.length(), 9);
+            log.success(barcode.source + " getScannerData(out)", 1);
             return barcode;
         } catch (JposException jposException) {
-            LOGGER.error(MARKER, getScannerType() + " Failed to Handle Data: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            log.failure(getScannerType() + " Failed to Handle Data: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 17, jposException);
             throw jposException;
         }
     }
@@ -176,15 +176,15 @@ public class ScannerDevice {
      * @return null.
      */
     public Void cancelScannerData() {
-        LOGGER.trace(getScannerType() + "cancelScannerData(in)");
+        log.success(getScannerType() + " cancelScannerData(in)", 1);
         try{
             disable();
         } catch(JposException jposException){
-            LOGGER.error("Received exception in cancelScannerData");
+            log.failure("Received exception in cancelScannerData", 17, jposException);
         } finally {
             deviceListener.stopWaitingForData();
         }
-        LOGGER.trace(getScannerType() + "cancelScannerData(out)");
+        log.success(getScannerType() + " cancelScannerData(out)", 1);
         return null;
     }
 
@@ -214,7 +214,7 @@ public class ScannerDevice {
      * @throws JposException
      */
     protected void enable() throws JposException {
-        LOGGER.trace(getScannerType() + "enable(in)");
+        log.success(getScannerType() + " enable(in)", 1);
         if (!isConnected()) {
             JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
             throw jposException;
@@ -237,20 +237,20 @@ public class ScannerDevice {
             }
         } catch (JposException jposException) {
             if(isConnected()) {
-                LOGGER.error(MARKER, getScannerType() + " Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                log.failure(getScannerType() + " Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 17, jposException);
             } else {
-                LOGGER.error(getScannerType() + " Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                log.failure(getScannerType() + " Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 17, jposException);
             }
 
             if(getScannerType().equalsIgnoreCase("HANDHELD")) {
-                LOGGER.info("Attempting HANDHELD Reconnect enable");
+                log.success("Attempting HANDHELD Reconnect enable", 9);
                 handheldReconnect();
             } else {
                 throw jposException;
             }
         }
-        LOGGER.info(getScannerType() + " scanner enabled");
-        LOGGER.trace(getScannerType() + "enable(out)");
+        log.success(getScannerType() + " scanner enabled", 9);
+        log.success(getScannerType() + " enable(out)", 1);
     }
 
     /**
@@ -258,7 +258,7 @@ public class ScannerDevice {
      * @throws JposException
      */
     private void disable() throws JposException {
-        LOGGER.trace(getScannerType() + "disable(in)");
+        log.success(getScannerType() + " disable(in)", 1);
         try {
             Scanner scanner;
             synchronized (scanner = dynamicScanner.getDevice()) {
@@ -266,19 +266,19 @@ public class ScannerDevice {
             }
         } catch (JposException jposException) {
             if(isConnected()) {
-                LOGGER.error(MARKER, getScannerType() + " Failed to Disable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                log.failure(getScannerType() + " Failed to Disable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 17, jposException);
             } else if(jposException.getErrorCode() != JposConst.JPOS_E_CLOSED) {
-                LOGGER.error(getScannerType() + " Failed to Disable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                log.failure(getScannerType() + " Failed to Disable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 17, jposException);
             }
             if(getScannerType().equalsIgnoreCase("HANDHELD")) {
-                LOGGER.info("Attempting HANDHELD Reconnect disable");
+                log.success("Attempting HANDHELD Reconnect disable", 9);
                 handheldReconnect();
             } else {
                 throw jposException;
             }
         }
-        LOGGER.info(getScannerType() + " scanner disabled");
-        LOGGER.trace(getScannerType() + "disable(out)");
+        log.success(getScannerType() + " scanner disabled", 9);
+        log.success(getScannerType() + " disable(out)", 1);
     }
 
     /**
@@ -312,16 +312,11 @@ public class ScannerDevice {
         return this.scannerType.toString();
     }
 
-    // Returns the elapsed time, need this for handscanner timeout/slow scan issue
-    // when we enable the handscanner - if this process takes longer than 1sec something went wrong
-    // and the handscanner timed out. We want to know the total time taken to enable the scanner, so we know
-    // whether we need to disconnect and reconnect the handscanner
-
     /**
      * Reconnects the handheld scanner.
      */
     private void handheldReconnect() {
-        LOGGER.trace("handheldTimeoutOccurredCheck(in)");
+        log.success("handheldTimeoutOccurredCheck(in)", 1);
         int retries = 0;
         Instant start;
         Instant end;
@@ -336,17 +331,17 @@ public class ScannerDevice {
                 end = Instant.now();
                 timeElapsedMillis = Duration.between(start, end).toMillis();
                 if(timeElapsedMillis < SCANNER_CMD_TIMEOUT){
-                    LOGGER.info("Reconnect handheld : recovered dead hand scanner in " + retries + " attempt(s).");
+                    log.success("Reconnect handheld : recovered dead hand scanner in " + retries + " attempt(s).", 9);
                     break;
                 } else {
-                    LOGGER.info("Reconnect handheld : still taking longer " + timeElapsedMillis + " milliseconds");
+                    log.success("Reconnect handheld : still taking longer " + timeElapsedMillis + " milliseconds", 9);
                 }
             } catch (JposException jposException) {
-                LOGGER.error("Hand scanner reconnect exception: " + jposException.getMessage());
+                log.failure("Hand scanner reconnect exception: " + jposException.getMessage(), 17, jposException);
             }
         }
 
-        LOGGER.trace("handheldTimeoutOccurredCheck(out");
+        log.success("handheldTimeoutOccurredCheck(out)", 1);
     }
 
     /**
@@ -356,9 +351,9 @@ public class ScannerDevice {
     public boolean tryLock() {
         try {
             isLocked = connectLock.tryLock(10, TimeUnit.SECONDS);
-            LOGGER.trace("Lock: " + isLocked);
+            log.success("Lock: " + isLocked, 1);
         } catch(InterruptedException interruptedException) {
-            LOGGER.error("Lock Failed: " + interruptedException.getMessage());
+            log.failure("Lock Failed: " + interruptedException.getMessage(), 17, interruptedException);
         }
         return isLocked;
     }

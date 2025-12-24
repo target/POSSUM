@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.scanner;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.components.scanner.entities.Barcode;
 import com.target.devicemanager.components.scanner.entities.ScannerError;
@@ -31,6 +32,7 @@ public class ScannerManager {
     private final Lock scannerLock;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScannerManager.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Scanner", "ScannerManager", LOGGER);
     private ExecutorService executor;
     private boolean isTest = false;
     private List<Future<Boolean>> results;
@@ -65,7 +67,7 @@ public class ScannerManager {
         if (connectStatus == ConnectEnum.FIRST_CONNECT) {
             for (ScannerDevice scanner : scanners) {
                 if(!scanner.isConnected()) {
-                    LOGGER.error(scanner.getScannerType() + " Failed to Connect");
+                    log.failure(scanner.getScannerType() + " Failed to Connect", 17, null);
                 }
             }
             connectStatus = ConnectEnum.CHECK_HEALTH;
@@ -85,37 +87,45 @@ public class ScannerManager {
             }
             for(Future<Boolean> result: results) {
                 if(!result.get()) {
-                    LOGGER.error("Failed to reconnect scanner.");
+                    log.failure("Failed to reconnect scanner.", 17, null);
                     throw new DeviceException(DeviceError.DEVICE_OFFLINE);
                 }
             }
         } catch (ExecutionException exception) {
-            DeviceException deviceException = (DeviceException) exception.getCause();
-            throw deviceException;
+            Throwable cause = exception.getCause();
+            if (cause instanceof DeviceException) {
+                throw (DeviceException) cause;
+            } else {
+                log.failure("Unexpected execution exception during reconnectScanners: " + exception.getMessage(), 17, exception);
+                throw new DeviceException(DeviceError.UNEXPECTED_ERROR);
+            }
         } catch (InterruptedException interruptedException) {
+            log.failure("Interrupted while reconnecting scanners", 17, interruptedException);
             throw new DeviceException(DeviceError.UNEXPECTED_ERROR);
         } finally {
-            executor.shutdown();
+            if (executor != null) {
+                executor.shutdown();
+            }
         }
     }
 
     Barcode getData(ScannerType scannerType) throws ScannerException {
-        LOGGER.trace("getData(in)");
+        log.success("getData(in)", 1);
         if (!scannerLock.tryLock()) {
             ScannerException scannerException = new ScannerException(ScannerError.DEVICE_BUSY);
-            LOGGER.trace("getData(out)");
+            log.success("getData(out) - device busy", 1);
             throw scannerException;
         }
         try {
             return enableScanners(scannerType);
         } finally {
             scannerLock.unlock();
-            LOGGER.trace("getData(out)");
+            log.success("getData(out)", 1);
         }
     }
 
     private Barcode enableScanners(ScannerType scannerType) throws ScannerException {
-        LOGGER.trace("enableScanners(in)");
+        log.success("enableScanners(in)", 1);
         List<Callable<Barcode>> taskList = new ArrayList<>();
         for (ScannerDevice scanner : scanners) {
             switch (scannerType.name()) {
@@ -142,27 +152,29 @@ public class ScannerManager {
             if (cause instanceof JposException) {
                 scannerException = new ScannerException((JposException) cause);
             } else {
-                LOGGER.error("Exception occurred: " + exception.getMessage());
+                log.failure("Exception occurred in enableScanners: " + exception.getMessage(), 17, exception);
                 scannerException = new ScannerException(ScannerError.UNEXPECTED_ERROR);
             }
-            LOGGER.debug("enableScanners(): " + scannerException.getDeviceError().getDescription());
-            LOGGER.trace("enableScanners(out)");
+            log.success("enableScanners(): " + scannerException.getDeviceError().getDescription(), 1);
+            log.success("enableScanners(out)", 1);
             throw scannerException;
         }
         finally {
-            LOGGER.trace("enableScanners(out)");
-            executor.shutdown();
+            log.success("enableScanners(out)", 1);
+            if (executor != null) {
+                executor.shutdown();
+            }
         }
     }
 
     void cancelScanRequest() throws ScannerException {
-        LOGGER.trace("cancelScanRequest(in)");
+        log.success("cancelScanRequest(in)", 1);
         //This makes sure no new scan data requests come in while we are cancelling
         if (scannerLock.tryLock()) {
             //Nothing to disable
             try {
                 ScannerException scannerException = new ScannerException(ScannerError.ALREADY_DISABLED);
-                LOGGER.trace("cancelScanRequest(out)");
+                log.success("cancelScanRequest(out) - already disabled", 1);
                 throw scannerException;
             } finally {
                 scannerLock.unlock();
@@ -172,16 +184,16 @@ public class ScannerManager {
             disableScanners();
         } catch (InterruptedException exception) {
             ScannerException scannerException = new ScannerException(ScannerError.UNEXPECTED_ERROR);
-            LOGGER.trace("cancelScanRequest(out)");
+            log.failure("Interrupted while cancelling scan request", 17, exception);
             throw scannerException;
         } catch (Exception exception) {
-            LOGGER.error("Error in cancelScanRequest: " + exception.getMessage());
+            log.failure("Error in cancelScanRequest: " + exception.getMessage(), 17, exception);
         }
-        LOGGER.trace("cancelScanRequest(out)");
+        log.success("cancelScanRequest(out)", 1);
     }
 
     public List<DeviceHealthResponse> getHealth(ScannerType scannerType) {
-        LOGGER.trace("getHealth(in)");
+        log.success("getHealth(in)", 1);
         List<DeviceHealthResponse> response = new ArrayList<>();
         for (ScannerDevice scanner : scanners) {
             switch (scannerType.name()) {
@@ -206,9 +218,9 @@ public class ScannerManager {
         try {
             Objects.requireNonNull(cacheManager.getCache("scannerHealth")).put("health", response);
         } catch (Exception exception) {
-            LOGGER.error("getCache(scannerHealth) Failed: " + exception.getMessage());
+            log.failure("getCache(scannerHealth) Failed: " + exception.getMessage(), 17, exception);
         }
-        LOGGER.trace("getHealth(out)");
+        log.success("getHealth(out)", 1);
         return response;
     }
 
@@ -219,12 +231,14 @@ public class ScannerManager {
                     connectStatus = ConnectEnum.HEALTH_UPDATED;
                     return getHealth(ScannerType.BOTH);
                 }
+                log.success("Returning cached scanner health status", 9);
                 return (List<DeviceHealthResponse>) Objects.requireNonNull(cacheManager.getCache("scannerHealth")).get("health").get();
             } else {
-                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+                log.success("Not able to retrieve from cache, checking getHealth()", 6);
                 return getHealth(ScannerType.BOTH);
             }
         } catch (Exception exception) {
+            log.failure("Error retrieving scanner status from cache, falling back to getHealth()", 17, exception);
             return getHealth(ScannerType.BOTH);
         }
     }
@@ -240,7 +254,7 @@ public class ScannerManager {
                     }
                     break;
                 default:
-                   scannerName = "";
+                    scannerName = "";
             }
         }
         for(DeviceHealthResponse deviceHealthResponse: getStatus()) {
@@ -252,7 +266,7 @@ public class ScannerManager {
     }
 
     private void disableScanners() throws InterruptedException {
-        LOGGER.trace("disableScanners(in)");
+        log.success("disableScanners(in)", 1);
         List<Callable<Void>> taskList = new ArrayList<>();
         try {
             scanners.forEach(scanner -> taskList.add(scanner::cancelScannerData));
@@ -264,6 +278,6 @@ public class ScannerManager {
         } catch (InterruptedException interruptedException) {
             throw interruptedException;
         }
-        LOGGER.trace("disableScanner(out)");
+        log.success("disableScanner(out)", 1);
     }
 }
