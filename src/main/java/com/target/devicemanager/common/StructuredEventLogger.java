@@ -12,9 +12,6 @@ public final class StructuredEventLogger {
     private static final StackWalker STACK_WALKER =
             StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
-    private static final String DEFAULT_OK_BODY = "OK";
-    private static final int DEFAULT_OK_STATUS = 200;
-
     public StructuredEventLogger(String serviceName, String component, Logger logger) {
         this.serviceName = serviceName;
         this.component = component;
@@ -79,6 +76,7 @@ public final class StructuredEventLogger {
         emitBySeverity(b, severity);
     }
 
+    // TODO: do we need this?
     public void failureWithTag(String message, int severity, Throwable t, String tag) {
         LogPayloadBuilder b = base(inferCallerMethodName(), "failure", severity)
                 .add(LogField.MESSAGE, message)

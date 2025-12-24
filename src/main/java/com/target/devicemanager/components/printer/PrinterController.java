@@ -63,7 +63,7 @@ public class PrinterController {
         try {
             if (contents.size() < PRINT_CONTENT_SIZE) {
                 printerManager.printReceipt(contents);
-                log.successAPI("API Request Completed Successfully", 9, url, null, 0);
+                log.successAPI("API Request Completed Successfully", 9, url, "OK", 200);
             } else {
                 log.failure("Printer print content more than expected limit", 17, null);
                 throw new DeviceException(PrinterError.INVALID_FORMAT);
@@ -78,10 +78,9 @@ public class PrinterController {
     @GetMapping(path = "/printer/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/printer/health";
+        log.successAPI("API Request Received", 9,url, null, 0);
         DeviceHealthResponse response = printerManager.getHealth();
         log.successAPI("API Request Completed Successfully", 9, url, response.toString(), 200);
-        log.success("healthStatus=" + response.getHealthStatus().toString(), 9);
-
         return response;
     }
 
@@ -92,7 +91,6 @@ public class PrinterController {
         log.success("API Request Received", 9);
         DeviceHealthResponse response = printerManager.getStatus();
         log.successAPI("API Request Completed Successfully", 9, url, response.toString(), 200);
-        log.success("healthStatus=" + response.getHealthStatus().toString(), 9);
         return response;
     }
 
