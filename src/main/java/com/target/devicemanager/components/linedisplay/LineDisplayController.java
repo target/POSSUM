@@ -29,7 +29,6 @@ public class LineDisplayController {
     @Autowired
     public LineDisplayController(LineDisplayManager lineDisplayManager) {
         if (lineDisplayManager == null) {
-            log.failure("lineDisplayManager cannot be null", 17, new IllegalArgumentException("lineDisplayManager cannot be null"));
             throw new IllegalArgumentException("lineDisplayManager cannot be null");
         }
         this.lineDisplayManager = lineDisplayManager;

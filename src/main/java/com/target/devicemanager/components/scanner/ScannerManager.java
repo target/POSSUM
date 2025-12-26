@@ -92,15 +92,9 @@ public class ScannerManager {
                 }
             }
         } catch (ExecutionException exception) {
-            Throwable cause = exception.getCause();
-            if (cause instanceof DeviceException) {
-                throw (DeviceException) cause;
-            } else {
-                log.failure("Unexpected execution exception during reconnectScanners: " + exception.getMessage(), 17, exception);
-                throw new DeviceException(DeviceError.UNEXPECTED_ERROR);
-            }
+            DeviceException deviceException = (DeviceException) exception.getCause();
+            throw deviceException;
         } catch (InterruptedException interruptedException) {
-            log.failure("Interrupted while reconnecting scanners", 17, interruptedException);
             throw new DeviceException(DeviceError.UNEXPECTED_ERROR);
         } finally {
             if (executor != null) {
@@ -160,7 +154,6 @@ public class ScannerManager {
             throw scannerException;
         }
         finally {
-            log.success("enableScanners(out)", 1);
             if (executor != null) {
                 executor.shutdown();
             }
@@ -231,14 +224,12 @@ public class ScannerManager {
                     connectStatus = ConnectEnum.HEALTH_UPDATED;
                     return getHealth(ScannerType.BOTH);
                 }
-                log.success("Returning cached scanner health status", 9);
                 return (List<DeviceHealthResponse>) Objects.requireNonNull(cacheManager.getCache("scannerHealth")).get("health").get();
             } else {
                 log.success("Not able to retrieve from cache, checking getHealth()", 6);
                 return getHealth(ScannerType.BOTH);
             }
         } catch (Exception exception) {
-            log.failure("Error retrieving scanner status from cache, falling back to getHealth()", 17, exception);
             return getHealth(ScannerType.BOTH);
         }
     }

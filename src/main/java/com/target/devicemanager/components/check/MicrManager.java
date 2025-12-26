@@ -41,7 +41,6 @@ public class MicrManager implements MicrEventListener, ConnectionEventListener {
 
     public MicrManager(MicrDevice micrDevice, CacheManager cacheManager, CompletableFuture<MicrData> micrDataClient) {
         if (micrDevice == null) {
-            log.failure("micrDevice cannot be null", 17, new IllegalArgumentException("micrDevice cannot be null"));
             throw new IllegalArgumentException("micrDevice cannot be null");
         }
         this.micrDevice = micrDevice;
@@ -170,7 +169,6 @@ public class MicrManager implements MicrEventListener, ConnectionEventListener {
                 return getHealth();
             }
         } catch (Exception exception) {
-            log.failure("getStatus() failed, falling back to getHealth()", 13, exception);
             return getHealth();
         }
     }

@@ -129,7 +129,6 @@ public class ScannerDevice {
             DataEvent dataEvent = deviceListener.waitForData();
             return handleDataEvent(dataEvent);
         } catch (JposException jposException) {
-            log.failure(getScannerType() + " getScannerData: exception waiting for data", 17, jposException);
             throw jposException;
         }
     }

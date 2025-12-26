@@ -51,15 +51,12 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
 
     public ScaleManager(ScaleDevice scaleDevice, List<SseEmitter> liveWeightClients, List<CompletableFuture<FormattedWeight>> stableWeightClients, CacheManager cacheManager, List<SseEmitter> deadEmitterList) {
         if (scaleDevice == null) {
-            log.failure("scaleDevice cannot be null", 17, new IllegalArgumentException("scaleDevice cannot be null"));
             throw new IllegalArgumentException("scaleDevice cannot be null");
         }
         if (liveWeightClients == null) {
-            log.failure("liveWeightClients cannot be null", 17, new IllegalArgumentException("liveWeightClients cannot be null"));
             throw new IllegalArgumentException("liveWeightClients cannot be null");
         }
         if (stableWeightClients == null) {
-            log.failure("stableWeightClients cannot be null", 17, new IllegalArgumentException("stableWeightClients cannot be null"));
             throw new IllegalArgumentException("stableWeightClients cannot be null");
         }
         this.scaleDevice = scaleDevice;
@@ -216,7 +213,6 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
                 return getHealth();
             }
         } catch (Exception exception) {
-            log.failure("getStatus() failed, falling back to getHealth()", 13, exception);
             return getHealth();
         }
     }

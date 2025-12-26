@@ -36,11 +36,9 @@ public class CashDrawerManager {
 
     public CashDrawerManager(CashDrawerDevice cashDrawerDevice, Lock cashDrawerLock, CacheManager cacheManager) {
         if (cashDrawerDevice == null) {
-            log.failure("cashDrawerDevice cannot be null", 17, new IllegalArgumentException("cashDrawerDevice cannot be null"));
             throw new IllegalArgumentException("cashDrawerDevice cannot be null");
         }
         if (cashDrawerLock == null) {
-            log.failure("cashDrawerLock cannot be null", 17, new IllegalArgumentException("cashDrawerLock cannot be null"));
             throw new IllegalArgumentException("cashDrawerLock cannot be null");
         }
         this.cashDrawerDevice = cashDrawerDevice;
@@ -127,7 +125,6 @@ public class CashDrawerManager {
                 return getHealth();
             }
         } catch (Exception exception) {
-            log.failure("getStatus() failed, falling back to getHealth()", 13, exception);
             return getHealth();
         }
     }

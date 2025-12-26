@@ -35,7 +35,6 @@ public class LineDisplayManager implements ConnectionEventListener {
 
     public LineDisplayManager(LineDisplayDevice lineDisplayDevice, CacheManager cacheManager) {
         if (lineDisplayDevice == null) {
-            log.failure("lineDisplayDevice cannot be null", 17, new IllegalArgumentException("lineDisplayDevice cannot be null"));
             throw new IllegalArgumentException("lineDisplayDevice cannot be null");
         }
         this.lineDisplayDevice = lineDisplayDevice;
@@ -127,7 +126,6 @@ public class LineDisplayManager implements ConnectionEventListener {
                 return getHealth();
             }
         } catch (Exception exception) {
-            log.failure("getStatus() failed, falling back to getHealth()", 13, exception);
             return getHealth();
         }
     }

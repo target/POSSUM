@@ -43,7 +43,6 @@ public class MicrController {
     @Autowired
     public MicrController(PrinterManager printerManager, MicrManager micrManager) {
         if (printerManager == null) {
-            log.failure("printerManager cannot be null", 17, new IllegalArgumentException("printerManager cannot be null"));
             throw new IllegalArgumentException("printerManager cannot be null");
         }
         if(micrManager == null){
@@ -152,7 +151,6 @@ public class MicrController {
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity<DeviceError> handleInvalidFormat(HttpMessageNotReadableException originalException) {
         String url = "/v1/check";
-        log.failureAPI("Invalid request format", 13, url, originalException.getMessage(), 400, originalException);
         DeviceException printerException = new DeviceException(PrinterError.INVALID_FORMAT);
         return new ResponseEntity<>(printerException.getDeviceError(), printerException.getDeviceError().getStatusCode());
     }
@@ -173,7 +171,6 @@ public class MicrController {
         String url = "/v1/check/healthstatus";
         log.successAPI("request", 9, url, null, 0);
         DeviceHealthResponse response = micrManager.getStatus();
-        log.successAPI("response", 9, url, response.toString(), 200);
         return response;
     }
 }

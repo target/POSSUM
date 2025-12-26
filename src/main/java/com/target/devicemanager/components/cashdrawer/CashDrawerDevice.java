@@ -1,9 +1,9 @@
 package com.target.devicemanager.components.cashdrawer;
 
-import com.target.devicemanager.common.DeviceListener;
 import com.target.devicemanager.common.DynamicDevice;
 import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.DeviceException;
+import com.target.devicemanager.common.DeviceListener;
 import com.target.devicemanager.components.cashdrawer.entities.CashDrawerError;
 import jpos.CashDrawer;
 import jpos.CashDrawerConst;
@@ -84,7 +84,6 @@ public class CashDrawerDevice implements StatusUpdateListener{
                     deviceConnected = true;
                 }
             } catch (JposException jposException) {
-                log.failure("Cash Drawer connect() failed while enabling device", 17, jposException);
                 deviceConnected = false;
                 return false;
             }

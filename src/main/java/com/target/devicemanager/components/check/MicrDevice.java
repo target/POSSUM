@@ -131,7 +131,6 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
                 fireConnectionEvent(true);
             }
         } catch (JposException jposException) {
-            log.failure("connect() failed", 17, jposException);
             return false;
         }
         return true;

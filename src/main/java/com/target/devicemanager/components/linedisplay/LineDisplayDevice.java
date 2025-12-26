@@ -85,12 +85,11 @@ public class LineDisplayDevice implements StatusUpdateListener {
                 lineDisplay.setDeviceEnabled(true);
             }
             //First connection, fire the event and clear the screen
-            if (connectionResult == DynamicDevice.ConnectionResult.CONNECTED) {
+            if(connectionResult == DynamicDevice.ConnectionResult.CONNECTED) {
                 lineDisplay.clearText();
                 fireConnectionEvent(true);
             }
         } catch (JposException jposException) {
-            log.failure("connect() failed", 17, jposException);
             return false;
         }
         return true;
@@ -136,7 +135,6 @@ public class LineDisplayDevice implements StatusUpdateListener {
                 lineDisplay.displayTextAt(1, 0, line2Text, LineDisplayConst.DISP_DT_NORMAL);
             }
         } catch (JposException jposException) {
-            // Severity: error when connected, trace when we're already disconnected.
             int severity = isConnected() ? 17 : 1;
             log.failure("displayLine() failed", severity, jposException);
             throw jposException;

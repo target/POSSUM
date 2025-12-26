@@ -33,7 +33,6 @@ public class CashDrawerController {
     @Autowired
     public CashDrawerController(CashDrawerManager cashDrawerManager) {
         if (cashDrawerManager == null) {
-            log.failure("cashDrawerManager cannot be null", 17, new IllegalArgumentException("cashDrawerManager cannot be null"));
             throw new IllegalArgumentException("cashDrawerManager cannot be null");
         }
         this.cashDrawerManager = cashDrawerManager;

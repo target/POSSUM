@@ -207,12 +207,8 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                     weight = new int[1];
                     return;
                 } catch (JposException jposException) {
-                    int severity = isConnected() ? 1 : 1;
-                    log.failure(isConnected()
-                                    ? "Scale Failed to Read Stable Weight"
-                                    : "Scale not connected in Read Stable Weight",
-                            severity,
-                            jposException);
+                    int severity = isConnected() ? 17 : 1;
+                    log.failure(isConnected() ? "Scale Failed to Read Stable Weight" : "Scale not connected in Read Stable Weight", severity, jposException);
                     if(jposException.getErrorCode() != JposConst.JPOS_E_TIMEOUT) {
                         fireScaleWeightErrorEvent(jposException);
                         stableWeightInProgress = false;
@@ -248,7 +244,6 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                     int scaleWeight = theScale.getScaleLiveWeight();
                     fireScaleLiveWeightEvent(new FormattedWeight(scaleWeight));
                 } catch (JposException jposException) {
-                    log.failure("getScaleLiveWeight() failed", 13, jposException);
                     fireScaleLiveWeightEvent(new FormattedWeight());
                 }
                 break;
