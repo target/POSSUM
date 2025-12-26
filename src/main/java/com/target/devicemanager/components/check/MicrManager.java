@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.check;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.common.events.ConnectionEvent;
 import com.target.devicemanager.common.events.ConnectionEventListener;
@@ -32,6 +33,7 @@ public class MicrManager implements MicrEventListener, ConnectionEventListener {
     private CompletableFuture<MicrData> micrDataClient = null;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(MicrManager.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Check", "MicrManager", LOGGER);
 
     public MicrManager(MicrDevice micrDevice) {
         this(micrDevice, null, null);
@@ -39,6 +41,7 @@ public class MicrManager implements MicrEventListener, ConnectionEventListener {
 
     public MicrManager(MicrDevice micrDevice, CacheManager cacheManager, CompletableFuture<MicrData> micrDataClient) {
         if (micrDevice == null) {
+            log.failure("micrDevice cannot be null", 17, new IllegalArgumentException("micrDevice cannot be null"));
             throw new IllegalArgumentException("micrDevice cannot be null");
         }
         this.micrDevice = micrDevice;
@@ -115,21 +118,24 @@ public class MicrManager implements MicrEventListener, ConnectionEventListener {
             micrDevice.withdrawCheck();
         } catch (JposException exception) {
             MicrException micrException = new MicrException(exception);
-            LOGGER.warn(micrException.getDeviceError().getDescription(), micrException);
+            log.failure(micrException.getDeviceError().getDescription(), 13, micrException);
         }
     }
 
     @Override
     public void micrDataEventOccurred(MicrDataEvent micrDataEvent) {
-        LOGGER.debug("micrDataEventOccurred()");
-        this.micrDataClient.complete(micrDataEvent.getMicrData());
-
+        log.success("micrDataEventOccurred()", 5);
+        if (this.micrDataClient != null) {
+            this.micrDataClient.complete(micrDataEvent.getMicrData());
+        }
     }
 
     @Override
     public void micrErrorEventOccurred(MicrErrorEvent micrErrorEvent) {
-        LOGGER.debug("micrErrorEventOccurred(): " + micrErrorEvent.getError());
-        this.micrDataClient.completeExceptionally(micrErrorEvent.getError());
+        log.success("micrErrorEventOccurred(): " + micrErrorEvent.getError(), 5);
+        if (this.micrDataClient != null) {
+            this.micrDataClient.completeExceptionally(micrErrorEvent.getError());
+        }
     }
 
     @Override
@@ -146,7 +152,7 @@ public class MicrManager implements MicrEventListener, ConnectionEventListener {
         try {
             Objects.requireNonNull(cacheManager.getCache("micrHealth")).put("health", deviceHealthResponse);
         } catch (Exception exception) {
-            LOGGER.error("getCache(micrHealth) Failed: " + exception.getMessage());
+            log.failure("getCache(micrHealth) Failed", 17, exception);
         }
         return deviceHealthResponse;
     }
@@ -160,12 +166,12 @@ public class MicrManager implements MicrEventListener, ConnectionEventListener {
                 }
                 return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("micrHealth")).get("health").get();
             } else {
-                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+                log.success("Not able to retrieve from cache, checking getHealth()", 5);
                 return getHealth();
             }
         } catch (Exception exception) {
+            log.failure("getStatus() failed, falling back to getHealth()", 13, exception);
             return getHealth();
         }
     }
 }
-

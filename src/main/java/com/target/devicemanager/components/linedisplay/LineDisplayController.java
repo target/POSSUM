@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.linedisplay;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealthResponse;
@@ -24,10 +25,11 @@ public class LineDisplayController {
 
     private final LineDisplayManager lineDisplayManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(LineDisplayController.class);
-
+    private static final StructuredEventLogger log = StructuredEventLogger.of("LineDisplay", "LineDisplayController", LOGGER);
     @Autowired
     public LineDisplayController(LineDisplayManager lineDisplayManager) {
         if (lineDisplayManager == null) {
+            log.failure("lineDisplayManager cannot be null", 17, new IllegalArgumentException("lineDisplayManager cannot be null"));
             throw new IllegalArgumentException("lineDisplayManager cannot be null");
         }
         this.lineDisplayManager = lineDisplayManager;
@@ -43,12 +45,13 @@ public class LineDisplayController {
     })
     public void displayLines(@RequestBody LineDisplayData data) throws DeviceException {
         String url = "/v1/linedisplay/display";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         try {
             lineDisplayManager.displayLine(data.line1, data.line2);
-            LOGGER.info("response: " + url + " - 200 OK");
+            log.successAPI("response", 9, url, null, 200);
         } catch (DeviceException deviceException) {
-            LOGGER.info("response: " + url + " - " + deviceException.getDeviceError().getStatusCode().toString() + ", " + deviceException.getDeviceError());
+            int statusCode = deviceException.getDeviceError().getStatusCode().value();
+            log.failureAPI("response", 13, url, deviceException.getDeviceError().toString(), statusCode, deviceException);
             throw deviceException;
         }
     }
@@ -57,9 +60,9 @@ public class LineDisplayController {
     @GetMapping(path = "/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/linedisplay/health";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         DeviceHealthResponse response = lineDisplayManager.getHealth();
-        LOGGER.info("response: " + url + " - " + response.toString());
+        log.successAPI("response", 9, url, response.toString(), 200);
         return response;
     }
 
@@ -67,9 +70,9 @@ public class LineDisplayController {
     @GetMapping(path = "/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/linedisplay/healthstatus";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         DeviceHealthResponse response = lineDisplayManager.getStatus();
-        LOGGER.info("response: " + url + " - " + response.toString());
+        log.successAPI("response", 9, url, response.toString(), 200);
         return response;
     }
 
@@ -82,12 +85,13 @@ public class LineDisplayController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/linedisplay/reconnect";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         try {
             lineDisplayManager.reconnectDevice();
-            LOGGER.info("response: " + url + " - 200 OK");
+            log.successAPI("response", 9, url, null, 200);
         } catch (DeviceException deviceException) {
-            LOGGER.info("response: " + url + " - " + deviceException.getDeviceError().getStatusCode().toString() + ", " + deviceException.getDeviceError());
+            int statusCode = deviceException.getDeviceError().getStatusCode().value();
+            log.failureAPI("response", 13, url, deviceException.getDeviceError().toString(), statusCode, deviceException);
             throw deviceException;
         }
     }

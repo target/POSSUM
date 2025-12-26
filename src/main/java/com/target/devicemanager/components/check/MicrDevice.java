@@ -1,6 +1,7 @@
 package com.target.devicemanager.components.check;
 
 import com.target.devicemanager.common.DynamicDevice;
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.events.ConnectionEvent;
 import com.target.devicemanager.common.events.ConnectionEventListener;
 import com.target.devicemanager.components.check.entities.MicrData;
@@ -13,8 +14,6 @@ import jpos.MICR;
 import jpos.events.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +29,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
     private final ReentrantLock connectLock;
     private boolean isLocked = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(MicrDevice.class);
-    private static final Marker MARKER = MarkerFactory.getMarker("FATAL");
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Check", "MicrDevice", LOGGER);
 
     /**
      * Initializes the MicrDevice.
@@ -44,15 +43,18 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
 
     public MicrDevice(DynamicDevice<? extends MICR> dynamicMICR, List<ConnectionEventListener> connectionEventListeners, List<MicrEventListener> micrEventListeners, ReentrantLock connectLock) {
         if (dynamicMICR == null) {
-            LOGGER.error(MARKER, "Check Reader Failed in Constructor: dynamicMICR cannot be null");
+            log.failure("Check Reader Failed in Constructor: dynamicMICR cannot be null", 17,
+                    new IllegalArgumentException("dynamicMICR cannot be null"));
             throw new IllegalArgumentException("dynamicMICR cannot be null");
         }
         if (connectionEventListeners == null) {
-            LOGGER.error(MARKER, "Check Reader Failed in Constructor: connectionEventListeners cannot be null");
+            log.failure("Check Reader Failed in Constructor: connectionEventListeners cannot be null", 17,
+                    new IllegalArgumentException("connectionEventListeners cannot be null"));
             throw new IllegalArgumentException("connectionEventListeners cannot be null");
         }
         if (micrEventListeners == null) {
-            LOGGER.error(MARKER, "Check Reader Failed in Constructor: micrEventListeners cannot be null");
+            log.failure("Check Reader Failed in Constructor: micrEventListeners cannot be null", 17,
+                    new IllegalArgumentException("micrEventListeners cannot be null"));
             throw new IllegalArgumentException("micrEventListeners cannot be null");
         }
         this.dynamicMicr = dynamicMICR;
@@ -129,6 +131,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
                 fireConnectionEvent(true);
             }
         } catch (JposException jposException) {
+            log.failure("connect() failed", 17, jposException);
             return false;
         }
         return true;
@@ -150,7 +153,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
                 dynamicMicr.disconnect();
                 fireConnectionEvent(false);
             } catch (JposException jposException) {
-                LOGGER.error("Check Reader Failed to Disconnect Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                log.failure("Check Reader Failed to Disconnect Device", 17, jposException);
             }
         }
     }
@@ -167,7 +170,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
      * begins check insertion process.
      */
     void insertCheck() throws MicrException {
-        LOGGER.debug("waiting for check to be inserted...");
+        log.success("waiting for check to be inserted...", 5);
         /*
         We are waiting for the check to be inserted. There are only 3 ways to get out of this black hole
         1. CHECK is inserted
@@ -185,7 +188,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
 
                 } catch (JposException jposException) {
                     if (jposException.getErrorCode() != JposConst.JPOS_E_TIMEOUT) {
-                        LOGGER.error(MARKER, "Check Reader Failed to Insert Check: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                        log.failure("Check Reader Failed to Insert Check", 17, jposException);
                         this.micrEventListeners.forEach(listener -> listener
                                 .micrErrorEventOccurred(new MicrErrorEvent(this, jposException)));
                         setCheckCancelReceived(true);
@@ -210,7 +213,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
      * @throws JposException
      */
     public void withdrawCheck() throws JposException {
-        LOGGER.debug("withdraw check");
+        log.success("withdraw check", 5);
         try {
             MICR micr;
             synchronized (micr = dynamicMicr.getDevice()) {
@@ -218,7 +221,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
                 micr.endRemoval();
             }
         } catch (JposException jposException) {
-            LOGGER.error(MARKER, "Check Reader Failed to Remove Check: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            log.failure("Check Reader Failed to Remove Check", 17, jposException);
             throw jposException;
         }
     }
@@ -244,13 +247,13 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
      * @param statusUpdateEvent
      */
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
-        LOGGER.debug("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
+        log.success("statusUpdateOccurred(): " + statusUpdateEvent.getStatus(), 1);
         int status = statusUpdateEvent.getStatus();
         switch (status) {
             case JposConst.JPOS_SUE_POWER_OFF:
             case JposConst.JPOS_SUE_POWER_OFF_OFFLINE:
             case JposConst.JPOS_SUE_POWER_OFFLINE:
-                LOGGER.error(MARKER, "Check Reader Status Update: Power offline");
+                log.failure("Check Reader Status Update: Power offline", 13, null);
                 disconnect();
                 break;
             case JposConst.JPOS_SUE_POWER_ONLINE:
@@ -267,11 +270,11 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
      */
     public void errorOccurred(ErrorEvent errorEvent) {
         JposException jposException = new JposException(errorEvent.getErrorCode(), errorEvent.getErrorCodeExtended());
-        LOGGER.error(MARKER, "Check Reader Received an Error: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
-        LOGGER.debug("errorOccurred(): errCode=" + errorEvent.getErrorCode()
+        log.failure("Check Reader Received an Error", 17, jposException);
+        log.success("errorOccurred(): errCode=" + errorEvent.getErrorCode()
                 + " errCodeExt=" + errorEvent.getErrorCodeExtended()
                 + " errLocus=" + errorEvent.getErrorLocus()
-                + " errResponse=" + errorEvent.getErrorResponse());
+                + " errResponse=" + errorEvent.getErrorResponse(), 5);
         fireMicrErrorEvent(jposException);
     }
 
@@ -280,7 +283,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
      * @param dataEvent
      */
     public void dataOccurred(DataEvent dataEvent) {
-        LOGGER.debug("dataOccurred(): " + dataEvent.getStatus());
+        log.success("dataOccurred(): " + dataEvent.getStatus(), 1);
         try {
             MICR micr = (MICR) dataEvent.getSource();
             MicrData micrData = new MicrData(
@@ -293,7 +296,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
             micr.clearInput();
 
         } catch (JposException jposException) {
-            LOGGER.error(MARKER, "Check Reader Received an Error in Data: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            log.failure("Check Reader Received an Error in Data", 17, jposException);
             fireMicrErrorEvent(jposException);
         }
 

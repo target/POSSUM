@@ -1,8 +1,9 @@
 package com.target.devicemanager.components.cashdrawer;
 
-import com.target.devicemanager.common.DynamicDevice;
-import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.DeviceListener;
+import com.target.devicemanager.common.DynamicDevice;
+import com.target.devicemanager.common.StructuredEventLogger;
+import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.components.cashdrawer.entities.CashDrawerError;
 import jpos.CashDrawer;
 import jpos.CashDrawerConst;
@@ -12,8 +13,6 @@ import jpos.events.StatusUpdateEvent;
 import jpos.events.StatusUpdateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.context.annotation.Profile;
 
 import java.util.concurrent.TimeUnit;
@@ -30,8 +29,8 @@ public class CashDrawerDevice implements StatusUpdateListener{
     private boolean isLocked = false;
     private static final int DRAWER_STATUS_CHECK_INTERVAL = 500;
     private static final Logger LOGGER = LoggerFactory.getLogger(CashDrawerDevice.class);
-    private static final Marker MARKER = MarkerFactory.getMarker("FATAL");
-   
+    private static final StructuredEventLogger log = StructuredEventLogger.of("CashDrawer", "CashDrawerDevice", LOGGER);
+
     /**
      * Makes sure everything is connected and online.
      * @param dynamicCashDrawer
@@ -43,11 +42,13 @@ public class CashDrawerDevice implements StatusUpdateListener{
 
     public CashDrawerDevice(DynamicDevice<? extends CashDrawer> dynamicCashDrawer, DeviceListener deviceListener, ReentrantLock connectLock) {
         if (dynamicCashDrawer == null) {
-            LOGGER.error(MARKER, "Cash Drawer Failed in Constructor: simpleCashDrawer cannot be null");
+            log.failure("Cash Drawer Failed in Constructor: simpleCashDrawer cannot be null", 17,
+                    new IllegalArgumentException("simpleCashDrawer cannot be null"));
             throw new IllegalArgumentException("simpleCashDrawer cannot be null");
         }
         if (deviceListener == null) {
-            LOGGER.error(MARKER, "Cash Drawer Failed in Constructor: deviceListener cannot be null");
+            log.failure("Cash Drawer Failed in Constructor: deviceListener cannot be null", 17,
+                    new IllegalArgumentException("deviceListener cannot be null"));
             throw new IllegalArgumentException("deviceListener cannot be null");
         }
         this.dynamicCashDrawer = dynamicCashDrawer;
@@ -83,6 +84,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
                     deviceConnected = true;
                 }
             } catch (JposException jposException) {
+                log.failure("Cash Drawer connect() failed while enabling device", 17, jposException);
                 deviceConnected = false;
                 return false;
             }
@@ -148,7 +150,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
                         deviceConnected = false;
                     }
                 } catch (JposException jposException) {
-                    LOGGER.error(MARKER, "Cash Drawer Failed to Disconnect: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                    log.failure("Cash Drawer Failed to Disconnect", 17, jposException);
                 }
             }
         }
@@ -168,7 +170,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
                     deviceConnected = true;
                 }
             } catch (JposException jposException) {
-                LOGGER.error(MARKER, "Cash Drawer Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+                log.failure("Cash Drawer Failed to Enable Device", 17, jposException);
                 deviceConnected = false;
             }
         }
@@ -186,14 +188,14 @@ public class CashDrawerDevice implements StatusUpdateListener{
         CashDrawer cashDrawer;
         synchronized (cashDrawer = dynamicCashDrawer.getDevice()) {
             if (cashDrawerOpen) {
-                LOGGER.error(MARKER, "Cash Drawer is already open: " + CashDrawerError.ALREADY_OPEN.getDescription());
+                log.failure("Cash Drawer is already open: " + CashDrawerError.ALREADY_OPEN.getDescription(), 17, null);
                 throw new DeviceException(CashDrawerError.ALREADY_OPEN);
             }
-            LOGGER.info("Opening cash drawer...");
+            log.success("Opening cash drawer...", 9);
             cashDrawer.openDrawer();
             waitForCashDrawerClose();
             if(!deviceConnected) {
-                LOGGER.error(MARKER, "Cash Drawer is offline after closing: " + CashDrawerError.DEVICE_OFFLINE.getDescription());
+                log.failure("Cash Drawer is offline after closing: " + CashDrawerError.DEVICE_OFFLINE.getDescription(), 17, null);
                 throw new DeviceException(CashDrawerError.DEVICE_OFFLINE);
             }
         }
@@ -206,7 +208,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
     private void enable() throws JposException {
         if (!isConnected()) {
             JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
-            LOGGER.error(MARKER, "Cash Drawer is not connected: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
+            log.failure("Cash Drawer is not connected", 17, jposException);
             throw jposException;
         }
         deviceListener.startEventListeners();
@@ -249,7 +251,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
      * Waits for CashDrawer to close or check interval.
      */
     private void waitForCashDrawerClose() {
-        LOGGER.info("Waiting for cash drawer to close...");
+        log.success("Waiting for cash drawer to close...", 9);
         //This do/while is necessary for status to stabilize when cash drawer opens
         do {
             try {
@@ -268,25 +270,24 @@ public class CashDrawerDevice implements StatusUpdateListener{
     @Override
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
         int status = statusUpdateEvent.getStatus();
-        LOGGER.trace("Cash Drawer statusUpdateOccurred(): " + status);
+        log.success("Cash Drawer statusUpdateOccurred(): " + status, 1);
         switch(status) {
             case JposConst.JPOS_SUE_POWER_OFF:
             case JposConst.JPOS_SUE_POWER_OFF_OFFLINE:
             case JposConst.JPOS_SUE_POWER_OFFLINE:
-                LOGGER.error(MARKER, "Cash Drawer Status Update: Power offline");
-                LOGGER.debug("Status Update: Power offline");
+                log.failure("Cash Drawer Status Update: Power offline", 13, null);
                 deviceConnected = false;
                 break;
             case JposConst.JPOS_SUE_POWER_ONLINE:
-                LOGGER.debug("Status Update: Power online");
+                log.success("Status Update: Power online", 5);
                 deviceConnected = true;
                 break;
             case CashDrawerConst.CASH_SUE_DRAWEROPEN:
-                LOGGER.info("Cash drawer opened");
+                log.success("Cash drawer opened", 9);
                 cashDrawerOpen = true;
                 break;
             case CashDrawerConst.CASH_SUE_DRAWERCLOSED:
-                LOGGER.info("Cash drawer closed");
+                log.success("Cash drawer closed", 9);
                 cashDrawerOpen = false;
                 break;
             default:
@@ -301,9 +302,9 @@ public class CashDrawerDevice implements StatusUpdateListener{
     public boolean tryLock() {
         try {
             isLocked = connectLock.tryLock(10, TimeUnit.SECONDS);
-            LOGGER.trace("Lock: " + isLocked);
+            log.success("Lock: " + isLocked, 1);
         } catch(InterruptedException interruptedException) {
-            LOGGER.error("Lock Failed: " + interruptedException.getMessage());
+            log.failure("Lock Failed", 17, interruptedException);
         }
         return isLocked;
     }
