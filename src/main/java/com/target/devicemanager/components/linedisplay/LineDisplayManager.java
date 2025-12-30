@@ -79,7 +79,7 @@ public class LineDisplayManager implements ConnectionEventListener {
     public void displayLine(String line1, String line2) throws DeviceException {
         String line1formatted = formatLineText(line1);
         String line2formatted = formatLineText(line2);
-        log.success("displayLine(): line1=" + line1formatted + " line2=" + line2formatted, 5);
+        log.success("displayLine(): line1=" + line1formatted + " line2=" + line2formatted, 1);
         try {
             lineDisplayDevice.displayLine(line1formatted, line2formatted);
         } catch (JposException jposException) {
