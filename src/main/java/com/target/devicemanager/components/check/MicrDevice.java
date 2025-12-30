@@ -169,7 +169,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
      * begins check insertion process.
      */
     void insertCheck() throws MicrException {
-        log.success("waiting for check to be inserted...", 5);
+        log.success("waiting for check to be inserted...", 1);
         /*
         We are waiting for the check to be inserted. There are only 3 ways to get out of this black hole
         1. CHECK is inserted
@@ -270,10 +270,6 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
     public void errorOccurred(ErrorEvent errorEvent) {
         JposException jposException = new JposException(errorEvent.getErrorCode(), errorEvent.getErrorCodeExtended());
         log.failure("Check Reader Received an Error", 17, jposException);
-        log.success("errorOccurred(): errCode=" + errorEvent.getErrorCode()
-                + " errCodeExt=" + errorEvent.getErrorCodeExtended()
-                + " errLocus=" + errorEvent.getErrorLocus()
-                + " errResponse=" + errorEvent.getErrorResponse(), 5);
         fireMicrErrorEvent(jposException);
     }
 
@@ -308,9 +304,10 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
     public boolean tryLock() {
         try {
             isLocked = connectLock.tryLock(10, TimeUnit.SECONDS);
-            LOGGER.trace("Lock: " + isLocked);
+            log.success("Lock" + isLocked, 1);
+
         } catch(InterruptedException interruptedException) {
-            LOGGER.error("Lock Failed: " + interruptedException.getMessage());
+            log.failure("Lock Failed"  + interruptedException.getMessage(), 17, interruptedException);
         }
         return isLocked;
     }
