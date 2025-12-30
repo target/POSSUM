@@ -76,16 +76,6 @@ public final class StructuredEventLogger {
         emitBySeverity(b, severity);
     }
 
-    // TODO: do we need this?
-    public void failureWithTag(String message, int severity, Throwable t, String tag) {
-        LogPayloadBuilder b = base(inferCallerMethodName(), "failure", severity)
-                .add(LogField.MESSAGE, message)
-                .add(LogField.TAGS, tag);
-
-        addThrowableFields(b, t);
-        emitBySeverity(b, severity);
-    }
-
     private void addThrowableFields(LogPayloadBuilder b, Throwable t) {
         if (t == null) return;
 
