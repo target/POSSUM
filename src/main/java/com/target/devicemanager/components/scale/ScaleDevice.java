@@ -150,7 +150,6 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                 fireConnectionEvent(true);
             }
         } catch (JposException jposException) {
-            log.failure("connect() failed", 17, jposException);
             return false;
         }
         deviceConnected = true;
