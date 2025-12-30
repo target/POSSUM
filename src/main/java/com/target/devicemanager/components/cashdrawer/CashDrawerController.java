@@ -53,10 +53,10 @@ public class CashDrawerController {
     })
     public void openCashDrawer() throws DeviceException {
         String url = "/v1/cashdrawer/open";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         try {
             cashDrawerManager.openCashDrawer();
-            log.successAPI("response", 9, url, null, 200);
+            log.successAPI("response", 1, url, null, 200);
         } catch (DeviceException deviceException) {
             int statusCode = deviceException.getDeviceError().getStatusCode().value();
             log.failureAPI("response", 13, url, deviceException.getDeviceError().toString(), statusCode, deviceException);
@@ -75,10 +75,10 @@ public class CashDrawerController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/cashdrawer/reconnect";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         try {
             cashDrawerManager.reconnectDevice();
-            log.successAPI("response", 9, url, null, 200);
+            log.successAPI("response", 1, url, null, 200);
         } catch (DeviceException deviceException) {
             int statusCode = deviceException.getDeviceError().getStatusCode().value();
             log.failureAPI("response", 13, url, deviceException.getDeviceError().toString(), statusCode, deviceException);
@@ -90,9 +90,9 @@ public class CashDrawerController {
     @GetMapping("/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/cashdrawer/health";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         DeviceHealthResponse response = cashDrawerManager.getHealth();
-        log.successAPI("response", 9, url, response.toString(), 200);
+        log.successAPI("response", 1, url, response.toString(), 200);
         return response;
     }
 
@@ -100,9 +100,9 @@ public class CashDrawerController {
     @GetMapping("/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/cashdrawer/healthstatus";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         DeviceHealthResponse response = cashDrawerManager.getStatus();
-        log.successAPI("response", 9, url, response.toString(), 200);
+        log.successAPI("response", 1, url, response.toString(), 200);
         return response;
     }
 }
