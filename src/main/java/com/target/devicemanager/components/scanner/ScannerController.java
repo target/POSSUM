@@ -55,24 +55,24 @@ public class ScannerController {
         String url;
         if (scannerType == null) {
             url = "/v1/scan";
-            log.success("API Request Received", 9);
+            log.success("API Request Received", 1);
             try {
                 Barcode data = scannerManager.getData(ScannerType.BOTH);
-                log.successAPI("API Request Completed Successfully", 9, url, data == null ? null : data.toString(), 200);
+                log.successAPI("API Request Completed Successfully", 1, url, data == null ? null : data.toString(), 200);
                 return data;
             } catch (ScannerException scannerException) {
-                log.failureAPI("API Request Failed with ScannerException", 17, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
+                log.failureAPI("API Request Failed with ScannerException", 13, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
                 throw scannerException;
             }
         } else {
             url = "/v1/scan/" + scannerType;
-            log.success("API Request Received", 9);
+            log.success("API Request Received", 1);
             try {
                 Barcode data = scannerManager.getData(scannerType);
-                log.successAPI("API Request Completed Successfully", 9, url, data == null ? null : data.toString(), 200);
+                log.successAPI("API Request Completed Successfully", 1, url, data == null ? null : data.toString(), 200);
                 return data;
             } catch (ScannerException scannerException) {
-                log.failureAPI("API Request Failed with ScannerException", 17, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
+                log.failureAPI("API Request Failed with ScannerException", 13, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
                 throw scannerException;
             }
         }
@@ -87,12 +87,12 @@ public class ScannerController {
     })
     public void cancelScanRequest() throws ScannerException {
         String url = "/v1/scan";
-        log.success("API Request Received", 9);
+        log.success("API Request Received", 1);
         try {
             scannerManager.cancelScanRequest();
-            log.successAPI("API Request Completed Successfully", 9, url, "OK", 200);
+            log.successAPI("API Request Completed Successfully", 1, url, "OK", 200);
         } catch (ScannerException scannerException) {
-            log.failureAPI("API Request Failed with ScannerException", 17, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
+            log.failureAPI("API Request Failed with ScannerException", 13, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
             throw scannerException;
         }
     }
@@ -104,16 +104,16 @@ public class ScannerController {
         String url;
         if (scannerType == null) {
             url = "/v1/scanner/health";
-            log.success("API Request Received", 9);
+            log.success("API Request Received", 1);
             responseList = scannerManager.getHealth(ScannerType.BOTH);
         } else {
             url = "/v1/scanner/health/" + scannerType;
-            log.success("API Request Received", 9);
+            log.success("API Request Received", 1);
             responseList = scannerManager.getHealth(scannerType);
         }
 
         for (DeviceHealthResponse deviceResponse : responseList) {
-            log.successAPI("API Request Completed Successfully", 9, url, deviceResponse == null ? null : deviceResponse.toString(), 200);
+            log.successAPI("API Request Completed Successfully", 1, url, deviceResponse == null ? null : deviceResponse.toString(), 200);
         }
         return ResponseEntity.ok(responseList);
     }
@@ -122,12 +122,12 @@ public class ScannerController {
     @GetMapping(path = "/scanner/healthstatus")
     public ResponseEntity<List<DeviceHealthResponse>> getStatus() {
         String url = "/v1/scanner/healthstatus";
-        log.success("API Request Received", 9);
+        log.success("API Request Received", 1);
 
         List<DeviceHealthResponse> responseList = scannerManager.getStatus();
 
         for (DeviceHealthResponse deviceResponse : responseList) {
-            log.successAPI("API Request Completed Successfully", 9, url, deviceResponse == null ? null : deviceResponse.toString(), 200);
+            log.successAPI("API Request Completed Successfully", 1, url, deviceResponse == null ? null : deviceResponse.toString(), 200);
         }
         return ResponseEntity.ok(responseList);
     }
@@ -145,12 +145,12 @@ public class ScannerController {
     })
     void reconnect() throws DeviceException {
         String url = "/v1/scanner/reconnect";
-        log.success("API Request Received", 9);
+        log.success("API Request Received", 1);
         try {
             scannerManager.reconnectScanners();
-            log.successAPI("API Request Completed Successfully", 9, url, "OK", 200);
+            log.successAPI("API Request Completed Successfully", 1, url, "OK", 200);
         } catch (DeviceException deviceException) {
-            log.failureAPI("API Request Failed with DeviceException", 17, url, deviceException.getDeviceError() == null ? null : deviceException.getDeviceError().toString(), deviceException.getDeviceError() == null ? 0 : deviceException.getDeviceError().getStatusCode().value(), deviceException);
+            log.failureAPI("API Request Failed with DeviceException", 13, url, deviceException.getDeviceError() == null ? null : deviceException.getDeviceError().toString(), deviceException.getDeviceError() == null ? 0 : deviceException.getDeviceError().getStatusCode().value(), deviceException);
             throw deviceException;
         }
     }
