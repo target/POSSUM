@@ -70,11 +70,11 @@ public class MicrController {
     })
     public void print(@Parameter(description = "Check Print Data") @Valid @RequestBody List<PrinterContent> contents) throws PrinterException {
         String url = "/v1/check";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         if(contents.size() < PRINT_CONTENT_SIZE){
             try {
                 printerManager.frankCheck(contents);
-                log.successAPI("response", 9, url, null, 200);
+                log.successAPI("response", 1, url, null, 200);
             } catch (PrinterException printerException) {
                 int statusCode = printerException.getDeviceError() == null ? 0 : printerException.getDeviceError().getStatusCode().value();
                 String body = printerException.getDeviceError() == null ? null : printerException.getDeviceError().toString();
@@ -99,11 +99,11 @@ public class MicrController {
     })
     public MicrData readCheck() throws MicrException {
         String url = "/v1/check";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         CompletableFuture<MicrData> micrDataClient = new CompletableFuture<>();
         try {
             MicrData data = micrManager.readMICR(micrDataClient);
-            log.successAPI("response", 9, url, null, 200);
+            log.successAPI("response", 1, url, null, 200);
             return data;
         } catch (MicrException micrException) {
             int statusCode = micrException.getDeviceError() == null ? 0 : micrException.getDeviceError().getStatusCode().value();
@@ -119,10 +119,10 @@ public class MicrController {
             @ApiResponse(responseCode = "200", description = "OK")})
     public void cancelCheckRead(){
         String url = "/v1/check";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         micrManager.cancelCheckRead();
         micrManager.ejectCheck();
-        log.successAPI("response", 9, url, null, 200);
+        log.successAPI("response", 1, url, null, 200);
     }
 
     @Operation(description = "Reconnect to check device")
@@ -136,10 +136,10 @@ public class MicrController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/check/reconnect";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         try {
             micrManager.reconnectDevice();
-            log.successAPI("response", 9, url, null, 200);
+            log.successAPI("response", 1, url, null, 200);
         } catch (DeviceException deviceException) {
             int statusCode = deviceException.getDeviceError() == null ? 0 : deviceException.getDeviceError().getStatusCode().value();
             String body = deviceException.getDeviceError() == null ? null : deviceException.getDeviceError().toString();
@@ -159,9 +159,9 @@ public class MicrController {
     @GetMapping(path = "/check/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/check/health";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         DeviceHealthResponse response = micrManager.getHealth();
-        log.successAPI("response", 9, url, response.toString(), 200);
+        log.successAPI("response", 1, url, response.toString(), 200);
         return response;
     }
 
@@ -169,7 +169,7 @@ public class MicrController {
     @GetMapping(path = "/check/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/check/healthstatus";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         DeviceHealthResponse response = micrManager.getStatus();
         return response;
     }
