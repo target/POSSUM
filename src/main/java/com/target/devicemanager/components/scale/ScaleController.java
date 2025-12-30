@@ -58,11 +58,11 @@ public class ScaleController {
     })
     public SseEmitter getLiveWeight() throws IOException {
         String url = "/v1/scale/liveweight";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
         try {
             scaleManager.subscribeToLiveWeight(sseEmitter);
-            log.successAPI("response", 9, url, null, 200);
+            log.successAPI("response", 1, url, null, 200);
             return sseEmitter;
         } catch (IOException ioException) {
             log.failureAPI("response", 13, url, ioException.getMessage(), 0, ioException);
@@ -88,11 +88,11 @@ public class ScaleController {
     public FormattedWeight getStableWeight() throws ScaleException {
         long randomWithTS = System.currentTimeMillis();
         String url = "/v1/scale/stableweight";
-        log.successAPI("request " + randomWithTS, 9, url, null, 0);
+        log.successAPI("request " + randomWithTS, 1, url, null, 0);
         CompletableFuture<FormattedWeight> completableFuture = new CompletableFuture<>();
         try {
             FormattedWeight weight = scaleManager.getStableWeight(completableFuture);
-            log.successAPI("response " + randomWithTS, 9, url, null, 200);
+            log.successAPI("response " + randomWithTS, 1, url, null, 200);
             return weight;
         } catch (ScaleException scaleException) {
             int statusCode = scaleException.getDeviceError() == null ? 0 : scaleException.getDeviceError().getStatusCode().value();
@@ -106,9 +106,9 @@ public class ScaleController {
     @GetMapping(path = "/scale/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/scale/health";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         DeviceHealthResponse response = scaleManager.getHealth();
-        log.successAPI("response", 9, url, response.toString(), 200);
+        log.successAPI("response", 1, url, response.toString(), 200);
         return response;
     }
 
@@ -116,9 +116,9 @@ public class ScaleController {
     @GetMapping(path = "/scale/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/scale/healthstatus";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         DeviceHealthResponse response = scaleManager.getStatus();
-        log.successAPI("response", 9, url, response.toString(), 200);
+        log.successAPI("response", 1, url, response.toString(), 200);
         return response;
     }
 
@@ -133,10 +133,10 @@ public class ScaleController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/scale/reconnect";
-        log.successAPI("request", 9, url, null, 0);
+        log.successAPI("request", 1, url, null, 0);
         try {
             scaleManager.reconnectDevice();
-            log.successAPI("response", 9, url, null, 200);
+            log.successAPI("response", 1, url, null, 200);
         } catch (DeviceException deviceException) {
             int statusCode = deviceException.getDeviceError() == null ? 0 : deviceException.getDeviceError().getStatusCode().value();
             String body = deviceException.getDeviceError() == null ? null : deviceException.getDeviceError().toString();
