@@ -197,9 +197,9 @@ public class PrinterDevice implements StatusUpdateListener {
                     boolean failureOrDisabledError = jposException.getErrorCode() == 111 || jposException.getErrorCode() == 105;
                     boolean badPrintContentError = jposException.getErrorCode() == 106 || (jposException.getErrorCode() == 114 && jposException.getErrorCodeExtended() == 207);
                     if ((failureOrDisabledError || badPrintContentError)) {
-                        log.failureWithTag("Received Printer " + jposException.getErrorCode() + " error.  Disconnecting device.", 17, jposException, "DISCONNECT");
+                        log.failure("Received Printer " + jposException.getErrorCode() + " error.  Disconnecting device.", 18, jposException);
                         disconnect();
-                        log.failureWithTag("Received Printer " + jposException.getErrorCode() + " error.  Reconnecting device.", 17, jposException, "RECONNECT");
+                        log.failure("Received Printer " + jposException.getErrorCode() + " error.  Reconnecting device.", 18, jposException);
                         connect();
                         if (badPrintContentError) {
                             throw new PrinterException(PrinterError.INVALID_FORMAT);
@@ -387,7 +387,6 @@ public class PrinterDevice implements StatusUpdateListener {
             if (printer.getPhysicalDeviceName().contains(R5PrinterName)) {
                 printer.directIO(105, ref, null);
                 if (this.ref[0] == -2147482880) {
-                    log.success("paperEmptyCheck(): true", 9);
                     return true;
                 }
             }
@@ -408,7 +407,7 @@ public class PrinterDevice implements StatusUpdateListener {
             case JposConst.JPOS_SUE_POWER_OFF:
             case JposConst.JPOS_SUE_POWER_OFF_OFFLINE:
             case JposConst.JPOS_SUE_POWER_OFFLINE:
-                log.failureWithTag("Printer Status Update: Power offline", 18, null, "POWER_OFFLINE");
+                log.failure("Printer Status Update: Power offline", 18, null);
                 deviceConnected = false;
                 break;
             case JposConst.JPOS_SUE_POWER_ONLINE:

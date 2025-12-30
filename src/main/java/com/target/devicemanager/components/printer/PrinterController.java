@@ -59,17 +59,17 @@ public class PrinterController {
     public void print(@Parameter(description = "Receipt entities")
                       @Valid @RequestBody List<PrinterContent> contents) throws DeviceException {
         String url = "/v1/print";
-        log.success("API Request Received", 9);
+        log.success("API Request Received", 1);
         try {
             if (contents.size() < PRINT_CONTENT_SIZE) {
                 printerManager.printReceipt(contents);
-                log.successAPI("API Request Completed Successfully", 9, url, "OK", 200);
+                log.successAPI("API Request Completed Successfully", 1, url, "OK", 200);
             } else {
-                log.failure("Printer print content more than expected limit", 17, null);
+                log.failure("Printer print content more than expected limit", 13, null);
                 throw new DeviceException(PrinterError.INVALID_FORMAT);
             }
         } catch (DeviceException deviceException) {
-            log.failureAPI("API Request Failed with DeviceException", 17, url, deviceException.getDeviceError().toString(), deviceException.getDeviceError().getStatusCode().value(), null);
+            log.failureAPI("API Request Failed with DeviceException", 13, url, deviceException.getDeviceError().toString(), deviceException.getDeviceError().getStatusCode().value(), null);
             throw deviceException;
         }
     }
@@ -78,9 +78,9 @@ public class PrinterController {
     @GetMapping(path = "/printer/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/printer/health";
-        log.successAPI("API Request Received", 9,url, null, 0);
+        log.successAPI("API Request Received", 1,url, null, 0);
         DeviceHealthResponse response = printerManager.getHealth();
-        log.successAPI("API Request Completed Successfully", 9, url, response.toString(), 200);
+        log.successAPI("API Request Completed Successfully", 1, url, response.toString(), 200);
         return response;
     }
 
@@ -88,9 +88,9 @@ public class PrinterController {
     @GetMapping(path = "/printer/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/printer/healthstatus";
-        log.success("API Request Received", 9);
+        log.success("API Request Received", 1);
         DeviceHealthResponse response = printerManager.getStatus();
-        log.successAPI("API Request Completed Successfully", 9, url, response.toString(), 200);
+        log.successAPI("API Request Completed Successfully", 1, url, response.toString(), 200);
         return response;
     }
 
@@ -105,12 +105,12 @@ public class PrinterController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/printer/reconnect";
-        log.success("API Request Received", 9);
+        log.success("API Request Received", 1);
         try {
             printerManager.reconnectDevice();
-            log.successAPI("API Request Completed Successfully", 9, url, "OK", 200);
+            log.successAPI("API Request Completed Successfully", 1, url, "OK", 200);
         } catch (DeviceException deviceException) {
-            log.failureAPI("API Request Failed with DeviceException", 17, url, deviceException.getDeviceError().toString(), deviceException.getDeviceError().getStatusCode().value(), null);
+            log.failureAPI("API Request Failed with DeviceException", 13, url, deviceException.getDeviceError().toString(), deviceException.getDeviceError().getStatusCode().value(), null);
             throw deviceException;
         }
     }
