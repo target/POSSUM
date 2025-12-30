@@ -42,14 +42,16 @@ public class CashDrawerDevice implements StatusUpdateListener{
 
     public CashDrawerDevice(DynamicDevice<? extends CashDrawer> dynamicCashDrawer, DeviceListener deviceListener, ReentrantLock connectLock) {
         if (dynamicCashDrawer == null) {
-            log.failure("Cash Drawer Failed in Constructor: simpleCashDrawer cannot be null", 17,
-                    new IllegalArgumentException("simpleCashDrawer cannot be null"));
-            throw new IllegalArgumentException("simpleCashDrawer cannot be null");
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("simpleCashDrawer cannot be null");
+            log.failure("Cash Drawer Failed in Constructor: simpleCashDrawer cannot be null", 18,
+                    illegalArgumentException);
+            throw illegalArgumentException;
         }
         if (deviceListener == null) {
-            log.failure("Cash Drawer Failed in Constructor: deviceListener cannot be null", 17,
-                    new IllegalArgumentException("deviceListener cannot be null"));
-            throw new IllegalArgumentException("deviceListener cannot be null");
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("deviceListener cannot be null");
+            log.failure("Cash Drawer Failed in Constructor: deviceListener cannot be null", 18,
+                    illegalArgumentException);
+            throw illegalArgumentException;
         }
         this.dynamicCashDrawer = dynamicCashDrawer;
         this.deviceListener = deviceListener;
@@ -149,7 +151,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
                         deviceConnected = false;
                     }
                 } catch (JposException jposException) {
-                    log.failure("Cash Drawer Failed to Disconnect", 17, jposException);
+                    log.failure("Cash Drawer Failed to Disconnect", 18, jposException);
                 }
             }
         }
@@ -169,7 +171,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
                     deviceConnected = true;
                 }
             } catch (JposException jposException) {
-                log.failure("Cash Drawer Failed to Enable Device", 17, jposException);
+                log.failure("Cash Drawer Failed to Enable Device", 18, jposException);
                 deviceConnected = false;
             }
         }
@@ -187,15 +189,17 @@ public class CashDrawerDevice implements StatusUpdateListener{
         CashDrawer cashDrawer;
         synchronized (cashDrawer = dynamicCashDrawer.getDevice()) {
             if (cashDrawerOpen) {
-                log.failure("Cash Drawer is already open: " + CashDrawerError.ALREADY_OPEN.getDescription(), 17, null);
-                throw new DeviceException(CashDrawerError.ALREADY_OPEN);
+                DeviceException deviceException = new DeviceException(CashDrawerError.ALREADY_OPEN);
+                log.failure("Cash Drawer is already open: " + CashDrawerError.ALREADY_OPEN.getDescription(), 17, deviceException);
+                throw deviceException;
             }
-            log.success("Opening cash drawer...", 9);
+            log.success("Opening cash drawer...", 1);
             cashDrawer.openDrawer();
             waitForCashDrawerClose();
             if(!deviceConnected) {
-                log.failure("Cash Drawer is offline after closing: " + CashDrawerError.DEVICE_OFFLINE.getDescription(), 17, null);
-                throw new DeviceException(CashDrawerError.DEVICE_OFFLINE);
+                DeviceException deviceException = new DeviceException(CashDrawerError.DEVICE_OFFLINE);
+                log.failure("Cash Drawer is offline after closing: " + CashDrawerError.DEVICE_OFFLINE.getDescription(), 18, deviceException);
+                throw deviceException;
             }
         }
     }
@@ -207,7 +211,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
     private void enable() throws JposException {
         if (!isConnected()) {
             JposException jposException = new JposException(JposConst.JPOS_E_OFFLINE);
-            log.failure("Cash Drawer is not connected", 17, jposException);
+            log.failure("Cash Drawer is not connected", 18, jposException);
             throw jposException;
         }
         deviceListener.startEventListeners();
@@ -250,7 +254,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
      * Waits for CashDrawer to close or check interval.
      */
     private void waitForCashDrawerClose() {
-        log.success("Waiting for cash drawer to close...", 9);
+        log.success("Waiting for cash drawer to close...", 1);
         //This do/while is necessary for status to stabilize when cash drawer opens
         do {
             try {
@@ -282,11 +286,11 @@ public class CashDrawerDevice implements StatusUpdateListener{
                 deviceConnected = true;
                 break;
             case CashDrawerConst.CASH_SUE_DRAWEROPEN:
-                log.success("Cash drawer opened", 9);
+                log.success("Cash drawer opened", 1);
                 cashDrawerOpen = true;
                 break;
             case CashDrawerConst.CASH_SUE_DRAWERCLOSED:
-                log.success("Cash drawer closed", 9);
+                log.success("Cash drawer closed", 1);
                 cashDrawerOpen = false;
                 break;
             default:
