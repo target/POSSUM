@@ -1,9 +1,12 @@
 package com.target.devicemanager.components.scale;
 
-import com.target.devicemanager.common.*;
+import com.target.devicemanager.common.DynamicDevice;
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.events.ConnectionEvent;
 import com.target.devicemanager.common.events.ConnectionEventListener;
-import com.target.devicemanager.components.scale.entities.*;
+import com.target.devicemanager.components.scale.entities.FormattedWeight;
+import com.target.devicemanager.components.scale.entities.WeightErrorEvent;
+import com.target.devicemanager.components.scale.entities.WeightEvent;
 import jpos.JposConst;
 import jpos.JposException;
 import jpos.Scale;
@@ -14,8 +17,6 @@ import jpos.events.StatusUpdateEvent;
 import jpos.events.StatusUpdateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +32,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     private final ReentrantLock connectLock;
     private boolean isLocked = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleDevice.class);
-    private static final Marker MARKER = MarkerFactory.getMarker("FATAL");
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Scale", "ScaleDevice", LOGGER);
     private boolean deviceConnected = false;
     private int[] weight;
 
@@ -48,15 +49,18 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
 
     public ScaleDevice(DynamicDevice<Scale> dynamicScale, List<ScaleEventListener> scaleEventListeners, List<ConnectionEventListener> connectionEventListeners, ReentrantLock connectLock)  {
         if (dynamicScale == null) {
-            LOGGER.error(MARKER, "Scale Failed in Constructor: dynamicScale cannot be null");
+            log.failure("Scale Failed in Constructor: dynamicScale cannot be null", 17,
+                    new IllegalArgumentException("dynamicScale cannot be null"));
             throw new IllegalArgumentException("dynamicScale cannot be null");
         }
         if (scaleEventListeners == null) {
-            LOGGER.error(MARKER, "Scale Failed in Constructor: scaleEventListeners cannot be null");
+            log.failure("Scale Failed in Constructor: scaleEventListeners cannot be null", 17,
+                    new IllegalArgumentException("scaleEventListeners cannot be null"));
             throw new IllegalArgumentException("scaleEventListeners cannot be null");
         }
         if (connectionEventListeners == null) {
-            LOGGER.error(MARKER, "Scale Failed in Constructor: connectionEventListeners cannot be null");
+            log.failure("Scale Failed in Constructor: connectionEventListeners cannot be null", 17,
+                    new IllegalArgumentException("connectionEventListeners cannot be null"));
             throw new IllegalArgumentException("connectionEventListeners cannot be null");
         }
         this.dynamicScale = dynamicScale;
@@ -146,6 +150,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
                 fireConnectionEvent(true);
             }
         } catch (JposException jposException) {
+            log.failure("connect() failed", 17, jposException);
             return false;
         }
         deviceConnected = true;
@@ -192,21 +197,18 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
             stableWeightInProgress = true;
             long currentTimeMsec = System.currentTimeMillis();
             long endTimeMsec = currentTimeMsec + timeout;
-            while(currentTimeMsec <= endTimeMsec) {
-                LOGGER.trace("Read Weight Time Remaining " + (endTimeMsec - currentTimeMsec));
+            while (currentTimeMsec <= endTimeMsec) {
+                log.success("Read Weight Time Remaining " + (endTimeMsec - currentTimeMsec), 1);
                 try {
-                        scale.readWeight(weight, STABLE_WEIGHT_READ_TIMEOUT);
-                        LOGGER.trace("After ReadWeight " + weight[0]);
-                        fireScaleStableWeightDataEvent(new FormattedWeight(weight[0]));
-                        stableWeightInProgress = false;
-                        weight = new int[1];
-                        return;
+                    scale.readWeight(weight, STABLE_WEIGHT_READ_TIMEOUT);
+                    log.success("After ReadWeight " + weight[0], 1);
+                    fireScaleStableWeightDataEvent(new FormattedWeight(weight[0]));
+                    stableWeightInProgress = false;
+                    weight = new int[1];
+                    return;
                 } catch (JposException jposException) {
-                    if(isConnected()) {
-                        LOGGER.trace("Scale Failed to Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
-                    } else {
-                        LOGGER.trace("Scale not connected in Read Stable Weight: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
-                    }
+                    int severity = isConnected() ? 17 : 1;
+                    log.failure(isConnected() ? "Scale Failed to Read Stable Weight" : "Scale not connected in Read Stable Weight", severity, jposException);
                     if(jposException.getErrorCode() != JposConst.JPOS_E_TIMEOUT) {
                         fireScaleWeightErrorEvent(jposException);
                         stableWeightInProgress = false;
@@ -225,13 +227,13 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
      * @param statusUpdateEvent
      */
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
-        LOGGER.trace("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
+        log.success("statusUpdateOccurred(): " + statusUpdateEvent.getStatus(), 1);
         int status = statusUpdateEvent.getStatus();
         switch (status) {
             case JposConst.JPOS_SUE_POWER_OFF:
             case JposConst.JPOS_SUE_POWER_OFF_OFFLINE:
             case JposConst.JPOS_SUE_POWER_OFFLINE:
-                LOGGER.error(MARKER, "Scale Status Update: Power offline");
+                log.failure("Scale Status Update: Power offline", 17, null);
                 return;
             case JposConst.JPOS_SUE_POWER_ONLINE:
                 connect();
@@ -264,11 +266,14 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
      */
     public void errorOccurred(ErrorEvent errorEvent) {
         JposException jposException = new JposException(errorEvent.getErrorCode(), errorEvent.getErrorCodeExtended());
-        LOGGER.error(MARKER, "Scale Received an Error: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
-        LOGGER.error("Scale - errorOccurred(): errCode=" + errorEvent.getErrorCode()
-                + " errCodeExt=" + errorEvent.getErrorCodeExtended()
-                + " errLocus=" + errorEvent.getErrorLocus()
-                + " errResponse=" + errorEvent.getErrorResponse());
+        log.failure("Scale Received an Error", 17, jposException);
+        log.failure("Scale - errorOccurred(): errCode=" + errorEvent.getErrorCode()
+                        + " errCodeExt=" + errorEvent.getErrorCodeExtended()
+                        + " errLocus=" + errorEvent.getErrorLocus()
+                        + " errResponse=" + errorEvent.getErrorResponse(),
+                13,
+                null);
+
         int errorCode = errorEvent.getErrorCode();
         switch (errorCode) {
             case JposConst.JPOS_E_OFFLINE:
@@ -327,9 +332,9 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     public boolean tryLock() {
         try {
             isLocked = connectLock.tryLock(10, TimeUnit.SECONDS);
-            LOGGER.trace("Lock: " + isLocked);
+            log.success("Lock: " + isLocked, 1);
         } catch(InterruptedException interruptedException) {
-            LOGGER.error("Scale Device tryLock Failed: " + interruptedException.getMessage());
+            log.failure("Scale Device tryLock Failed", 17, interruptedException);
         }
         return isLocked;
     }
@@ -350,4 +355,3 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
         return isLocked;
     }
 }
-

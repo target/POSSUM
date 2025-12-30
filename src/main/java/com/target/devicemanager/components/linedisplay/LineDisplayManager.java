@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.linedisplay;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.common.events.ConnectionEvent;
 import com.target.devicemanager.common.events.ConnectionEventListener;
@@ -26,6 +27,7 @@ public class LineDisplayManager implements ConnectionEventListener {
     private final LineDisplayDevice lineDisplayDevice;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(LineDisplayManager.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("LineDisplay", "LineDisplayManager", LOGGER);
 
     public LineDisplayManager(LineDisplayDevice lineDisplayDevice) {
         this(lineDisplayDevice, null);
@@ -77,7 +79,7 @@ public class LineDisplayManager implements ConnectionEventListener {
     public void displayLine(String line1, String line2) throws DeviceException {
         String line1formatted = formatLineText(line1);
         String line2formatted = formatLineText(line2);
-        LOGGER.debug("displayLine(): line1=" + line1formatted + " line2=" + line2formatted);
+        log.success("displayLine(): line1=" + line1formatted + " line2=" + line2formatted, 5);
         try {
             lineDisplayDevice.displayLine(line1formatted, line2formatted);
         } catch (JposException jposException) {
@@ -87,8 +89,7 @@ public class LineDisplayManager implements ConnectionEventListener {
     }
 
     @Override
-    public void connectionEventOccurred(ConnectionEvent connectionEvent) {
-    }
+    public void connectionEventOccurred(ConnectionEvent connectionEvent) {}
 
     private String formatLineText(String lineText) {
         //right pad line to 20 characters (-20)
@@ -107,7 +108,7 @@ public class LineDisplayManager implements ConnectionEventListener {
         try {
             Objects.requireNonNull(cacheManager.getCache("lineDisplayHealth")).put("health", deviceHealthResponse);
         } catch (Exception exception) {
-            LOGGER.error("getCache(lineDisplayHealth) Failed: " + exception.getMessage());
+            log.failure("getCache(lineDisplayHealth) Failed", 17, exception);
         }
         return deviceHealthResponse;
     }
@@ -121,7 +122,7 @@ public class LineDisplayManager implements ConnectionEventListener {
                 }
                 return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("lineDisplayHealth")).get("health").get();
             } else {
-                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+                log.success("Not able to retrieve from cache, checking getHealth()", 5);
                 return getHealth();
             }
         } catch (Exception exception) {
@@ -129,4 +130,3 @@ public class LineDisplayManager implements ConnectionEventListener {
         }
     }
 }
-

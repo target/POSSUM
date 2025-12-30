@@ -1,12 +1,11 @@
 package com.target.devicemanager.components.printer;
 
-import com.target.devicemanager.common.LogPayloadBuilder;
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealthResponse;
 import com.target.devicemanager.components.printer.entities.PrinterContent;
 import com.target.devicemanager.components.printer.entities.PrinterError;
-import com.target.devicemanager.common.entities.LogField;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
 
 @RestController
@@ -33,6 +31,7 @@ public class PrinterController {
     private final PrinterManager printerManager;
     private final int PRINT_CONTENT_SIZE = 64; // Assumes maximum allowed array size for the printer is 64
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterController.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Printer", "PrinterController", LOGGER);
 
     @Autowired
     public PrinterController(PrinterManager printerManager) {
@@ -57,55 +56,20 @@ public class PrinterController {
             @ApiResponse(responseCode = "409", description = "DEVICE_BUSY",
                     content = @Content(schema = @Schema(implementation = DeviceError.class)))
     })
-    public void print(@Parameter(description = "Receipt entities") 
-                          @Valid @RequestBody List<PrinterContent> contents) throws DeviceException {
+    public void print(@Parameter(description = "Receipt entities")
+                      @Valid @RequestBody List<PrinterContent> contents) throws DeviceException {
         String url = "/v1/print";
-        new LogPayloadBuilder()
-            .add(LogField.URL_PATH, url)
-            .add(LogField.SERVICE_NAME, "Printer")
-            .add(LogField.EVENT_SEVERITY, 9)
-            .add(LogField.COMPONENT, "print")
-            .add(LogField.EVENT_ACTION, "print")
-            .add(LogField.MESSAGE, "API Request Received")
-            .logInfo(LOGGER);
+        log.success("API Request Received", 9);
         try {
-            if(contents.size() < PRINT_CONTENT_SIZE){
+            if (contents.size() < PRINT_CONTENT_SIZE) {
                 printerManager.printReceipt(contents);
-                new LogPayloadBuilder()
-                    .add(LogField.URL_PATH, url)
-                    .add(LogField.SERVICE_NAME, "Printer")
-                    .add(LogField.EVENT_SEVERITY, 9)
-                    .add(LogField.COMPONENT, "PrinterController")
-                    .add(LogField.EVENT_ACTION, "print")
-                    .add(LogField.EVENT_OUTCOME, "success")
-                    .add(LogField.HTTP_RESPONSE_STATUS_CODE, 200)
-                    .add(LogField.HTTP_RESPONSE_BODY_CONTENT, "OK")
-                    .add(LogField.MESSAGE, "API Request Completed Successfully")
-                    .logInfo(LOGGER);
+                log.successAPI("API Request Completed Successfully", 9, url, "OK", 200);
             } else {
-                new LogPayloadBuilder()
-                    .add(LogField.SERVICE_NAME, "Printer")
-                    .add(LogField.EVENT_SEVERITY, 17)
-                    .add(LogField.COMPONENT, "PrinterController")
-                    .add(LogField.EVENT_ACTION, "print")
-                    .add(LogField.EVENT_OUTCOME, "failure")
-                    .add(LogField.MESSAGE, "Printer print content more than expected limit")
-                    .logError(LOGGER);
-                 throw new DeviceException(PrinterError.INVALID_FORMAT);
+                log.failure("Printer print content more than expected limit", 17, null);
+                throw new DeviceException(PrinterError.INVALID_FORMAT);
             }
-        }
-        catch (DeviceException deviceException) {
-            new LogPayloadBuilder()
-                .add(LogField.URL_PATH, url)
-                .add(LogField.SERVICE_NAME, "Printer")
-                .add(LogField.EVENT_SEVERITY, 17)
-                .add(LogField.COMPONENT, "PrinterController")
-                .add(LogField.EVENT_ACTION, "print")
-                .add(LogField.EVENT_OUTCOME, "failure")
-                .add(LogField.HTTP_RESPONSE_STATUS_CODE, deviceException.getDeviceError().getStatusCode().value())
-                .add(LogField.HTTP_RESPONSE_BODY_CONTENT, deviceException.getDeviceError().toString())
-                .add(LogField.MESSAGE, "API Request Failed with DeviceException")
-                .logError(LOGGER);
+        } catch (DeviceException deviceException) {
+            log.failureAPI("API Request Failed with DeviceException", 17, url, deviceException.getDeviceError().toString(), deviceException.getDeviceError().getStatusCode().value(), null);
             throw deviceException;
         }
     }
@@ -114,27 +78,9 @@ public class PrinterController {
     @GetMapping(path = "/printer/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/printer/health";
-        new LogPayloadBuilder()
-            .add(LogField.URL_PATH, url)
-            .add(LogField.SERVICE_NAME, "Printer")
-            .add(LogField.EVENT_SEVERITY, 9)
-            .add(LogField.COMPONENT, "PrinterController")
-            .add(LogField.EVENT_ACTION, "getHealth")
-            .add(LogField.MESSAGE, "API Request Received")
-            .logInfo(LOGGER);
+        log.successAPI("API Request Received", 9,url, null, 0);
         DeviceHealthResponse response = printerManager.getHealth();
-        new LogPayloadBuilder()
-            .add(LogField.URL_PATH, url)
-            .add(LogField.SERVICE_NAME, "Printer")
-            .add(LogField.EVENT_SEVERITY, 9)
-            .add(LogField.COMPONENT, "PrinterController")
-            .add(LogField.EVENT_ACTION, "getHealth")
-            .add(LogField.EVENT_OUTCOME, "success")
-            .add(LogField.HTTP_RESPONSE_STATUS_CODE, 200)
-            .add(LogField.HTTP_RESPONSE_BODY_CONTENT, response.toString())
-            .add(LogField.TAGS, response.getHealthStatus().toString())
-            .add(LogField.MESSAGE, "API Request Completed Successfully")
-            .logInfo(LOGGER);
+        log.successAPI("API Request Completed Successfully", 9, url, response.toString(), 200);
         return response;
     }
 
@@ -142,27 +88,9 @@ public class PrinterController {
     @GetMapping(path = "/printer/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/printer/healthstatus";
-        new LogPayloadBuilder()
-            .add(LogField.URL_PATH, url)
-            .add(LogField.SERVICE_NAME, "Printer")
-            .add(LogField.EVENT_SEVERITY, 9)
-            .add(LogField.COMPONENT, "PrinterController")
-            .add(LogField.EVENT_ACTION, "getStatus")
-            .add(LogField.MESSAGE, "API Request Received")
-            .logInfo(LOGGER);
+        log.success("API Request Received", 9);
         DeviceHealthResponse response = printerManager.getStatus();
-        new LogPayloadBuilder()
-            .add(LogField.URL_PATH, url)
-            .add(LogField.SERVICE_NAME, "Printer")
-            .add(LogField.EVENT_SEVERITY, 9)
-            .add(LogField.COMPONENT, "PrinterController")
-            .add(LogField.EVENT_ACTION, "getStatus")
-            .add(LogField.EVENT_OUTCOME, "success")
-            .add(LogField.HTTP_RESPONSE_STATUS_CODE, 200)
-            .add(LogField.HTTP_RESPONSE_BODY_CONTENT, response.toString())
-            .add(LogField.TAGS, response.getHealthStatus().toString())
-            .add(LogField.MESSAGE, "API Request Completed Successfully")
-            .logInfo(LOGGER);
+        log.successAPI("API Request Completed Successfully", 9, url, response.toString(), 200);
         return response;
     }
 
@@ -177,39 +105,12 @@ public class PrinterController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/printer/reconnect";
-        new LogPayloadBuilder()
-            .add(LogField.URL_PATH, url)
-            .add(LogField.SERVICE_NAME, "Printer")
-            .add(LogField.EVENT_SEVERITY, 9)
-            .add(LogField.COMPONENT, "PrinterController")
-            .add(LogField.EVENT_ACTION, "reconnect")
-            .add(LogField.MESSAGE, "API Request Received")
-            .logInfo(LOGGER);
+        log.success("API Request Received", 9);
         try {
             printerManager.reconnectDevice();
-            new LogPayloadBuilder()
-                .add(LogField.URL_PATH, url)
-                .add(LogField.SERVICE_NAME, "Printer")
-                .add(LogField.EVENT_SEVERITY, 9)
-                .add(LogField.COMPONENT, "PrinterController")
-                .add(LogField.EVENT_ACTION, "reconnect")
-                .add(LogField.EVENT_OUTCOME, "success")
-                .add(LogField.HTTP_RESPONSE_STATUS_CODE, 200)
-                .add(LogField.HTTP_RESPONSE_BODY_CONTENT, "OK")
-                .add(LogField.MESSAGE, "API Request Completed Successfully")
-                .logInfo(LOGGER);
+            log.successAPI("API Request Completed Successfully", 9, url, "OK", 200);
         } catch (DeviceException deviceException) {
-            new LogPayloadBuilder()
-                .add(LogField.URL_PATH, url)
-                .add(LogField.SERVICE_NAME, "Printer")
-                .add(LogField.EVENT_SEVERITY, 17)
-                .add(LogField.COMPONENT, "PrinterController")
-                .add(LogField.EVENT_ACTION, "reconnect")
-                .add(LogField.EVENT_OUTCOME, "failure")
-                .add(LogField.HTTP_RESPONSE_STATUS_CODE, deviceException.getDeviceError().getStatusCode().value())
-                .add(LogField.HTTP_RESPONSE_BODY_CONTENT, deviceException.getDeviceError().toString())
-                .add(LogField.MESSAGE, "API Request Failed with DeviceException")
-                .logError(LOGGER);
+            log.failureAPI("API Request Failed with DeviceException", 17, url, deviceException.getDeviceError().toString(), deviceException.getDeviceError().getStatusCode().value(), null);
             throw deviceException;
         }
     }

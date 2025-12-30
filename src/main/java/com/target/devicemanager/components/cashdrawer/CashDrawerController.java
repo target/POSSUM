@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.cashdrawer;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealthResponse;
@@ -27,6 +28,7 @@ public class CashDrawerController {
 
     private final CashDrawerManager cashDrawerManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(CashDrawerController.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("CashDrawer", "CashDrawerController", LOGGER);
 
     @Autowired
     public CashDrawerController(CashDrawerManager cashDrawerManager) {
@@ -51,12 +53,13 @@ public class CashDrawerController {
     })
     public void openCashDrawer() throws DeviceException {
         String url = "/v1/cashdrawer/open";
-        LOGGER.info("request: " + url );
+        log.successAPI("request", 9, url, null, 0);
         try {
             cashDrawerManager.openCashDrawer();
-            LOGGER.info("response: " + url  + " - 200 OK");
+            log.successAPI("response", 9, url, null, 200);
         } catch (DeviceException deviceException) {
-            LOGGER.info("response: " + url + " - " + deviceException.getDeviceError().getStatusCode().toString() + ", " + deviceException.getDeviceError());
+            int statusCode = deviceException.getDeviceError().getStatusCode().value();
+            log.failureAPI("response", 13, url, deviceException.getDeviceError().toString(), statusCode, deviceException);
             throw deviceException;
         }
     }
@@ -72,12 +75,13 @@ public class CashDrawerController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/cashdrawer/reconnect";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         try {
             cashDrawerManager.reconnectDevice();
-            LOGGER.info("response: " + url + " - 200 OK");
+            log.successAPI("response", 9, url, null, 200);
         } catch (DeviceException deviceException) {
-            LOGGER.info("response: " + url + " - " + deviceException.getDeviceError().getStatusCode().toString() + ", " + deviceException.getDeviceError());
+            int statusCode = deviceException.getDeviceError().getStatusCode().value();
+            log.failureAPI("response", 13, url, deviceException.getDeviceError().toString(), statusCode, deviceException);
             throw deviceException;
         }
     }
@@ -86,9 +90,9 @@ public class CashDrawerController {
     @GetMapping("/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/cashdrawer/health";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         DeviceHealthResponse response = cashDrawerManager.getHealth();
-        LOGGER.info("response: " + url + " - " + response.toString());
+        log.successAPI("response", 9, url, response.toString(), 200);
         return response;
     }
 
@@ -96,9 +100,9 @@ public class CashDrawerController {
     @GetMapping("/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/cashdrawer/healthstatus";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         DeviceHealthResponse response = cashDrawerManager.getStatus();
-        LOGGER.info("response: " + url + " - " + response.toString());
+        log.successAPI("response", 9, url, response.toString(), 200);
         return response;
     }
 }

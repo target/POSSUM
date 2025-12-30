@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.check;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.DeviceError;
 import com.target.devicemanager.common.entities.DeviceException;
 import com.target.devicemanager.common.entities.DeviceHealthResponse;
@@ -37,6 +38,7 @@ public class MicrController {
     private final MicrManager micrManager;
     private final int PRINT_CONTENT_SIZE = 64;
     private static final Logger LOGGER = LoggerFactory.getLogger(MicrController.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Check", "MicrController", LOGGER);
 
     @Autowired
     public MicrController(PrinterManager printerManager, MicrManager micrManager) {
@@ -67,18 +69,20 @@ public class MicrController {
                     content = @Content(schema = @Schema(implementation = DeviceError.class)))
     })
     public void print(@Parameter(description = "Check Print Data") @Valid @RequestBody List<PrinterContent> contents) throws PrinterException {
-        String url = "POST /v1/check";
-        LOGGER.info("request: " + url);
+        String url = "/v1/check";
+        log.successAPI("request", 9, url, null, 0);
         if(contents.size() < PRINT_CONTENT_SIZE){
             try {
                 printerManager.frankCheck(contents);
-                LOGGER.info("response: " + url + " - 200 OK");
-            } catch (PrinterException printerException){
-                LOGGER.info("response: " + url + " - " + printerException.getDeviceError().getStatusCode().toString() + ", " + printerException.getDeviceError());
+                log.successAPI("response", 9, url, null, 200);
+            } catch (PrinterException printerException) {
+                int statusCode = printerException.getDeviceError() == null ? 0 : printerException.getDeviceError().getStatusCode().value();
+                String body = printerException.getDeviceError() == null ? null : printerException.getDeviceError().toString();
+                log.failureAPI("response", 13, url, body, statusCode, printerException);
                 throw printerException;
             }
         } else {
-            LOGGER.error("MICR Print content more than expected limit");
+            log.failureAPI("MICR Print content more than expected limit", 17, url, null, 400, null);
         }
     }
 
@@ -94,15 +98,17 @@ public class MicrController {
                     content = @Content(schema = @Schema(implementation = MicrError.class)))
     })
     public MicrData readCheck() throws MicrException {
-        String url = "GET /v1/check";
-        LOGGER.info("request: " + url);
+        String url = "/v1/check";
+        log.successAPI("request", 9, url, null, 0);
         CompletableFuture<MicrData> micrDataClient = new CompletableFuture<>();
         try {
             MicrData data = micrManager.readMICR(micrDataClient);
-            LOGGER.info("response: " + url + " - 200 OK");
+            log.successAPI("response", 9, url, null, 200);
             return data;
         } catch (MicrException micrException) {
-            LOGGER.info("response: " + url + " - " + micrException.getDeviceError().getStatusCode().toString() + ", " + micrException.getDeviceError());
+            int statusCode = micrException.getDeviceError() == null ? 0 : micrException.getDeviceError().getStatusCode().value();
+            String body = micrException.getDeviceError() == null ? null : micrException.getDeviceError().toString();
+            log.failureAPI("response", 13, url, body, statusCode, micrException);
             throw micrException;
         }
     }
@@ -113,10 +119,10 @@ public class MicrController {
             @ApiResponse(responseCode = "200", description = "OK")})
     public void cancelCheckRead(){
         String url = "/v1/check";
-        LOGGER.info("request: " + " DELETE - " + url);
+        log.successAPI("request", 9, url, null, 0);
         micrManager.cancelCheckRead();
         micrManager.ejectCheck();
-        LOGGER.info("response: " + " DELETE " + url + " - 200 OK");
+        log.successAPI("response", 9, url, null, 200);
     }
 
     @Operation(description = "Reconnect to check device")
@@ -130,18 +136,21 @@ public class MicrController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/check/reconnect";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         try {
             micrManager.reconnectDevice();
-            LOGGER.info("response: " + url + " - 200 OK");
+            log.successAPI("response", 9, url, null, 200);
         } catch (DeviceException deviceException) {
-            LOGGER.info("response: " + url + " - " + deviceException.getDeviceError().getStatusCode().toString() + ", " + deviceException.getDeviceError());
+            int statusCode = deviceException.getDeviceError() == null ? 0 : deviceException.getDeviceError().getStatusCode().value();
+            String body = deviceException.getDeviceError() == null ? null : deviceException.getDeviceError().toString();
+            log.failureAPI("response", 13, url, body, statusCode, deviceException);
             throw deviceException;
         }
     }
 
     @ExceptionHandler(value = HttpMessageNotReadableException.class)
     public ResponseEntity<DeviceError> handleInvalidFormat(HttpMessageNotReadableException originalException) {
+        String url = "/v1/check";
         DeviceException printerException = new DeviceException(PrinterError.INVALID_FORMAT);
         return new ResponseEntity<>(printerException.getDeviceError(), printerException.getDeviceError().getStatusCode());
     }
@@ -150,9 +159,9 @@ public class MicrController {
     @GetMapping(path = "/check/health")
     public DeviceHealthResponse getHealth() {
         String url = "/v1/check/health";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         DeviceHealthResponse response = micrManager.getHealth();
-        LOGGER.info("response: " + url + " - " + response.toString());
+        log.successAPI("response", 9, url, response.toString(), 200);
         return response;
     }
 
@@ -160,10 +169,8 @@ public class MicrController {
     @GetMapping(path = "/check/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/check/healthstatus";
-        LOGGER.info("request: " + url);
+        log.successAPI("request", 9, url, null, 0);
         DeviceHealthResponse response = micrManager.getStatus();
         return response;
     }
 }
-
-

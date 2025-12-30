@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.cashdrawer;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.components.cashdrawer.entities.CashDrawerError;
 import jpos.JposException;
@@ -27,6 +28,7 @@ public class CashDrawerManager {
     private final Lock cashDrawerLock;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(CashDrawerManager.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("CashDrawer", "CashDrawerManager", LOGGER);
 
     public CashDrawerManager(CashDrawerDevice cashDrawerDevice, Lock cashDrawerLock) {
         this(cashDrawerDevice, cashDrawerLock, null);
@@ -105,7 +107,7 @@ public class CashDrawerManager {
         try {
             Objects.requireNonNull(cacheManager.getCache("cashDrawerHealth")).put("health", deviceHealthResponse);
         } catch (Exception exception) {
-            LOGGER.error("getCache(cashDrawerHealth) Failed: " + exception.getMessage());
+            log.failure("getCache(cashDrawerHealth) Failed", 17, exception);
         }
         return deviceHealthResponse;
     }
@@ -119,11 +121,10 @@ public class CashDrawerManager {
                 }
                 return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("cashDrawerHealth")).get("health").get();
             } else {
-                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+                log.success("Not able to retrieve from cache, checking getHealth()", 5);
                 return getHealth();
             }
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             return getHealth();
         }
     }

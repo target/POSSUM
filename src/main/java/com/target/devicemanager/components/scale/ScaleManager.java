@@ -1,5 +1,6 @@
 package com.target.devicemanager.components.scale;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.entities.*;
 import com.target.devicemanager.common.events.ConnectionEvent;
 import com.target.devicemanager.common.events.ConnectionEventListener;
@@ -42,6 +43,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private List<SseEmitter> deadEmitterList;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleManager.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Scale", "ScaleManager", LOGGER);
 
     public ScaleManager(ScaleDevice scaleDevice, List<SseEmitter> liveWeightClients, List<CompletableFuture<FormattedWeight>> stableWeightClients) {
         this(scaleDevice, liveWeightClients, stableWeightClients, null, null);
@@ -135,7 +137,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
             if(!isScaleReady()){
                 throw (new ScaleException(new JposException(JposConst.JPOS_E_OFFLINE)));
             }
-            LOGGER.error("Scale Device Busy. Please Wait To Get Stable Weight.");
+            log.failure("Scale Device Busy. Please Wait To Get Stable Weight.", 17, null);
             throw (new ScaleException(new JposException(JposConst.JPOS_E_BUSY)));
         }
     }
@@ -193,7 +195,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
         try {
             Objects.requireNonNull(cacheManager.getCache("scaleHealth")).put("health", deviceHealthResponse);
         } catch (Exception exception) {
-            LOGGER.error("getCache(scaleHealth) Failed: " + exception.getMessage());
+            log.failure("getCache(scaleHealth) Failed", 17, exception);
         }
         return deviceHealthResponse;
     }
@@ -207,7 +209,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
                 }
                 return (DeviceHealthResponse) Objects.requireNonNull(cacheManager.getCache("scaleHealth")).get("health").get();
             } else {
-                LOGGER.debug("Not able to retrieve from cache, checking getHealth()");
+                log.success("Not able to retrieve from cache, checking getHealth()", 5);
                 return getHealth();
             }
         } catch (Exception exception) {

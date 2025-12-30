@@ -1,6 +1,7 @@
 package com.target.devicemanager.components.linedisplay;
 
 import com.target.devicemanager.common.DynamicDevice;
+import com.target.devicemanager.common.StructuredEventLogger;
 import com.target.devicemanager.common.events.ConnectionEvent;
 import com.target.devicemanager.common.events.ConnectionEventListener;
 import jpos.JposConst;
@@ -11,8 +12,6 @@ import jpos.events.StatusUpdateEvent;
 import jpos.events.StatusUpdateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 import org.springframework.context.annotation.Profile;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class LineDisplayDevice implements StatusUpdateListener {
     private final ReentrantLock connectLock;
     private boolean isLocked = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(LineDisplayDevice.class);
-    private static final Marker MARKER = MarkerFactory.getMarker("FATAL");
+    private static final StructuredEventLogger log = StructuredEventLogger.of("LineDisplay", "LineDisplayDevice", LOGGER);
 
     /**
      * Initializes LineDisplayDevice and gets it ready for use.
@@ -44,7 +43,7 @@ public class LineDisplayDevice implements StatusUpdateListener {
      */
     public LineDisplayDevice(DynamicDevice<LineDisplay> dynamicLineDisplay, List<ConnectionEventListener> connectionEventListenerList, ReentrantLock connectLock) {
         if (dynamicLineDisplay == null) {
-            LOGGER.error(MARKER, "Line Display Failed in Constructor: dynamicLineDisplay cannot be null");
+            log.failure("dynamicLineDisplay cannot be null", 17, new IllegalArgumentException("dynamicLineDisplay cannot be null"));
             throw new IllegalArgumentException("dynamicLineDisplay cannot be null");
         }
         this.dynamicLineDisplay = dynamicLineDisplay;
@@ -136,11 +135,8 @@ public class LineDisplayDevice implements StatusUpdateListener {
                 lineDisplay.displayTextAt(1, 0, line2Text, LineDisplayConst.DISP_DT_NORMAL);
             }
         } catch (JposException jposException) {
-            if(isConnected()) {
-                LOGGER.error(MARKER, "Line Display Failed to Display: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
-            } else {
-                LOGGER.trace("Line Display Failed to Display: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended());
-            }
+            int severity = isConnected() ? 17 : 1;
+            log.failure("displayLine() failed", severity, jposException);
             throw jposException;
         }
     }
@@ -159,13 +155,13 @@ public class LineDisplayDevice implements StatusUpdateListener {
      */
     @Override
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
-        LOGGER.debug("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
+        log.success("statusUpdateOccurred(): " + statusUpdateEvent.getStatus(), 1);
         int status = statusUpdateEvent.getStatus();
         switch (status) {
             case JposConst.JPOS_SUE_POWER_OFF:
             case JposConst.JPOS_SUE_POWER_OFF_OFFLINE:
             case JposConst.JPOS_SUE_POWER_OFFLINE:
-                LOGGER.error(MARKER, "Line Display Status Update: Power offline");
+                log.failure("Line Display Status Update: Power offline", 13, null);
                 disconnect();
                 break;
 
@@ -185,9 +181,9 @@ public class LineDisplayDevice implements StatusUpdateListener {
     public boolean tryLock() {
         try {
             isLocked = connectLock.tryLock(10, TimeUnit.SECONDS);
-            LOGGER.trace("Lock: " + isLocked);
-        } catch(InterruptedException interruptedException) {
-            LOGGER.error("Lock Failed: " + interruptedException.getMessage());
+            log.success("Lock: " + isLocked, 1);
+        } catch (InterruptedException interruptedException) {
+            log.failure("Lock Failed", 17, interruptedException);
         }
         return isLocked;
     }
