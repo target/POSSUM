@@ -1,5 +1,6 @@
 package com.target.devicemanager;
 
+import com.target.devicemanager.common.StructuredEventLogger;
 import jpos.util.JposPropertiesConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ import java.util.regex.Pattern;
 @EnableScheduling
 public class DeviceMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceMain.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("DeviceManager", "DeviceMain", LOGGER);
+
     public static void main(String[] args) {
         System.setProperty(JposPropertiesConst.JPOS_POPULATOR_FILE_PROP_NAME, "devcon.xml");
         System.setProperty("jpos.config.regPopulatorClass", "jpos.config.simple.xml.SimpleXmlRegPopulator");
@@ -40,7 +43,7 @@ public class DeviceMain {
             try {
                 String logPath = System.getenv("POSSUM_LOG_PATH");
                 if (logPath == null) {
-                    LOGGER.debug("Setting default log path for POSSUM.");
+                    log.success("Setting default log path for POSSUM.", 5);
                     logPath = "/var/log/target/possum";
                 }
 
@@ -50,7 +53,7 @@ public class DeviceMain {
                 if (latestLogFile != null) {
                     String coreDump = getCoreDumpInfo(latestLogFile);
                     if (coreDump != null && coreDump.length() > 0 ) {
-                        LOGGER.info(coreDump);
+                        log.success(coreDump, 9);
                     }
                 }
 
@@ -60,14 +63,14 @@ public class DeviceMain {
                     try {
                         String count = (new BufferedReader(new FileReader(crashCount))).readLine();
                         if (!count.equals("0")) {
-                            LOGGER.info("Current POSSUM start count after reboot is: " + count);
+                            log.success("Current POSSUM start count after reboot is: " + count, 9);
                         }
                     } catch (IOException ioException) {
-                        LOGGER.error("Error reading crash count");
+                        log.failure("Error reading crash count", 17, ioException);
                     }
                 }
             } catch (Exception exception) {
-                LOGGER.error("Error getting crash log file path");
+                log.failure("Error getting crash log file path", 17, exception);
             }
         }
     }
@@ -78,7 +81,7 @@ public class DeviceMain {
         File[] files = crashdir.listFiles();
         File lastModifiedFile = null;
         if (files.length > 0) {
-            LOGGER.info("Current POSSUM crash count since rebuild is: " + files.length);
+            log.success("Current POSSUM crash count since rebuild is: " + files.length, 9);
 
             //find the latest log file
             lastModifiedFile = files[0];
@@ -124,11 +127,11 @@ public class DeviceMain {
                         coreDumpInfo = "core dump happened  - " + diff + " mins ago - " + logfile.getName() + " : " + probFrame + "; Crash " + crashTime;
                     }
                 } catch (DateTimeParseException exp) {
-                    LOGGER.error("Failed to parsing the crash time: " + exp.getMessage());
+                    log.failure("Failed to parsing the crash time: " + exp.getMessage(), 17, exp);
                 }
             }
         } catch (IOException ioException) {
-            LOGGER.error("Failed reading core dump file" + logfile.getName() + ioException.getMessage());
+            log.failure("Failed reading core dump file" + logfile.getName() + ioException.getMessage(), 17, ioException);
         }
         return coreDumpInfo;
     }
