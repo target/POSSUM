@@ -30,6 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DeviceAvailabilityService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceAvailabilityService.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DeviceAvailabilityService", LOGGER);
     public static final List<SseEmitter> deviceErrorClientList = new CopyOnWriteArrayList<>();
     ApplicationConfig applicationConfig;
     private String simulatorRegisterType = "default";
@@ -56,13 +57,13 @@ public class DeviceAvailabilityService {
         if(applicationConfig != null && applicationConfig.IsSimulationMode()) {
             deviceAvailabilityResponse.possumversion = "possum_simulator";
             deviceAvailabilityResponse.confirmversion = "confirm_simulator";
-            LOGGER.info("Simulator register type: " + simulatorRegisterType);
+            log.success("Simulator register type: " + simulatorRegisterType, 9);
 
             if (!simulatorRegisterType.equals("default")) {
                 if ("CUSTOM".equals(simulatorRegisterType) && customConfigPath != null && !customConfigPath.isEmpty()) {
                     jsonConfirm = new File(customConfigPath);
                     if (!jsonConfirm.exists()) {
-                        LOGGER.warn("Custom config path doesn't exist: " + customConfigPath);
+                        log.success("Custom config path doesn't exist: " + customConfigPath, 13);
                     }
                 }
 
@@ -158,10 +159,10 @@ public class DeviceAvailabilityService {
                     }
                 }
             } else {
-                LOGGER.error("JSON file not found or invalid");
+                log.failure("JSON file not found or invalid", 17, null);
             }
         } catch (IOException ioException) {
-            LOGGER.error("Received IOException " + ioException.getMessage());
+            log.failure("Received IOException", 17, ioException);
         }
 
         return deviceAvailabilityResponse;
@@ -178,39 +179,39 @@ public class DeviceAvailabilityService {
                 if(deviceAvailabilitySingleton.getScannerManager() != null) {
                     healthStatus = deviceAvailabilitySingleton.getScannerManager().getScannerHealthStatus("FLATBED");
                 } else {
-                    LOGGER.trace("Failed to Connect to " + devName);
+                    log.failure("Failed to Connect to " + devName, 1, null);
                 }
                 break;
             case "handscanner":
                 if(deviceAvailabilitySingleton.getScannerManager() != null) {
                     healthStatus = deviceAvailabilitySingleton.getScannerManager().getScannerHealthStatus("HANDHELD");
                 } else {
-                    LOGGER.trace("Failed to Connect to " + devName);
+                    log.failure("Failed to Connect to " + devName, 1, null);
                 }
                 break;
             case "scale":
                 if(deviceAvailabilitySingleton.getScaleManager() != null) {
                     healthStatus = deviceAvailabilitySingleton.getScaleManager().getStatus().getHealthStatus();
                 } else {
-                    LOGGER.trace("Failed to Connect to " + devName);
+                    log.failure("Failed to Connect to " + devName, 1, null);
                 }
                 break;
             case "printer":
                 if(deviceAvailabilitySingleton.getPrinterManager() != null) {
                     healthStatus = deviceAvailabilitySingleton.getPrinterManager().getStatus().getHealthStatus();
                 } else {
-                    LOGGER.trace("Failed to Connect to " + devName);
+                    log.failure("Failed to Connect to " + devName, 1, null);
                 }
                 break;
             case "linedisplay":
                 if(deviceAvailabilitySingleton.getLineDisplayManager() != null) {
                     healthStatus = deviceAvailabilitySingleton.getLineDisplayManager().getStatus().getHealthStatus();
                 } else {
-                    LOGGER.trace("Failed to Connect to " + devName);
+                    log.failure("Failed to Connect to " + devName, 1, null);
                 }
                 break;
             default:
-                LOGGER.trace("Not a known device. " + devName);
+                log.failure("Not a known device: " + devName, 1, null);
         }
         return healthStatus;
     }

@@ -3,6 +3,7 @@ package com.target.devicemanager.common.entities;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.devicemanager.common.DeviceAvailabilityService;
+import com.target.devicemanager.common.StructuredEventLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DeviceErrorStatusResponse {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceErrorStatusResponse.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DeviceErrorStatusResponse", LOGGER);
     private static final DeviceErrorStatusResponse deviceErrorStatusResponse = new DeviceErrorStatusResponse();
     private static List<DeviceErrorStatus> deviceErrorStatuses;
 
@@ -26,7 +28,7 @@ public class DeviceErrorStatusResponse {
             try {
                 rootDevNode = objectMapper.readTree(jsonConfirm);
             } catch (IOException ioException) {
-                LOGGER.error("Error in parsing confirmout");
+                log.failure("Error in parsing confirmout", 17, ioException);
             }
             Iterator<String> fieldNames = rootDevNode.fieldNames();
 
@@ -34,7 +36,7 @@ public class DeviceErrorStatusResponse {
                 deviceErrorStatuses.add(new DeviceErrorStatus(fieldNames.next(), false, null));
             }
         } else {
-            LOGGER.error("JSON is in wrong format");
+            log.failure("JSON is in wrong format", 17, null);
         }
     }
 

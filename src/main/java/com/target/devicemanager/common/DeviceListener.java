@@ -19,6 +19,7 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
 
     private final EventSynchronizer eventSynchronizer;
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceListener.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DeviceListener", LOGGER);
 
     public DeviceListener(EventSynchronizer eventSynchronizer) {
         if (eventSynchronizer == null) {
@@ -29,23 +30,23 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
 
     @Override
     public void dataOccurred(DataEvent dataEvent) {
-        LOGGER.trace("dataOccurred(): " + dataEvent.getStatus());
+        log.success("dataOccurred(): " + dataEvent.getStatus(), 1);
         eventSynchronizer.triggerEvent(dataEvent);
     }
 
     @Override
     public void errorOccurred(ErrorEvent errorEvent) {
-        LOGGER.error("errorOccurred(): errCode=" + errorEvent.getErrorCode()
+        log.failure("errorOccurred(): errCode=" + errorEvent.getErrorCode()
                 + " errCodeExt=" + errorEvent.getErrorCodeExtended()
                 + " errLocus=" + errorEvent.getErrorLocus()
-                + " errResponse=" + errorEvent.getErrorResponse());
+                + " errResponse=" + errorEvent.getErrorResponse(), 17, null);
         int errorCode = errorEvent.getErrorCode();
         if (errorCode == JposConst.JPOS_E_OFFLINE || errorCode == JposConst.JPOS_E_NOHARDWARE) {
             BaseService jposService = (BaseService) errorEvent.getSource();
             try {
                 jposService.close();
             } catch (JposException jposException) {
-                LOGGER.error("close failed", jposException);
+                log.failure("close failed", 17, jposException);
             }
         }
         eventSynchronizer.triggerEvent(errorEvent);
@@ -53,7 +54,7 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
 
     @Override
     public void statusUpdateOccurred(StatusUpdateEvent statusUpdateEvent) {
-        LOGGER.trace("statusUpdateOccurred(): " + statusUpdateEvent.getStatus());
+        log.success("statusUpdateOccurred(): " + statusUpdateEvent.getStatus(), 1);
         if (isFailureStatus(statusUpdateEvent.getStatus())) {
             //Don't trigger the event for things we expect, like online statuses
             eventSynchronizer.triggerEvent(statusUpdateEvent);
@@ -62,7 +63,7 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
 
     @Override
     public void outputCompleteOccurred(OutputCompleteEvent outputCompleteEvent) {
-        LOGGER.trace("outputCompleteOccurred(): " + outputCompleteEvent.getOutputID());
+        log.success("outputCompleteOccurred(): " + outputCompleteEvent.getOutputID(), 1);
         eventSynchronizer.triggerEvent(outputCompleteEvent);
     }
 
@@ -73,47 +74,52 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
     //Convenience methods to hide the type of event coming back, kinda ugly but makes it easier to handle device specializations
     // currently only used by scanner
     public DataEvent waitForData() throws JposException {
-        LOGGER.trace("waitForData(in)");
+        log.success("waitForData(in)", 1);
         JposEvent jposEvent = eventSynchronizer.waitForEvent();
+        JposException jposException = null;
         if (jposEvent instanceof ErrorEvent) {
-            LOGGER.trace("waitForData(out)");
-            throw jposExceptionFromErrorEvent((ErrorEvent) jposEvent);
+            jposException = jposExceptionFromErrorEvent((ErrorEvent) jposEvent);
         }
         if (jposEvent instanceof StatusUpdateEvent) {
-            LOGGER.trace("waitForData(out)");
-            throw jposExceptionFromStatusUpdateEvent((StatusUpdateEvent) jposEvent);
+            jposException = jposExceptionFromStatusUpdateEvent((StatusUpdateEvent) jposEvent);
         }
         if (!(jposEvent instanceof DataEvent)) {
-            LOGGER.trace("waitForData(out)");
-            throw new JposException(JposConst.JPOS_E_FAILURE);
+            jposException = new JposException(JposConst.JPOS_E_FAILURE);
         }
-        LOGGER.trace("waitForData(out)");
+        if (jposException != null) {
+            log.failure("waitForData(out)", 1, jposException);
+            throw jposException;
+        }
+        log.success("waitForData(out)", 1);
         return (DataEvent) jposEvent;
     }
 
     // currently only used by scanner
     public void stopWaitingForData() {
-        LOGGER.trace("stopWaitingForData(in)");
+        log.success("stopWaitingForData(in)", 1);
         eventSynchronizer.stopWaitingForEvent();
-        LOGGER.trace("stopWaitingForData(out)");
+        log.success("stopWaitingForData(out)", 1);
     }
 
     // currently this method is only used printer
     public void waitForOutputToComplete() throws JposException {
-        LOGGER.trace("waitForOutputToComplete(in)");
+        log.success("waitForOutputToComplete(in)", 1);
         JposEvent jposEvent = eventSynchronizer.waitForEvent();
+        JposException jposException = null;
         if (jposEvent instanceof ErrorEvent) {
-            LOGGER.trace("waitForOutputToComplete(out)");
-            throw jposExceptionFromErrorEvent((ErrorEvent) jposEvent);
+            jposException = jposExceptionFromErrorEvent((ErrorEvent) jposEvent);
         }
         if (jposEvent instanceof StatusUpdateEvent) {
-            LOGGER.trace("waitForOutputToComplete(out)");
-            throw jposExceptionFromStatusUpdateEvent((StatusUpdateEvent) jposEvent);
+            jposException = jposExceptionFromStatusUpdateEvent((StatusUpdateEvent) jposEvent);
         }
         if (!(jposEvent instanceof OutputCompleteEvent)) {
-            LOGGER.trace("waitForOutputToComplete(out)");
-            throw new JposException(JposConst.JPOS_E_FAILURE);
+            jposException = new JposException(JposConst.JPOS_E_FAILURE);
         }
+        if (jposException != null) {
+            log.failure("waitForOutputToComplete(out)", 1, jposException);
+            throw jposException;
+        }
+        log.success("waitForOutputToComplete(out)", 1);
     }
 
     public StatusUpdateEvent waitForStatusUpdate() throws JposException {

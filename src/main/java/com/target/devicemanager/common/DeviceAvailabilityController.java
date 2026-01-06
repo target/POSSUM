@@ -23,6 +23,7 @@ import java.util.List;
 public class DeviceAvailabilityController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceAvailabilityController.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DeviceAvailabilityController", LOGGER);
 
     private static final String CONFIRMOUT_LOCATION  = "/var/tmp/CONFIRMOUT/confirmout.json";
 
@@ -43,16 +44,17 @@ public class DeviceAvailabilityController {
 
     @GetMapping("/v1/deviceerror")
     public SseEmitter getDeviceError() throws IOException {
-        LOGGER.info("GET : /v1/deviceerror");
+        String url = "/v1/deviceerror";
+        log.successAPI("API Request Received", 1, url, null, 0);
         try {
             SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
             deviceAvailabilityService.subscribeToDeviceError(sseEmitter);
             return sseEmitter;
         } catch (IOException ioException) {
-            LOGGER.info("IOException in DeviceError: " + ioException.getMessage());
+            log.failureAPI("API Request Failed with IOException", 9, url, ioException.getMessage(), 500, ioException);
             throw ioException;
         } catch (Exception exception) {
-            LOGGER.info("Exception in DeviceError: " + exception.getMessage());
+            log.failureAPI("API Request Failed with Exception", 9, url, exception.getMessage(), 500, exception);
             throw exception;
         }
     }
@@ -60,7 +62,7 @@ public class DeviceAvailabilityController {
     @Operation(description = "Health status of all devices")
     @GetMapping(path = "/v1/health")
     public ResponseEntity<List<DeviceHealthResponse>> getHealth() {
-        LOGGER.info("GET : /v1/health");
+        log.successAPI("API Request Received", 1, "/v1/health", null, 0);
         return deviceAvailabilityService.getHealth();
     }
 

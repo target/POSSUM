@@ -1,6 +1,7 @@
 package com.target.devicemanager.configuration;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.target.devicemanager.common.StructuredEventLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -18,11 +19,12 @@ import java.util.concurrent.TimeUnit;
 public class ApplicationConfig {
     private final boolean isSimulationMode;
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfig.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Configuration", "ApplicationConfig", LOGGER);
 
     public ApplicationConfig() {
         isSimulationMode = Boolean.parseBoolean(System.getProperty("useSimulators"));
-        LOGGER.debug("Application Version - PACKAGE_VERSION");
-        LOGGER.debug("Is Simulation Mode - " + isSimulationMode);
+        log.success("Application Version - PACKAGE_VERSION", 5);
+        log.success("Is Simulation Mode - " + isSimulationMode, 5);
     }
 
     @Bean
