@@ -59,7 +59,7 @@ public class PrinterController {
     public void print(@Parameter(description = "Receipt entities")
                       @Valid @RequestBody List<PrinterContent> contents) throws DeviceException {
         String url = "/v1/print";
-        log.success("API Request Received", 1);
+        log.successAPI("API Request Received", 1, url, null, 0);
         try {
             if (contents.size() < PRINT_CONTENT_SIZE) {
                 printerManager.printReceipt(contents);
@@ -88,7 +88,7 @@ public class PrinterController {
     @GetMapping(path = "/printer/healthstatus")
     public DeviceHealthResponse getStatus() {
         String url = "/v1/printer/healthstatus";
-        log.success("API Request Received", 1);
+        log.successAPI("API Request Received", 1, url, null, 0);
         DeviceHealthResponse response = printerManager.getStatus();
         log.successAPI("API Request Completed Successfully", 1, url, response.toString(), 200);
         return response;
@@ -105,7 +105,7 @@ public class PrinterController {
     })
     public void reconnect() throws DeviceException {
         String url = "/v1/printer/reconnect";
-        log.success("API Request Received", 1);
+        log.successAPI("API Request Received", 1, url, null, 0);
         try {
             printerManager.reconnectDevice();
             log.successAPI("API Request Completed Successfully", 1, url, "OK", 200);

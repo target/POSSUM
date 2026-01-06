@@ -16,18 +16,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ExceptionController extends ResponseEntityExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionController.class);
-    private static final Marker MARKER = MarkerFactory.getMarker("FATAL");
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "ExceptionController", LOGGER);
 
     @ExceptionHandler(DeviceException.class)
     public ResponseEntity<DeviceError> handleDeviceException(DeviceException exception) {
-        LOGGER.trace(MARKER, "Device Exception: " + exception);
+        log.failure("Device Exception: " + exception, 1, exception);
         return new ResponseEntity<>(exception.getDeviceError(), exception.getDeviceError().getStatusCode());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<DeviceError> handleAllExceptions(Exception exception) {
         DeviceError unknownErr = new DeviceError("Unhandled Exception", exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        LOGGER.error(MARKER, "Unhandled Exception: " + unknownErr);
+        log.failure("Unhandled Exception: " + unknownErr, 18, exception);
         return new ResponseEntity<>(unknownErr, unknownErr.getStatusCode());
     }
 }

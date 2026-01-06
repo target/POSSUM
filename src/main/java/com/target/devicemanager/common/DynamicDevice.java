@@ -12,6 +12,8 @@ public class DynamicDevice<DEVICE extends BaseJposControl> {
     private final DevicePower devicePower;
     private int connectCount = 0;
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDevice.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DynamicDevice", LOGGER);
+
 
     public enum ConnectionResult {
         CONNECTED,
@@ -44,13 +46,13 @@ public class DynamicDevice<DEVICE extends BaseJposControl> {
             }
             boolean deviceFound = deviceConnector.discoverConnectedDevice();
             if (!deviceFound) {
-                LOGGER.trace(getDeviceName() + " Connect Failed: " + connectCount);
+                log.failure(getDeviceName() + " Connect Failed: " + connectCount, 1 , null);
                 return ConnectionResult.NOT_CONNECTED;
             }
 
             devicePower.enablePowerNotification(device);
         }
-        LOGGER.info(getDeviceName() + " Connect Succeeded: " + connectCount);
+        log.success(getDeviceName() + " Connect Succeeded: " + connectCount, 9);
         connectCount = 0;
         return ConnectionResult.CONNECTED;
     }
@@ -59,15 +61,15 @@ public class DynamicDevice<DEVICE extends BaseJposControl> {
         synchronized (device) {
             try {
                 device.release();
-                LOGGER.debug(getDeviceName() + " Released");
+                log.success(getDeviceName() + " Released", 5);
             } catch (JposException jposException) {
-                LOGGER.debug(getDeviceName() + " Release failed " + jposException.getMessage());
+                log.failure(getDeviceName() + " Release failed " + jposException.getMessage(), 5, jposException);
             }
             try {
                 device.close();
-                LOGGER.debug(getDeviceName() + " Closed");
+                log.success(getDeviceName() + " Closed", 5);
             } catch (JposException jposException) {
-                LOGGER.error(getDeviceName() + " Close failed : " + jposException.getMessage());
+                log.failure(getDeviceName() + " Close failed : " + jposException.getMessage(), 17, jposException);
             }
         }
     }

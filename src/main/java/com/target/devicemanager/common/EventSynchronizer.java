@@ -17,6 +17,8 @@ public class EventSynchronizer {
     private final AtomicInteger waitingPhase;
     private final AtomicBoolean areEventsActive;
     private static final Logger LOGGER = LoggerFactory.getLogger(EventSynchronizer.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "EventSynchronizer", LOGGER);
+
 
     public EventSynchronizer(Phaser phaser) {
         if (phaser == null) {
@@ -25,8 +27,9 @@ public class EventSynchronizer {
 
         int registeredParties = phaser.getRegisteredParties();
         if (registeredParties != 1) {
-            LOGGER.error("Phaser has " + registeredParties + "registered parties, must be 1");
-            throw new IllegalArgumentException("phaser must have 1 and only 1 registered parties");
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("phaser must have 1 and only 1 registered parties");
+            log.failure("Phaser has " + registeredParties + "registered parties, must be 1", 17, illegalArgumentException);
+            throw illegalArgumentException;
         }
         this.phaser = phaser;
         int currentPhase = phaser.getPhase();

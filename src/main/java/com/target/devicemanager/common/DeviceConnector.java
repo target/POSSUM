@@ -19,6 +19,8 @@ public class DeviceConnector<T extends BaseJposControl> {
     private static final int CLAIM_TIMEOUT_IN_MSEC = 30000;
     private final int RETRY_REGISTRY_LOAD = 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceConnector.class);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DeviceConnector", LOGGER);
+
 
     public DeviceConnector(T device, JposEntryRegistry deviceRegistry) {
         this(device, deviceRegistry, null);
@@ -43,7 +45,7 @@ public class DeviceConnector<T extends BaseJposControl> {
             clearDeviceCache(); //this clears any caches that exist (both datalogic and ncr have caches that need to get cleared)
             boolean isConnected = connect(configName);
             if (isConnected) {
-                LOGGER.info("device found '" + connectedDeviceName + "'");
+                log.success("device found '" + connectedDeviceName + "'", 9);
                 return true;
             }
         }
@@ -59,17 +61,17 @@ public class DeviceConnector<T extends BaseJposControl> {
             try {
                 device.setDeviceEnabled(false);
             } catch (Exception exception) {
-                LOGGER.trace("failed to disable device '" + getDefaultDeviceName() + "'" + exception);
+                log.failure("failed to disable device '" + getDefaultDeviceName() + "'" + exception, 1, exception);
             }
             try {
                 device.release();
             } catch (Exception exception) {
-                LOGGER.trace("failed to release device '" + getDefaultDeviceName() + "'" + exception);
+                log.failure("failed to release device '" + getDefaultDeviceName() + "'" + exception, 1, exception);
             }
             try {
                 device.close();
             } catch (Exception exception) {
-                LOGGER.trace("failed to close device '" + getDefaultDeviceName() + "'" + exception);
+                log.failure("failed to close device '" + getDefaultDeviceName() + "'" + exception, 1, exception);
             }
         }
     }
@@ -79,13 +81,13 @@ public class DeviceConnector<T extends BaseJposControl> {
                 try {
                     device.open(configName);
                 } catch (JposException jposException){
-                    LOGGER.error("failed to open " + configName + " with error " + jposException.getErrorCode());
+                    log.failure("failed to open " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
                     return false;
                 }
                 try {
                     device.claim(CLAIM_TIMEOUT_IN_MSEC);
                 } catch (JposException jposException){
-                    LOGGER.error("failed to claim " + configName + " with error " + jposException.getErrorCode());
+                    log.failure("failed to claim " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
                     return false;
                 }
                 //this is a test, some devices wont signal connected status until enabled
@@ -93,17 +95,17 @@ public class DeviceConnector<T extends BaseJposControl> {
                 try {
                     device.setDeviceEnabled(true);
                 } catch (JposException jposException){
-                    LOGGER.error("failed to enable " + configName + " with error " + jposException.getErrorCode());
+                    log.failure("failed to enable " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
                     return false;
                 }
                 try {
                     device.setDeviceEnabled(false);
                 } catch (JposException jposException){
-                    LOGGER.error("failed to disable " + configName + " with error " + jposException.getErrorCode());
+                    log.failure("failed to disable " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
                     return false;
                 }
                 this.connectedDeviceName = configName;
-                LOGGER.info("successfully connected " + configName);
+                log.success("successfully connected " + configName, 9);
                 return true;
             }
     }
