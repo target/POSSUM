@@ -76,19 +76,14 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
     public DataEvent waitForData() throws JposException {
         log.success("waitForData(in)", 1);
         JposEvent jposEvent = eventSynchronizer.waitForEvent();
-        JposException jposException = null;
         if (jposEvent instanceof ErrorEvent) {
-            jposException = jposExceptionFromErrorEvent((ErrorEvent) jposEvent);
+            throw jposExceptionFromErrorEvent((ErrorEvent) jposEvent);
         }
         if (jposEvent instanceof StatusUpdateEvent) {
-            jposException = jposExceptionFromStatusUpdateEvent((StatusUpdateEvent) jposEvent);
+            throw jposExceptionFromStatusUpdateEvent((StatusUpdateEvent) jposEvent);
         }
         if (!(jposEvent instanceof DataEvent)) {
-            jposException = new JposException(JposConst.JPOS_E_FAILURE);
-        }
-        if (jposException != null) {
-            log.failure("waitForData(out)", 1, jposException);
-            throw jposException;
+            throw new JposException(JposConst.JPOS_E_FAILURE);
         }
         log.success("waitForData(out)", 1);
         return (DataEvent) jposEvent;
@@ -105,20 +100,16 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
     public void waitForOutputToComplete() throws JposException {
         log.success("waitForOutputToComplete(in)", 1);
         JposEvent jposEvent = eventSynchronizer.waitForEvent();
-        JposException jposException = null;
         if (jposEvent instanceof ErrorEvent) {
-            jposException = jposExceptionFromErrorEvent((ErrorEvent) jposEvent);
+            throw jposExceptionFromErrorEvent((ErrorEvent) jposEvent);
         }
         if (jposEvent instanceof StatusUpdateEvent) {
-            jposException = jposExceptionFromStatusUpdateEvent((StatusUpdateEvent) jposEvent);
+            throw jposExceptionFromStatusUpdateEvent((StatusUpdateEvent) jposEvent);
         }
         if (!(jposEvent instanceof OutputCompleteEvent)) {
-            jposException = new JposException(JposConst.JPOS_E_FAILURE);
+            throw new JposException(JposConst.JPOS_E_FAILURE);
         }
-        if (jposException != null) {
-            log.failure("waitForOutputToComplete(out)", 1, jposException);
-            throw jposException;
-        }
+
         log.success("waitForOutputToComplete(out)", 1);
     }
 
