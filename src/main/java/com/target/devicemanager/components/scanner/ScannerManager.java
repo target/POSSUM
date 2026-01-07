@@ -143,7 +143,6 @@ public class ScannerManager {
         } catch (ExecutionException | InterruptedException exception) {
             ScannerException scannerException;
             Throwable cause = exception.getCause();
-            log.failure("EXCEPTION: " + cause, 20, exception);
             if (cause instanceof JposException) {
                 scannerException = new ScannerException((JposException) cause);
             } else {
@@ -258,7 +257,7 @@ public class ScannerManager {
     }
 
     private void disableScanners() throws InterruptedException {
-        log.success("disableScanners(in)", 18);
+        log.success("disableScanners(in)", 1);
         List<Callable<Void>> taskList = new ArrayList<>();
         try {
             scanners.forEach(scanner -> taskList.add(scanner::cancelScannerData));
