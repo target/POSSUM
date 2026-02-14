@@ -19,25 +19,49 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Configuration
 class ScannerConfig {
-    private final SimulatedJposScanner simulatedScanner;
+   // private final SimulatedJposScanner simulatedScanner;
     private final ApplicationConfig applicationConfig;
+    private final SimulatedJposScanner simulatedFlatbedScanner;
+    private final SimulatedJposScanner simulatedHandheldScanner;
 
     @Autowired
     ScannerConfig(ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
-        this.simulatedScanner = new SimulatedJposScanner();
+       // this.simulatedScanner = new SimulatedJposScanner();
+        this.simulatedFlatbedScanner = new SimulatedJposScanner(ScannerType.FLATBED);
+        this.simulatedHandheldScanner = new SimulatedJposScanner(ScannerType.HANDHELD);
     }
 
     List<ScannerDevice> getScanners() {
         List<ScannerDevice> scanners = new ArrayList<>();
         JposEntryRegistry deviceRegistry = JposServiceLoader.getManager().getEntryRegistry();
 
+//Changed only simulator portion to add Handheld, Flatbed and Both options - Venkatesh Rajmendram
         if (applicationConfig.IsSimulationMode()) {
             scanners.add(new ScannerDevice(
                     new ScannerDeviceListener(new EventSynchronizer(new Phaser(1))),
-                    new SimulatedDynamicDevice<>(simulatedScanner, new DevicePower(), new DeviceConnector<>(simulatedScanner, deviceRegistry)),
-                    ScannerType.FLATBED, applicationConfig));
-        } else {
+                    new SimulatedDynamicDevice<>(
+                            simulatedFlatbedScanner,
+                            new DevicePower(),
+                            new DeviceConnector<>(simulatedFlatbedScanner, deviceRegistry)
+                    ),
+                    ScannerType.FLATBED,
+                    applicationConfig
+            ));
+
+            scanners.add(new ScannerDevice(
+                    new ScannerDeviceListener(new EventSynchronizer(new Phaser(1))),
+                    new SimulatedDynamicDevice<>(
+                            simulatedHandheldScanner,
+                            new DevicePower(),
+                            new DeviceConnector<>(simulatedHandheldScanner, deviceRegistry)
+                    ),
+                    ScannerType.HANDHELD,
+                    applicationConfig
+            ));
+        }
+
+        else {
             Scanner flatbedScanner = new Scanner();
             scanners.add(new ScannerDevice(
                     new ScannerDeviceListener(new EventSynchronizer(new Phaser(1))),
@@ -61,9 +85,11 @@ class ScannerConfig {
         DeviceAvailabilitySingleton.getDeviceAvailabilitySingleton().setScannerManager(scannerManager);
         return scannerManager;
     }
+    
+    @Bean
+    SimulatedJposScanner simulatedFlatbedScanner() { return simulatedFlatbedScanner; }
 
     @Bean
-    SimulatedJposScanner getSimulatedScanner() {
-        return simulatedScanner;
-    }
+    SimulatedJposScanner simulatedHandheldScanner() { return simulatedHandheldScanner; }
+
 }

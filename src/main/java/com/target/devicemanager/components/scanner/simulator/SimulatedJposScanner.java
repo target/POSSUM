@@ -16,11 +16,22 @@ import java.nio.charset.Charset;
 public class SimulatedJposScanner extends Scanner  {
     private Barcode barcode;
     private SimulatorState simulatorState;
+    private ScannerType scannerType;
 
     public SimulatedJposScanner() {
-        barcode = new Barcode("POST desired data to scanner simulator", BarcodeType.UNKNOWN, ScannerType.HANDHELD);
-        simulatorState = SimulatorState.ONLINE;
+        this(ScannerType.BOTH); // default
     }
+    //Changed to add Handheld, Flatbed and Both options added scannerType to take options - Venkatesh Rajmendram
+    public SimulatedJposScanner(ScannerType scannerType) {
+        this.scannerType = scannerType;
+        this.barcode = new Barcode(
+                "POST desired data to scanner simulator",
+                BarcodeType.UNKNOWN,
+                scannerType
+        );
+        this.simulatorState = SimulatorState.ONLINE;
+    }
+
 
     void setBarcode(Barcode barcode) {
         this.barcode = barcode;
@@ -71,10 +82,6 @@ public class SimulatedJposScanner extends Scanner  {
         return simulatorState == SimulatorState.ONLINE ? JposConst.JPOS_S_IDLE : JposConst.JPOS_S_CLOSED;
     }
 
-    @Override
-    public String getPhysicalDeviceName() {
-        return barcode.source.toString();
-    }
 
     @Override
     public void setAutoDisable(boolean value) {
@@ -94,6 +101,12 @@ public class SimulatedJposScanner extends Scanner  {
     @Override
     public void setDeviceEnabled(boolean value) {
         //doNothing
+    }
+
+
+    @Override
+    public String getPhysicalDeviceName() {
+        return scannerType.toString();
     }
 
     @Override
