@@ -13,7 +13,7 @@ import jpos.events.StatusUpdateListener;
 
 import java.nio.charset.Charset;
 
-public class SimulatedJposScanner extends Scanner  {
+public class SimulatedJposScanner extends Scanner {
     private Barcode barcode;
     private SimulatorState simulatorState;
     private ScannerType scannerType;
@@ -21,7 +21,7 @@ public class SimulatedJposScanner extends Scanner  {
     public SimulatedJposScanner() {
         this(ScannerType.BOTH); // default
     }
-    //Changed to add Handheld, Flatbed and Both options added scannerType to take options - Venkatesh Rajmendram
+
     public SimulatedJposScanner(ScannerType scannerType) {
         this.scannerType = scannerType;
         this.barcode = new Barcode(
@@ -36,11 +36,6 @@ public class SimulatedJposScanner extends Scanner  {
     void setBarcode(Barcode barcode) {
         this.barcode = barcode;
         triggerDataEvent();
-    }
-
-    void setState(SimulatorState simulatorState) {
-        this.simulatorState = simulatorState;
-        triggerStatusUpdateEvent();
     }
 
     private void triggerDataEvent() {
@@ -82,6 +77,10 @@ public class SimulatedJposScanner extends Scanner  {
         return simulatorState == SimulatorState.ONLINE ? JposConst.JPOS_S_IDLE : JposConst.JPOS_S_CLOSED;
     }
 
+    void setState(SimulatorState simulatorState) {
+        this.simulatorState = simulatorState;
+        triggerStatusUpdateEvent();
+    }
 
     @Override
     public void setAutoDisable(boolean value) {
@@ -110,7 +109,7 @@ public class SimulatedJposScanner extends Scanner  {
     }
 
     @Override
-    public void close(){
+    public void close() {
         //do nothing
     }
 }

@@ -19,7 +19,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @Configuration
 class ScannerConfig {
-   // private final SimulatedJposScanner simulatedScanner;
     private final ApplicationConfig applicationConfig;
     private final SimulatedJposScanner simulatedFlatbedScanner;
     private final SimulatedJposScanner simulatedHandheldScanner;
@@ -27,7 +26,6 @@ class ScannerConfig {
     @Autowired
     ScannerConfig(ApplicationConfig applicationConfig) {
         this.applicationConfig = applicationConfig;
-       // this.simulatedScanner = new SimulatedJposScanner();
         this.simulatedFlatbedScanner = new SimulatedJposScanner(ScannerType.FLATBED);
         this.simulatedHandheldScanner = new SimulatedJposScanner(ScannerType.HANDHELD);
     }
@@ -35,8 +33,6 @@ class ScannerConfig {
     List<ScannerDevice> getScanners() {
         List<ScannerDevice> scanners = new ArrayList<>();
         JposEntryRegistry deviceRegistry = JposServiceLoader.getManager().getEntryRegistry();
-
-//Changed only simulator portion to add Handheld, Flatbed and Both options - Venkatesh Rajmendram
         if (applicationConfig.IsSimulationMode()) {
             scanners.add(new ScannerDevice(
                     new ScannerDeviceListener(new EventSynchronizer(new Phaser(1))),
@@ -59,9 +55,7 @@ class ScannerConfig {
                     ScannerType.HANDHELD,
                     applicationConfig
             ));
-        }
-
-        else {
+        } else {
             Scanner flatbedScanner = new Scanner();
             scanners.add(new ScannerDevice(
                     new ScannerDeviceListener(new EventSynchronizer(new Phaser(1))),
@@ -85,11 +79,15 @@ class ScannerConfig {
         DeviceAvailabilitySingleton.getDeviceAvailabilitySingleton().setScannerManager(scannerManager);
         return scannerManager;
     }
-    
-    @Bean
-    SimulatedJposScanner simulatedFlatbedScanner() { return simulatedFlatbedScanner; }
 
-    @Bean
-    SimulatedJposScanner simulatedHandheldScanner() { return simulatedHandheldScanner; }
+    @Bean(name = "simulatedFlatbedScanner")
+    SimulatedJposScanner getSimulatedFlatbedScanner() {
+        return simulatedFlatbedScanner;
+    }
+
+    @Bean(name = "simulatedHandheldScanner")
+    SimulatedJposScanner getSimulatedHandheldScanner() {
+        return simulatedHandheldScanner;
+    }
 
 }
