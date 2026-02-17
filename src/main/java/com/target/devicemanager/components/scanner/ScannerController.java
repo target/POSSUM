@@ -63,11 +63,24 @@ public class ScannerController {
                 return data;
             } catch (ScannerException scannerException) {
                 // If getCode() is DISABLED or DEVICE_BUSY, it means the scan request was cancelled either by the client or due to another scan request, so we log it as a less severe failure than other exceptions
-//                if(!Objects.equals(scannerException.getDeviceError().getCode(), "DISABLED") || !Objects.equals(scannerException.getDeviceError().getCode(), "DEVICE_BUSY")) {
-                    log.failureAPI("API Request Failed with ScannerException", 13, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
-//                } else {
-//                    log.failureAPI("API Request Failed with ScannerException", 1, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
-//                }
+                DeviceError error = scannerException.getDeviceError();
+                String code = error != null ? error.getCode() : null;
+                int status = (error != null && error.getStatusCode() != null)
+                        ? error.getStatusCode().value()
+                        : 0;
+
+                int severity = (!Objects.equals(code, "DISABLED") &&
+                        !Objects.equals(code, "DEVICE_BUSY")) ? 13 : 1;
+
+                log.failureAPI(
+                        "API Request Failed with ScannerException",
+                        severity,
+                        url,
+                        error != null ? error.toString() : null,
+                        status,
+                        scannerException
+                );
+
                 throw scannerException;
             }
         } else {
@@ -99,11 +112,23 @@ public class ScannerController {
             log.successAPI("API Request Completed Successfully", 1, url, "OK", 200);
         } catch (ScannerException scannerException) {
             // If getCode() is ALREADY_DISABLED, it means the scan request was already cancelled before this call, so we log it as a less severe failure than other exceptions
-            // if(!Objects.equals(scannerException.getDeviceError().getCode(), "ALREADY_DISABLED")) {
-                log.failureAPI("API Request Failed with ScannerException", 13, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
-//            } else {
-//                log.failureAPI("API Request Failed with ScannerException", 1, url, scannerException.getDeviceError() == null ? null : scannerException.getDeviceError().toString(), scannerException.getDeviceError() == null ? 0 : scannerException.getDeviceError().getStatusCode().value(), scannerException);
-//            }
+            DeviceError error = scannerException.getDeviceError();
+            String code = error != null ? error.getCode() : null;
+            int status = (error != null && error.getStatusCode() != null)
+                    ? error.getStatusCode().value()
+                    : 0;
+
+            int severity = !Objects.equals(code, "ALREADY_DISABLED") ? 13 : 1;
+
+            log.failureAPI(
+                    "API Request Failed with ScannerException",
+                    severity,
+                    url,
+                    error != null ? error.toString() : null,
+                    status,
+                    scannerException
+            );
+
             throw scannerException;
         }
     }
