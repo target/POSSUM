@@ -12,25 +12,33 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/v1/simulate")
 @Tag(name = "Scanner")
 public class ScanSimulatorController {
-    private final SimulatedJposScanner simulatedJposScanner;
+    private final List<SimulatedJposScanner> scanners;
     private final ApplicationConfig applicationConfig;
 
     @Autowired
-    public ScanSimulatorController(ApplicationConfig applicationConfig, SimulatedJposScanner simulatedJposScanner) {
+    public ScanSimulatorController(ApplicationConfig applicationConfig,
+                                   List<SimulatedJposScanner> scanners) {
         if (applicationConfig == null) {
             throw new IllegalArgumentException("applicationConfig cannot be null");
         }
-
-        if (simulatedJposScanner == null) {
-            throw new IllegalArgumentException("simulatedJposScanner cannot be null");
+        if (scanners == null || scanners.isEmpty()) {
+            throw new IllegalArgumentException("scanners cannot be null or empty");
         }
-
-        this.simulatedJposScanner = simulatedJposScanner;
         this.applicationConfig = applicationConfig;
+        this.scanners = scanners;
+    }
+
+    private SimulatedJposScanner pickScanner(com.target.devicemanager.components.scanner.entities.ScannerType type) {
+        return scanners.stream()
+                .filter(s -> type.name().equalsIgnoreCase(s.getPhysicalDeviceName()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unknown device: " + type));
     }
 
     @Operation(description = "Set barcode to complete the currently pending scan request")
@@ -42,7 +50,11 @@ public class ScanSimulatorController {
         if (barcode.source == null) {
             throw new ScannerException(ScannerError.UNKNOWN_DEVICE);
         }
-        simulatedJposScanner.setBarcode(barcode);
+        try {
+            pickScanner(barcode.source).setBarcode(barcode);
+        } catch (IllegalArgumentException e) {
+            throw new ScannerException(ScannerError.UNKNOWN_DEVICE);
+        }
     }
 
     @Operation(description = "Set current state of the scanner")
@@ -51,7 +63,7 @@ public class ScanSimulatorController {
         if (!applicationConfig.IsSimulationMode()) {
             throw new UnsupportedOperationException("Simulation mode is not enabled.");
         }
-        simulatedJposScanner.setState(simulatorState);
+        scanners.forEach(s -> s.setState(simulatorState));
     }
 
     @ExceptionHandler(UnsupportedOperationException.class)
