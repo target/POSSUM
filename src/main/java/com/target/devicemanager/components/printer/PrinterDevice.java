@@ -35,7 +35,7 @@ public class PrinterDevice implements StatusUpdateListener {
     private boolean isLocked = false;
     private final int[] ref = new int[1];
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterDevice.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Printer", "PrinterDevice", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("printer", "PrinterDevice", LOGGER);
 
     /**
      * constructor

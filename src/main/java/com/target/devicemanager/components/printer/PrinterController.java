@@ -31,7 +31,7 @@ public class PrinterController {
     private final PrinterManager printerManager;
     private final int PRINT_CONTENT_SIZE = 64; // Assumes maximum allowed array size for the printer is 64
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterController.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Printer", "PrinterController", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("printer", "PrinterController", LOGGER);
 
     @Autowired
     public PrinterController(PrinterManager printerManager) {

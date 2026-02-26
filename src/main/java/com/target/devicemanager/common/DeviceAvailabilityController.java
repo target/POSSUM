@@ -23,7 +23,7 @@ import java.util.List;
 public class DeviceAvailabilityController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceAvailabilityController.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DeviceAvailabilityController", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("common", "DeviceAvailabilityController", LOGGER);
 
     private static final String CONFIRMOUT_LOCATION  = "/var/tmp/CONFIRMOUT/confirmout.json";
 

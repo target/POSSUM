@@ -28,7 +28,7 @@ public class CashDrawerController {
 
     private final CashDrawerManager cashDrawerManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(CashDrawerController.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("CashDrawer", "CashDrawerController", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("cash_drawer", "CashDrawerController", LOGGER);
 
     @Autowired
     public CashDrawerController(CashDrawerManager cashDrawerManager) {

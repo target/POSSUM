@@ -29,7 +29,7 @@ public class CashDrawerDevice implements StatusUpdateListener{
     private boolean isLocked = false;
     private static final int DRAWER_STATUS_CHECK_INTERVAL = 500;
     private static final Logger LOGGER = LoggerFactory.getLogger(CashDrawerDevice.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("CashDrawer", "CashDrawerDevice", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("cash_drawer", "CashDrawerDevice", LOGGER);
 
     /**
      * Makes sure everything is connected and online.

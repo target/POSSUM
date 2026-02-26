@@ -25,7 +25,7 @@ public class LineDisplayController {
 
     private final LineDisplayManager lineDisplayManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(LineDisplayController.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("LineDisplay", "LineDisplayController", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("line_display", "LineDisplayController", LOGGER);
     @Autowired
     public LineDisplayController(LineDisplayManager lineDisplayManager) {
         if (lineDisplayManager == null) {

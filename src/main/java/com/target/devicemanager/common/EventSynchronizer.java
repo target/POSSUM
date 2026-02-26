@@ -17,7 +17,7 @@ public class EventSynchronizer {
     private final AtomicInteger waitingPhase;
     private final AtomicBoolean areEventsActive;
     private static final Logger LOGGER = LoggerFactory.getLogger(EventSynchronizer.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "EventSynchronizer", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("common", "EventSynchronizer", LOGGER);
 
 
     public EventSynchronizer(Phaser phaser) {

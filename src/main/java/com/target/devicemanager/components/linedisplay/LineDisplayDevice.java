@@ -26,7 +26,7 @@ public class LineDisplayDevice implements StatusUpdateListener {
     private final ReentrantLock connectLock;
     private boolean isLocked = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(LineDisplayDevice.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("LineDisplay", "LineDisplayDevice", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of("line_display", "LineDisplayDevice", LOGGER);
 
     /**
      * Initializes LineDisplayDevice and gets it ready for use.
