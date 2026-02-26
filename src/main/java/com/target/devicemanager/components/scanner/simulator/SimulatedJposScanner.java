@@ -13,23 +13,29 @@ import jpos.events.StatusUpdateListener;
 
 import java.nio.charset.Charset;
 
-public class SimulatedJposScanner extends Scanner  {
+public class SimulatedJposScanner extends Scanner {
     private Barcode barcode;
     private SimulatorState simulatorState;
+    private ScannerType scannerType;
 
     public SimulatedJposScanner() {
-        barcode = new Barcode("POST desired data to scanner simulator", BarcodeType.UNKNOWN, ScannerType.HANDHELD);
-        simulatorState = SimulatorState.ONLINE;
+        this(ScannerType.BOTH); // default
     }
+
+    public SimulatedJposScanner(ScannerType scannerType) {
+        this.scannerType = scannerType;
+        this.barcode = new Barcode(
+                "POST desired data to scanner simulator",
+                BarcodeType.UNKNOWN,
+                scannerType
+        );
+        this.simulatorState = SimulatorState.ONLINE;
+    }
+
 
     void setBarcode(Barcode barcode) {
         this.barcode = barcode;
         triggerDataEvent();
-    }
-
-    void setState(SimulatorState simulatorState) {
-        this.simulatorState = simulatorState;
-        triggerStatusUpdateEvent();
     }
 
     private void triggerDataEvent() {
@@ -71,9 +77,9 @@ public class SimulatedJposScanner extends Scanner  {
         return simulatorState == SimulatorState.ONLINE ? JposConst.JPOS_S_IDLE : JposConst.JPOS_S_CLOSED;
     }
 
-    @Override
-    public String getPhysicalDeviceName() {
-        return barcode.source.toString();
+    void setState(SimulatorState simulatorState) {
+        this.simulatorState = simulatorState;
+        triggerStatusUpdateEvent();
     }
 
     @Override
@@ -96,8 +102,14 @@ public class SimulatedJposScanner extends Scanner  {
         //doNothing
     }
 
+
     @Override
-    public void close(){
+    public String getPhysicalDeviceName() {
+        return scannerType.toString();
+    }
+
+    @Override
+    public void close() {
         //do nothing
     }
 }

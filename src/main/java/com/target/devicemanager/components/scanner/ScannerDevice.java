@@ -179,7 +179,7 @@ public class ScannerDevice {
         try{
             disable();
         } catch(JposException jposException){
-            log.failure("Received exception in cancelScannerData", 17, jposException);
+            log.failure("Received exception in cancelScannerData", 1, jposException);
         } finally {
             deviceListener.stopWaitingForData();
         }
@@ -248,7 +248,7 @@ public class ScannerDevice {
                 throw jposException;
             }
         }
-        log.success(getScannerType() + " scanner enabled", 9);
+        log.success(getScannerType() + " scanner enabled", 1);
         log.success(getScannerType() + " enable(out)", 1);
     }
 
@@ -276,7 +276,7 @@ public class ScannerDevice {
                 throw jposException;
             }
         }
-        log.success(getScannerType() + " scanner disabled", 9);
+        log.success(getScannerType() + " scanner disabled", 1);
         log.success(getScannerType() + " disable(out)", 1);
     }
 
