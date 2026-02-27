@@ -32,7 +32,7 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     private final ReentrantLock connectLock;
     private boolean isLocked = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleDevice.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("scale", "ScaleDevice", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getScaleServiceName(), "ScaleDevice", LOGGER);
     private boolean deviceConnected = false;
     private int[] weight;
 

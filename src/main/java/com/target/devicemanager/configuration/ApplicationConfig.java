@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class ApplicationConfig {
     private final boolean isSimulationMode;
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfig.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("configuration", "ApplicationConfig", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getConfigurationServiceName(), "ApplicationConfig", LOGGER);
 
     public ApplicationConfig() {
         isSimulationMode = Boolean.parseBoolean(System.getProperty("useSimulators"));

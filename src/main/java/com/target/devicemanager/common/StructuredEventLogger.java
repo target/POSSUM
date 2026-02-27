@@ -1,7 +1,10 @@
 package com.target.devicemanager.common;
 
 import com.target.devicemanager.common.entities.LogField;
+import com.target.devicemanager.components.printer.entities.PrinterError;
 import org.slf4j.Logger;
+
+import javax.naming.ldap.PagedResultsControl;
 import java.util.Objects;
 
 public final class StructuredEventLogger {
@@ -11,6 +14,16 @@ public final class StructuredEventLogger {
 
     private static final StackWalker STACK_WALKER =
             StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
+
+    private static final String CASH_DRAWER = "cash_drawer";
+    private static final String CHECK = "check";
+    private static final String LINE_DISPLAY = "line_display";
+    private static final String PRINTER = "printer";
+    private static final String SCALE = "scale";
+    private static final String SCANNER = "scanner";
+    private static final String DEVICE_MANAGER = "device_manager";
+    private static final String COMMON = "common";
+    private static final String CONFIGURATION = "configuration";
 
     public StructuredEventLogger(String serviceName, String component, Logger logger) {
         this.serviceName = serviceName;
@@ -119,5 +132,41 @@ public final class StructuredEventLogger {
                         .map(StackWalker.StackFrame::getMethodName)
                         .orElse("unknown")
         );
+    }
+
+    public static String getCashDrawerServiceName(){
+        return CASH_DRAWER;
+    }
+
+    public static String getCheckServiceName(){
+        return CHECK;
+    }
+
+    public static String getLineDisplayServiceName(){
+        return LINE_DISPLAY;
+    }
+
+    public static String getPrinterServiceName(){
+        return PRINTER;
+    }
+
+    public static String getScaleServiceName(){
+        return SCALE;
+    }
+
+    public static String getScannerServiceName(){
+        return SCANNER;
+    }
+
+    public static String getDeviceManagerServiceName(){
+        return DEVICE_MANAGER;
+    }
+
+    public static String getCommonServiceName(){
+        return COMMON;
+    }
+
+    public static String getConfigurationServiceName(){
+        return CONFIGURATION;
     }
 }

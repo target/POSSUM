@@ -28,7 +28,7 @@ public class CashDrawerManager {
     private final Lock cashDrawerLock;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(CashDrawerManager.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("cash_drawer", "CashDrawerManager", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCashDrawerServiceName(), "CashDrawerManager", LOGGER);
 
     public CashDrawerManager(CashDrawerDevice cashDrawerDevice, Lock cashDrawerLock) {
         this(cashDrawerDevice, cashDrawerLock, null);

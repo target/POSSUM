@@ -36,7 +36,7 @@ public class PrinterManager {
     private boolean isTest = false;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterManager.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("printer", "PrinterManager", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getPrinterServiceName(), "PrinterManager", LOGGER);
 
     public PrinterManager(PrinterDevice printerDevice, Lock printerLock) {
         this(printerDevice, printerLock, null, null, false);

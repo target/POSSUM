@@ -27,7 +27,7 @@ public class ScannerDevice {
     private final ScannerType scannerType;
     private boolean deviceConnected = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScannerDevice.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("scanner", "ScannerDevice", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getScannerServiceName(), "ScannerDevice", LOGGER);
     private static final int MAX_RETRIES = 3;
     private static final int SCANNER_CMD_TIMEOUT = 999;
     private final ReentrantLock connectLock;

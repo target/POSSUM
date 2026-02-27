@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 @EnableScheduling
 public class DeviceMain {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceMain.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("device_manager", "DeviceMain", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getDeviceManagerServiceName(), "DeviceMain", LOGGER);
 
     public static void main(String[] args) {
         System.setProperty(JposPropertiesConst.JPOS_POPULATOR_FILE_PROP_NAME, "devcon.xml");

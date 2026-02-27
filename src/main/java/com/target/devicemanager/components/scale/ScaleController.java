@@ -33,7 +33,7 @@ public class ScaleController {
 
     private final ScaleManager scaleManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleController.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("scale", "ScaleController", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getScaleServiceName(), "ScaleController", LOGGER);
 
     @Autowired
     public ScaleController(ScaleManager scaleManager) {

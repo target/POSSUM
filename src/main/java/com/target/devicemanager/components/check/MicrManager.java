@@ -33,7 +33,7 @@ public class MicrManager implements MicrEventListener, ConnectionEventListener {
     private CompletableFuture<MicrData> micrDataClient = null;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(MicrManager.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("check", "MicrManager", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCheckServiceName(), "MicrManager", LOGGER);
 
     public MicrManager(MicrDevice micrDevice) {
         this(micrDevice, null, null);

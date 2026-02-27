@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DeviceErrorStatusResponse {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceErrorStatusResponse.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("common", "DeviceErrorStatusResponse", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCommonServiceName(), "DeviceErrorStatusResponse", LOGGER);
     private static final DeviceErrorStatusResponse deviceErrorStatusResponse = new DeviceErrorStatusResponse();
     private static List<DeviceErrorStatus> deviceErrorStatuses;
 

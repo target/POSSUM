@@ -38,7 +38,7 @@ public class MicrController {
     private final MicrManager micrManager;
     private final int PRINT_CONTENT_SIZE = 64;
     private static final Logger LOGGER = LoggerFactory.getLogger(MicrController.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("check", "MicrController", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCheckServiceName(), "MicrController", LOGGER);
 
     @Autowired
     public MicrController(PrinterManager printerManager, MicrManager micrManager) {
