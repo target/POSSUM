@@ -19,7 +19,7 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
 
     private final EventSynchronizer eventSynchronizer;
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceListener.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DeviceListener", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCommonServiceName(), "DeviceListener", LOGGER);
 
     public DeviceListener(EventSynchronizer eventSynchronizer) {
         if (eventSynchronizer == null) {

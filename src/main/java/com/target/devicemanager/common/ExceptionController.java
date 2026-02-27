@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class ExceptionController extends ResponseEntityExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionController.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "ExceptionController", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCommonServiceName(), "ExceptionController", LOGGER);
 
     @ExceptionHandler(DeviceException.class)
     public ResponseEntity<DeviceError> handleDeviceException(DeviceException exception) {

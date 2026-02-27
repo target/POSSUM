@@ -30,7 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DeviceAvailabilityService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceAvailabilityService.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DeviceAvailabilityService", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCommonServiceName(), "DeviceAvailabilityService", LOGGER);
     public static final List<SseEmitter> deviceErrorClientList = new CopyOnWriteArrayList<>();
     ApplicationConfig applicationConfig;
     private String simulatorRegisterType = "default";

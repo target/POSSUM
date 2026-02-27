@@ -12,7 +12,7 @@ public class DynamicDevice<DEVICE extends BaseJposControl> {
     private final DevicePower devicePower;
     private int connectCount = 0;
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicDevice.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DynamicDevice", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCommonServiceName(), "DynamicDevice", LOGGER);
 
 
     public enum ConnectionResult {

@@ -29,7 +29,7 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
     private final ReentrantLock connectLock;
     private boolean isLocked = false;
     private static final Logger LOGGER = LoggerFactory.getLogger(MicrDevice.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Check", "MicrDevice", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCheckServiceName(), "MicrDevice", LOGGER);
 
     /**
      * Initializes the MicrDevice.

@@ -19,7 +19,7 @@ public class DeviceConnector<T extends BaseJposControl> {
     private static final int CLAIM_TIMEOUT_IN_MSEC = 30000;
     private final int RETRY_REGISTRY_LOAD = 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceConnector.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Common", "DeviceConnector", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCommonServiceName(), "DeviceConnector", LOGGER);
 
 
     public DeviceConnector(T device, JposEntryRegistry deviceRegistry) {

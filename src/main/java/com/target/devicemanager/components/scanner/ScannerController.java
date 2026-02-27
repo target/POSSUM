@@ -30,7 +30,7 @@ public class ScannerController {
 
     private final ScannerManager scannerManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScannerController.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Scanner", "ScannerController", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getScannerServiceName(), "ScannerController", LOGGER);
 
     @Autowired
     public ScannerController(ScannerManager scannerManager) {
