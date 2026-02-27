@@ -1,10 +1,7 @@
 package com.target.devicemanager.common;
 
 import com.target.devicemanager.common.entities.LogField;
-import com.target.devicemanager.components.printer.entities.PrinterError;
 import org.slf4j.Logger;
-
-import javax.naming.ldap.PagedResultsControl;
 import java.util.Objects;
 
 public final class StructuredEventLogger {
