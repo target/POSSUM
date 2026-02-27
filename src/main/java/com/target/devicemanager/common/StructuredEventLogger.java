@@ -4,7 +4,7 @@ import com.target.devicemanager.common.entities.LogField;
 import org.slf4j.Logger;
 import java.util.Objects;
 
-public final class StructuredEventLogger {
+public class StructuredEventLogger {
     private final String serviceName;
     private final String component;
     private final Logger logger;
