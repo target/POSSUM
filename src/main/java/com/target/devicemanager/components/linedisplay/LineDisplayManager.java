@@ -27,7 +27,7 @@ public class LineDisplayManager implements ConnectionEventListener {
     private final LineDisplayDevice lineDisplayDevice;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(LineDisplayManager.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("LineDisplay", "LineDisplayManager", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getLineDisplayServiceName(), "LineDisplayManager", LOGGER);
 
     public LineDisplayManager(LineDisplayDevice lineDisplayDevice) {
         this(lineDisplayDevice, null);

@@ -43,7 +43,7 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private List<SseEmitter> deadEmitterList;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScaleManager.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Scale", "ScaleManager", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getScaleServiceName(), "ScaleManager", LOGGER);
 
     public ScaleManager(ScaleDevice scaleDevice, List<SseEmitter> liveWeightClients, List<CompletableFuture<FormattedWeight>> stableWeightClients) {
         this(scaleDevice, liveWeightClients, stableWeightClients, null, null);
