@@ -32,7 +32,7 @@ public class ScannerManager {
     private final Lock scannerLock;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(ScannerManager.class);
-    private static final StructuredEventLogger log = StructuredEventLogger.of("Scanner", "ScannerManager", LOGGER);
+    private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getScannerServiceName(), "ScannerManager", LOGGER);
     private ExecutorService executor;
     private boolean isTest = false;
     private List<Future<Boolean>> results;
