@@ -225,6 +225,7 @@ public class PrinterDevice implements StatusUpdateListener {
                             }
                         }
                     }
+                    log.failure("Unlocking the printer", 17, null);
                     unlock();
                     if (jposException != null) {
                         throw jposException;
@@ -369,6 +370,22 @@ public class PrinterDevice implements StatusUpdateListener {
         }
     }
 
+    private void clearPrinterBuffer(){
+        new Thread(() -> {
+            try {
+                POSPrinter posPrinter;
+                synchronized (posPrinter = dynamicPrinter.getDevice()) {
+                    String selectReceipt = "\u001B" + "c" + "0" + "\u0001";
+                    posPrinter.printNormal(POSPrinterConst.PTR_S_RECEIPT, selectReceipt);
+                    String init = "\u001B" + "@";
+                    posPrinter.printNormal(POSPrinterConst.PTR_S_RECEIPT, init);
+                }
+            } catch (JposException jposException) {
+                log.failure("Printer Failed to clear buffer: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 18, jposException);
+            }
+        }).start();
+    }
+
     /**
      * This method is only used to set 'ref' for unit testing
      * @param ref
@@ -441,6 +458,7 @@ public class PrinterDevice implements StatusUpdateListener {
             case POSPrinterConst.PTR_SUE_REC_NEAREMPTY:
                 log.success("Status Update: Receipt printer paper near empty", 5);
                 if (getWasPaperEmpty()) {
+                    clearPrinterBuffer();
                     setWasPaperEmpty(false);
                 }
                 break;
@@ -450,6 +468,7 @@ public class PrinterDevice implements StatusUpdateListener {
                     printerErrorHandlingSingleton.clearError();
                 }
                 if (getWasPaperEmpty()) {
+                    clearPrinterBuffer();
                     setIsReconnectNeeded(true);
                     setWasPaperEmpty(false);
                 }
