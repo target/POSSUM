@@ -225,7 +225,6 @@ public class PrinterDevice implements StatusUpdateListener {
                             }
                         }
                     }
-                    log.failure("Unlocking the printer", 17, null);
                     unlock();
                     if (jposException != null) {
                         throw jposException;
