@@ -257,47 +257,104 @@ public class PrinterManagerTest {
     }
 
     @Test
-    public void printReceipt_WhenFutureThrowsTimeoutException() throws PrinterException, JposException, InterruptedException, ExecutionException, TimeoutException {
-        //arrange
+    public void printReceipt_WhenFutureThrowsTimeoutException() {
+        // arrange
         List<PrinterContent> testContents = new ArrayList<>();
         when(mockPrinterLock.tryLock()).thenReturn(true);
-        doThrow(new TimeoutException()).when(mockFuture).get(PrinterManager.getPrinterTimeoutValue(), TimeUnit.SECONDS);
-        //act
+
+        // Make the task block > PRINTER_TIMEOUT so PrinterManager times out.
         try {
-            printerManagerCacheFuture.printReceipt(testContents);
+            doAnswer(invocation -> {
+                Thread.sleep((PrinterManager.getPrinterTimeoutValue() + 1L) * 1000L);
+                return null;
+            }).when(mockPrinterDevice).printContent(any(), anyInt());
+        } catch (Exception e) {
+            fail("Unexpected stubbing error: " + e);
         }
 
-        //assert
-        catch (DeviceException deviceException) {
-            verify(mockPrinterDevice, never()).printContent(testContents, PrinterStationType.RECEIPT_PRINTER.getValue());
-            assertEquals(PrinterError.PRINTER_TIME_OUT, deviceException.getDeviceError());
+        // act/assert
+        try {
+            printerManager.printReceipt(testContents);
+        } catch (PrinterException printerException) {
+            assertEquals(PrinterError.PRINTER_TIME_OUT, printerException.getDeviceError());
             verify(mockPrinterLock).unlock();
             return;
+        } catch (Exception other) {
+            fail("Expected PrinterException(PRINTER_TIME_OUT), but got: " + other);
         }
 
         fail("Expected Exception, but got none");
     }
 
     @Test
-    public void printReceipt_WhenFutureThrowsInterruptedException() throws DeviceException, JposException, InterruptedException, ExecutionException, TimeoutException {
-        //arrange
+    public void printReceipt_WhenFutureThrowsInterruptedException() {
+        // arrange
         List<PrinterContent> testContents = new ArrayList<>();
         when(mockPrinterLock.tryLock()).thenReturn(true);
-        doThrow(new InterruptedException()).when(mockFuture).get(PrinterManager.getPrinterTimeoutValue(), TimeUnit.SECONDS);
-        //act
+
+        // Force the worker to wait, then interrupt the calling thread while it awaits the Future.
         try {
-            printerManagerCacheFuture.printReceipt(testContents);
+            doAnswer(invocation -> {
+                Thread.sleep((PrinterManager.getPrinterTimeoutValue() + 1L) * 1000L);
+                return null;
+            }).when(mockPrinterDevice).printContent(any(), anyInt());
+        } catch (Exception e) {
+            fail("Unexpected stubbing error: " + e);
         }
 
-        //assert
-        catch (PrinterException printerException) {
-            verify(mockPrinterDevice, never()).printContent(testContents, PrinterStationType.RECEIPT_PRINTER.getValue());
+        Thread testThread = Thread.currentThread();
+        Thread interrupter = new Thread(() -> {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ignored) {
+            }
+            testThread.interrupt();
+        });
+        interrupter.start();
+
+        // act/assert
+        try {
+            printerManager.printReceipt(testContents);
+        } catch (PrinterException printerException) {
+            assertEquals(DeviceError.UNEXPECTED_ERROR, printerException.getDeviceError());
+            verify(mockPrinterLock).unlock();
+            // Clear interrupt for subsequent tests.
+            Thread.interrupted();
+            return;
+        } catch (Exception other) {
+            Thread.interrupted();
+            fail("Expected PrinterException(UNEXPECTED_ERROR), but got: " + other);
+        }
+
+        Thread.interrupted();
+        fail("Expected Exception, but got none");
+    }
+
+    @Test
+    public void printReceipt_WhenExecutionExceptionCauseIsUnknown_MapsToFailurePrinterException() {
+        // arrange
+        List<PrinterContent> testContents = new ArrayList<>();
+        when(mockPrinterLock.tryLock()).thenReturn(true);
+        try {
+            doThrow(new RuntimeException("boom")).when(mockPrinterDevice).printContent(any(), anyInt());
+        } catch (PrinterException | JposException e) {
+            fail("Unexpected stubbing error: " + e);
+        }
+
+        // act/assert
+        try {
+            printerManager.printReceipt(testContents);
+        } catch (PrinterException printerException) {
             assertEquals(DeviceError.UNEXPECTED_ERROR, printerException.getDeviceError());
             verify(mockPrinterLock).unlock();
             return;
+        } catch (DeviceException otherDeviceException) {
+            fail("Expected PrinterException(UNEXPECTED_ERROR), but got DeviceException: " + otherDeviceException);
+        } catch (Exception other) {
+            fail("Expected PrinterException(UNEXPECTED_ERROR), but got: " + other);
         }
 
-        fail("Expected Exception, but got none");
+        fail("Expected exception, but got none");
     }
 
     @Test
