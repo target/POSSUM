@@ -101,37 +101,51 @@ public class PrinterManager {
             throw printerException;
         }
 
-        ExecutorService executorService = null;
-        Callable<Void> task;
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<?> localFuture = null;
 
         try {
-            executorService = Executors.newSingleThreadExecutor();
-            task = () -> printerDevice.printContent(contents,PrinterStationType.RECEIPT_PRINTER.getValue());
-            if(!isTest) {
-                future = executorService.submit(task);
-            }
-            future.get(PRINTER_TIMEOUT, TimeUnit.SECONDS);
+            Callable<Void> task = () -> {
+                printerDevice.printContent(contents, PrinterStationType.RECEIPT_PRINTER.getValue());
+                return null;
+            };
+
+            localFuture = executorService.submit(task);
+            localFuture.get(PRINTER_TIMEOUT, TimeUnit.SECONDS);
+
         } catch (ExecutionException executionException) {
             Throwable cause = executionException.getCause();
             PrinterException printerException;
             if (cause instanceof PrinterException) {
                 printerException = (PrinterException) cause;
-            }
-            else {  // JposException
+            } else if (cause instanceof JposException) {
                 printerException = new PrinterException((JposException) cause);
+            } else {
+                printerException = new PrinterException(new JposException(JposConst.JPOS_E_FAILURE));
             }
-            log.failure(printerException.getDeviceError().getDescription(),17, printerException);
+            log.failure(printerException.getDeviceError().getDescription(), 17, printerException);
             throw printerException;
+
         } catch (TimeoutException timeoutException) {
-            log.failure(PrinterError.PRINTER_TIME_OUT.getDescription(),17, timeoutException);
+            if (localFuture != null) {
+                localFuture.cancel(true);
+            }
+            executorService.shutdownNow(); // attempt to stop running tasks immediately
+            log.failure(PrinterError.PRINTER_TIME_OUT.getDescription(), 17, timeoutException);
             throw new PrinterException(PrinterError.PRINTER_TIME_OUT);
-        } catch (InterruptedException exception) {
+        } catch (InterruptedException interruptedException) {
+            // preserve interrupt status and try to stop worker
+            if (localFuture != null) {
+                localFuture.cancel(true);
+            }
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
             PrinterException printerException = new PrinterException(new JposException(JposConst.JPOS_E_FAILURE));
-            log.failure(printerException.getDeviceError().getDescription(),17, printerException);
+            log.failure(printerException.getDeviceError().getDescription(), 17, printerException);
             throw printerException;
         } finally {
-            if (executorService != null) {
-                executorService.shutdown();
+            if (!executorService.isShutdown()) {
+                executorService.shutdownNow();
             }
             printerLock.unlock();
         }
