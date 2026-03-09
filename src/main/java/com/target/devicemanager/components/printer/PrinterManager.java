@@ -32,8 +32,6 @@ public class PrinterManager {
     private final PrinterDevice printerDevice;
     private final Lock printerLock;
     private static final int PRINTER_TIMEOUT = 10;  // Timeout value for printContent call in seconds
-    private Future<Void> future;
-    private boolean isTest = false;
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterManager.class);
     private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getPrinterServiceName(), "PrinterManager", LOGGER);
@@ -56,12 +54,6 @@ public class PrinterManager {
         if(cacheManager != null) {
             this.cacheManager = cacheManager;
         }
-
-        if(future != null) {
-            this.future = future;
-        }
-
-        this.isTest = isTest;
     }
 
     @Scheduled(fixedDelay = 5000, initialDelay = 5000)
