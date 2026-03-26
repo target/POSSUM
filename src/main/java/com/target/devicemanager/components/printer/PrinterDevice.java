@@ -153,87 +153,165 @@ public class PrinterDevice implements StatusUpdateListener {
 
     /**
      * Prints the content on the receipt.
-     * @param contents the image on receipt.
+     *
+     * @param contents       the image on receipt.
      * @param printerStation register where printing occurs.
      * @throws JposException, PrinterException
      */
-    public Void printContent(List<PrinterContent> contents, int printerStation) throws JposException, PrinterException {
-        if (tryLock()) {
-            POSPrinter printer;
+
+    public void printContent(List<PrinterContent> contents, int printerStation)
+            throws JposException, PrinterException {
+        System.out.println("TEST.......");
+        log.failure("printContent() invoked", 17,null);
+
+        if (!tryLock()) {
+            log.failure("Printer lock unavailable", 17, null);
+            throw new PrinterException(PrinterError.PRINTER_BUSY);
+        }
+
+        POSPrinter printer = null;
+        boolean transactionStarted = false;
+
+        try {
             synchronized (printer = dynamicPrinter.getDevice()) {
-                try {
-                    if (contents == null || contents.isEmpty()) {
-                        PrinterException printerException = new PrinterException(PrinterError.INVALID_FORMAT);
-                        log.failure("Receipt contents are empty", 5, printerException);
-                        throw printerException;
-                    }
-                    enable();
-                    if (printerStation != PrinterStationType.CHECK_PRINTER.getValue() && (wasPaperEmpty || paperEmptyCheck())) {
-                        // Throw JPOS extended error JPOS_EPTR_REC_EMPTY
-                        throw new JposException(114, 203);
-                    }
-                    reconnectR5Printer();
-                    printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_TRANSACTION);
-                    for (PrinterContent content : contents) {
-                        switch (content.type.toString()) {
-                            case "BARCODE":
-                                print(printer, (BarcodeContent) content, printerStation);
-                                break;
-                            case "IMAGE":
-                                print(printer, (ImageContent) content, printerStation);
-                                break;
-                            case "TEXT":
-                            default:
-                                print(printer, content.data, printerStation);
-                                break;
-                        }
-                    }
-                    printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_NORMAL);
-                    deviceListener.waitForOutputToComplete();
 
-                } catch (JposException jposException) {
-                    log.failure("Printer Failed to Print Content: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 18, jposException);
+                log.failure("Acquired printer and entered synchronized block", 17,null);
 
-                    boolean failureOrDisabledError = jposException.getErrorCode() == 111 || jposException.getErrorCode() == 105;
-                    boolean badPrintContentError = jposException.getErrorCode() == 106 || (jposException.getErrorCode() == 114 && jposException.getErrorCodeExtended() == 207);
-                    if ((failureOrDisabledError || badPrintContentError)) {
-                        log.failure("Received Printer " + jposException.getErrorCode() + " error.  Disconnecting device.", 18, jposException);
-                        disconnect();
-                        log.failure("Received Printer " + jposException.getErrorCode() + " error.  Reconnecting device.", 18, jposException);
-                        connect();
-                        if (badPrintContentError) {
-                            throw new PrinterException(PrinterError.INVALID_FORMAT);
-                        }
+                // Clear stale status
+                PrinterErrorHandlingSingleton.getPrinterErrorHandlingSingleton().clearError();
+                log.failure("Cleared singleton error state", 17,null);
+
+                if (contents == null || contents.isEmpty()) {
+                    log.failure("Receipt contents are empty", 5, null);
+                    throw new PrinterException(PrinterError.INVALID_FORMAT);
+                }
+
+                log.failure("Valid contents received. Size=" + contents.size(), 1,null);
+
+                enable();
+                log.failure("Printer enabled successfully", 17,null);
+
+                if (printerStation != PrinterStationType.CHECK_PRINTER.getValue()
+                        && (wasPaperEmpty || paperEmptyCheck())) {
+                    log.failure("Paper empty detected before print", 13, null);
+                    throw new JposException(114, 203);
+                }
+
+                reconnectR5Printer();
+                log.failure("Reconnect check completed", 17,null);
+
+                printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_TRANSACTION);
+                transactionStarted = true;
+                log.failure("Transaction started", 17,null);
+
+                int index = 0;
+                for (PrinterContent content : contents) {
+                    index++;
+
+                    if (content == null || content.type == null) {
+                        log.failure("Invalid content at index " + index, 13, null);
+                        throw new PrinterException(PrinterError.INVALID_FORMAT);
                     }
-                    throw jposException;
-                } finally {
-                    JposException jposException = null;
-                    try {
-                        printer.clearOutput();
-                    } catch (JposException exception) {
-                        log.failure("Received printer " + exception.getErrorCode() + " error during clearOutput()", 17, exception);
-                        jposException = exception;
-                    }
-                    // if an exception is thrown during print, make sure check is spit out.
-                    if (getIsCheckInserted()) {
-                        try {
-                            withdrawCheck();
-                        } catch (JposException exception) {
-                            log.failure("Received printer " + exception.getErrorCode() + " error during withdrawCheck()", 17, exception);
-                            if (jposException == null) {
-                                jposException = exception;
-                            }
-                        }
-                    }
-                    unlock();
-                    if (jposException != null) {
-                        throw jposException;
+
+                    log.failure("Printing content index=" + index + " type=" + content.type, 1,null);
+
+                    switch (content.type.toString()) {
+                        case "BARCODE":
+                            print(printer, (BarcodeContent) content, printerStation);
+                            break;
+                        case "IMAGE":
+                            print(printer, (ImageContent) content, printerStation);
+                            break;
+                        case "TEXT":
+                        default:
+                            print(printer, content.data, printerStation);
+                            break;
                     }
                 }
+
+                log.failure("All content sent to printer buffer", 17,null);
+
+                printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_NORMAL);
+                transactionStarted = false;
+                log.failure("Transaction ended (PTR_TP_NORMAL)", 17,null);
+
+                deviceListener.waitForOutputToComplete();
+                log.failure("Output complete event received", 17,null);
+
+                PrinterException statusError =
+                        PrinterErrorHandlingSingleton.getPrinterErrorHandlingSingleton().getError();
+
+                if (statusError != null) {
+                    log.failure("Singleton error detected after print: "
+                            + statusError.getDeviceError().getDescription(), 17, statusError);
+                    throw statusError;
+                }
+
+                log.failure("printContent() completed successfully", 17,null);
             }
-            return null;
-        } else {
-            throw new PrinterException(PrinterError.PRINTER_BUSY);
+
+        } catch (PrinterException printerException) {
+            log.failure("PrinterException: " + printerException.getDeviceError().getDescription(), 18, printerException);
+            throw printerException;
+
+        } catch (JposException jposException) {
+            log.failure("JposException: " + jposException.getErrorCode()
+                    + ", " + jposException.getErrorCodeExtended(), 18, jposException);
+
+            boolean failureOrDisabledError = jposException.getErrorCode() == 111
+                    || jposException.getErrorCode() == 105;
+
+            boolean badPrintContentError = jposException.getErrorCode() == 106
+                    || (jposException.getErrorCode() == 114 && jposException.getErrorCodeExtended() == 207);
+
+            if (badPrintContentError) {
+                log.failure("Detected invalid print content error", 13, jposException);
+                throw new PrinterException(PrinterError.INVALID_FORMAT);
+            }
+
+            if (failureOrDisabledError) {
+                log.failure("Device failure/disabled detected. Reconnecting...", 18, jposException);
+                disconnect();
+                connect();
+            }
+
+            throw jposException;
+
+        } finally {
+            log.failure("Entering finally block", 17,null);
+
+            try {
+                if (printer != null && transactionStarted) {
+                    log.failure("Closing open transaction in finally", 17,null);
+                    printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_NORMAL);
+                }
+            } catch (JposException cleanupException) {
+                log.failure("Failed to end transaction: "
+                        + cleanupException.getErrorCode() + ", "
+                        + cleanupException.getErrorCodeExtended(), 17, cleanupException);
+            }
+
+            try {
+                if (printer != null) {
+                    printer.clearOutput();
+                    log.failure("Cleared printer output buffer", 17,null);
+                }
+            } catch (JposException cleanupException) {
+                log.failure("clearOutput failed: "
+                        + cleanupException.getErrorCode(), 17, cleanupException);
+            }
+
+            if (getIsCheckInserted()) {
+                try {
+                    withdrawCheck();
+                    log.failure("Withdraw check executed", 17,null);
+                } catch (JposException cleanupException) {
+                    log.failure("withdrawCheck failed: "
+                            + cleanupException.getErrorCode(), 17, cleanupException);
+                }
+            }
+            unlock();
+            log.failure("Printer lock released", 17,null);
         }
     }
 
@@ -463,11 +541,11 @@ public class PrinterDevice implements StatusUpdateListener {
                 break;
             case POSPrinterConst.PTR_SUE_REC_PAPEROK:
                 log.success("Status Update: Receipt paper OK", 5);
+                clearPrinterBuffer();
                 if (printerErrorHandlingSingleton.getError() != null) {
                     printerErrorHandlingSingleton.clearError();
                 }
                 if (getWasPaperEmpty()) {
-                    clearPrinterBuffer();
                     setIsReconnectNeeded(true);
                     setWasPaperEmpty(false);
                 }

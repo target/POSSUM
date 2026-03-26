@@ -31,7 +31,7 @@ public class PrinterManager {
 
     private final PrinterDevice printerDevice;
     private final Lock printerLock;
-    private static final int PRINTER_TIMEOUT = 10;  // Timeout value for printContent call in seconds
+    private static final int PRINTER_TIMEOUT = 20;  // Timeout value for printContent call in seconds
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterManager.class);
     private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getPrinterServiceName(), "PrinterManager", LOGGER);

@@ -15,11 +15,19 @@ import jpos.services.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class DeviceListener implements DataListener, ErrorListener, StatusUpdateListener, OutputCompleteListener {
 
     private final EventSynchronizer eventSynchronizer;
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceListener.class);
     private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCommonServiceName(), "DeviceListener", LOGGER);
+
+    private static final long ERROR_LOG_DUP_MS = 1000;
+
+    private final AtomicReference<String> lastErrorKey = new AtomicReference<>("");
+    private final AtomicLong lastErrorLogTime = new AtomicLong(0);
 
     public DeviceListener(EventSynchronizer eventSynchronizer) {
         if (eventSynchronizer == null) {
@@ -36,11 +44,33 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
 
     @Override
     public void errorOccurred(ErrorEvent errorEvent) {
-        log.failure("errorOccurred(): errCode=" + errorEvent.getErrorCode()
-                + " errCodeExt=" + errorEvent.getErrorCodeExtended()
-                + " errLocus=" + errorEvent.getErrorLocus()
-                + " errResponse=" + errorEvent.getErrorResponse(), 17, null);
         int errorCode = errorEvent.getErrorCode();
+        int errorExt = errorEvent.getErrorCodeExtended();
+        int errorLocus = errorEvent.getErrorLocus();
+        int errorResponse = errorEvent.getErrorResponse();
+
+        String currentKey = errorCode + ":" + errorExt + ":" + errorLocus + ":" + errorResponse;
+        long now = System.currentTimeMillis();
+
+        String previousKey = lastErrorKey.get();
+        long previousTime = lastErrorLogTime.get();
+
+        boolean shouldLog = !currentKey.equals(previousKey) || (now - previousTime) > ERROR_LOG_DUP_MS;
+
+        if (shouldLog) {
+            lastErrorKey.set(currentKey);
+            lastErrorLogTime.set(now);
+
+            log.failure(
+                    "errorOccurred(): errCode=" + errorCode
+                            + " errCodeExt=" + errorExt
+                            + " errLocus=" + errorLocus
+                            + " errResponse=" + errorResponse,
+                    17,
+                    null
+            );
+        }
+
         if (errorCode == JposConst.JPOS_E_OFFLINE || errorCode == JposConst.JPOS_E_NOHARDWARE) {
             BaseService jposService = (BaseService) errorEvent.getSource();
             try {
