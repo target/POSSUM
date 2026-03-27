@@ -1143,6 +1143,108 @@ public class PrinterDeviceTest {
     }
 
     @Test
+    public void printContent_WhenGetIsCheckInsertedFalse_DoesNotWithdrawCheck() throws JposException, PrinterException {
+        List<PrinterContent> contents = new ArrayList<>();
+        TextContent textContent = new TextContent();
+        textContent.setType(ContentType.TEXT);
+        contents.add(textContent);
+        printerDevice.setDeviceConnected(true);
+        when(mockPrinter.getPhysicalDeviceName()).thenReturn("NotR5");
+        printerDevice.setIsCheckInserted(false);
+
+        printerDevice.printContent(contents, 0);
+
+        verify(mockDynamicPrinter, times(3)).getDevice();
+        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
+        verify(mockPrinter).clearOutput();
+        verify(mockPrinter, never()).beginRemoval(anyInt());
+        verify(mockPrinter, never()).endRemoval();
+    }
+
+    @Test
+    public void printContent_WhenGetIsCheckInsertedTrue_WithdrawsCheck() throws JposException, PrinterException {
+        List<PrinterContent> contents = new ArrayList<>();
+        TextContent textContent = new TextContent();
+        textContent.setType(ContentType.TEXT);
+        contents.add(textContent);
+        printerDevice.setDeviceConnected(true);
+        when(mockPrinter.getPhysicalDeviceName()).thenReturn("NotR5");
+        printerDevice.setIsCheckInserted(true);
+
+        printerDevice.printContent(contents, 0);
+
+        verify(mockDynamicPrinter, times(4)).getDevice();
+        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
+        verify(mockPrinter).clearOutput();
+        verify(mockPrinter).beginRemoval(anyInt());
+        verify(mockPrinter).endRemoval();
+    }
+
+    @Test
+    public void printContent_WhenGetIsCheckInsertedTrue_WithdrawCheckThrowsError() throws JposException, PrinterException {
+        List<PrinterContent> contents = new ArrayList<>();
+        TextContent textContent = new TextContent();
+        textContent.setType(ContentType.TEXT);
+        contents.add(textContent);
+        printerDevice.setDeviceConnected(true);
+        when(mockPrinter.getPhysicalDeviceName()).thenReturn("NotR5");
+        printerDevice.setIsCheckInserted(true);
+        doThrow(new JposException(JposConst.JPOS_E_EXTENDED)).when(mockPrinter).beginRemoval(anyInt());
+
+        printerDevice.printContent(contents, 0);
+
+        verify(mockDynamicPrinter, times(4)).getDevice();
+        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
+        verify(mockPrinter).clearOutput();
+        verify(mockPrinter).beginRemoval(anyInt());
+        verify(mockPrinter, never()).endRemoval();
+    }
+
+    @Test
+    public void withdrawCheck_CallsThrough() throws JposException {
+        printerDevice.withdrawCheck();
+
+        verify(mockDynamicPrinter).getDevice();
+        verify(mockPrinter).beginRemoval(0);
+        verify(mockPrinter).endRemoval();
+    }
+
+    @Test
+    public void withdrawCheck_beginRemovalThrowsError() throws JposException {
+        doThrow(new JposException(JposConst.JPOS_E_EXTENDED)).when(mockPrinter).beginRemoval(0);
+
+        try {
+            printerDevice.withdrawCheck();
+        } catch (JposException jposException) {
+            verify(mockDynamicPrinter).getDevice();
+            verify(mockPrinter).beginRemoval(0);
+            verify(mockPrinter, never()).endRemoval();
+            return;
+        }
+
+        fail("Expected Exception, but got none");
+    }
+
+    @Test
+    public void withdrawCheck_endRemovalThrowsError() throws JposException {
+        doThrow(new JposException(JposConst.JPOS_E_EXTENDED)).when(mockPrinter).endRemoval();
+
+        try {
+            printerDevice.withdrawCheck();
+        } catch (JposException jposException) {
+            verify(mockDynamicPrinter).getDevice();
+            verify(mockPrinter).beginRemoval(0);
+            verify(mockPrinter).endRemoval();
+            return;
+        }
+
+        fail("Expected Exception, but got none");
+    }
+
+    @Test
     public void getDeviceName_ReturnsName() {
         //arrange
         String expectedDeviceName = "micr";
@@ -1219,6 +1321,7 @@ public class PrinterDeviceTest {
         //assert
         assertTrue(printerSpy.getWasDoorOpened());
         assertFalse(printerSpy.getIsReconnectNeeded());
+        verify(mockDeviceListener).statusUpdateOccurred(mockStatusUpdateEvent);
     }
 
     @Test

@@ -79,6 +79,11 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
                 log.failure("close failed", 17, jposException);
             }
         }
+
+        if (errorLocus == JposConst.JPOS_EL_OUTPUT) {
+            errorEvent.setErrorResponse(JposConst.JPOS_ER_CLEAR);
+        }
+
         eventSynchronizer.triggerEvent(errorEvent);
     }
 

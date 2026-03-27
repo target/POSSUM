@@ -148,7 +148,6 @@ public class PrinterDevice implements StatusUpdateListener {
             log.failure("Printer Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 18, jposException);
             throw jposException;
         }
-        deviceListener.startEventListeners();
     }
 
     /**
@@ -161,11 +160,10 @@ public class PrinterDevice implements StatusUpdateListener {
 
     public void printContent(List<PrinterContent> contents, int printerStation)
             throws JposException, PrinterException {
-        System.out.println("TEST.......");
-        log.failure("printContent() invoked", 17,null);
+        log.success("printContent() invoked", 5);
 
         if (!tryLock()) {
-            log.failure("Printer lock unavailable", 17, null);
+            log.success("Printer lock unavailable", 5);
             throw new PrinterException(PrinterError.PRINTER_BUSY);
         }
 
@@ -175,21 +173,19 @@ public class PrinterDevice implements StatusUpdateListener {
         try {
             synchronized (printer = dynamicPrinter.getDevice()) {
 
-                log.failure("Acquired printer and entered synchronized block", 17,null);
+                log.success("Acquired printer and entered synchronized block", 5);
 
-                // Clear stale status
+                // Clear status
                 PrinterErrorHandlingSingleton.getPrinterErrorHandlingSingleton().clearError();
-                log.failure("Cleared singleton error state", 17,null);
+                log.success("Cleared singleton error state", 5);
 
                 if (contents == null || contents.isEmpty()) {
-                    log.failure("Receipt contents are empty", 5, null);
+                    log.failure("Receipt contents are empty", 17, null);
                     throw new PrinterException(PrinterError.INVALID_FORMAT);
                 }
 
-                log.failure("Valid contents received. Size=" + contents.size(), 1,null);
-
                 enable();
-                log.failure("Printer enabled successfully", 17,null);
+                log.success("Printer enabled successfully", 5);
 
                 if (printerStation != PrinterStationType.CHECK_PRINTER.getValue()
                         && (wasPaperEmpty || paperEmptyCheck())) {
@@ -198,11 +194,10 @@ public class PrinterDevice implements StatusUpdateListener {
                 }
 
                 reconnectR5Printer();
-                log.failure("Reconnect check completed", 17,null);
-
+                log.success("Reconnect Check for R5 completed", 5);
                 printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_TRANSACTION);
                 transactionStarted = true;
-                log.failure("Transaction started", 17,null);
+                log.success("Transaction started", 5);
 
                 int index = 0;
                 for (PrinterContent content : contents) {
@@ -212,8 +207,6 @@ public class PrinterDevice implements StatusUpdateListener {
                         log.failure("Invalid content at index " + index, 13, null);
                         throw new PrinterException(PrinterError.INVALID_FORMAT);
                     }
-
-                    log.failure("Printing content index=" + index + " type=" + content.type, 1,null);
 
                     switch (content.type.toString()) {
                         case "BARCODE":
@@ -229,14 +222,17 @@ public class PrinterDevice implements StatusUpdateListener {
                     }
                 }
 
-                log.failure("All content sent to printer buffer", 17,null);
+                log.success("All content sent to printer buffer", 5);
+
+                deviceListener.startEventListeners();
+                log.success("Event synchronizer re-armed before wait", 5);
 
                 printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_NORMAL);
                 transactionStarted = false;
-                log.failure("Transaction ended (PTR_TP_NORMAL)", 17,null);
+                log.success("Transaction ended (PTR_TP_NORMAL)", 5);
 
                 deviceListener.waitForOutputToComplete();
-                log.failure("Output complete event received", 17,null);
+                log.success("Output complete event received", 5);
 
                 PrinterException statusError =
                         PrinterErrorHandlingSingleton.getPrinterErrorHandlingSingleton().getError();
@@ -247,7 +243,7 @@ public class PrinterDevice implements StatusUpdateListener {
                     throw statusError;
                 }
 
-                log.failure("printContent() completed successfully", 17,null);
+                log.success("printContent() completed successfully", 5);
             }
 
         } catch (PrinterException printerException) {
@@ -260,6 +256,9 @@ public class PrinterDevice implements StatusUpdateListener {
 
             boolean failureOrDisabledError = jposException.getErrorCode() == 111
                     || jposException.getErrorCode() == 105;
+
+            boolean paperEmptyError = jposException.getErrorCode() == 114
+                    && jposException.getErrorCodeExtended() == 203;
 
             boolean badPrintContentError = jposException.getErrorCode() == 106
                     || (jposException.getErrorCode() == 114 && jposException.getErrorCodeExtended() == 207);
@@ -275,10 +274,15 @@ public class PrinterDevice implements StatusUpdateListener {
                 connect();
             }
 
+            if (paperEmptyError) {
+                log.failure("Paper empty detected, marking reconnect needed for next print", 18, jposException);
+                setIsReconnectNeeded(true);
+            }
+
             throw jposException;
 
         } finally {
-            log.failure("Entering finally block", 17,null);
+            log.success("Entering finally block", 5);
 
             try {
                 if (printer != null && transactionStarted) {
@@ -294,7 +298,7 @@ public class PrinterDevice implements StatusUpdateListener {
             try {
                 if (printer != null) {
                     printer.clearOutput();
-                    log.failure("Cleared printer output buffer", 17,null);
+                    log.success("Cleared printer output buffer", 5);
                 }
             } catch (JposException cleanupException) {
                 log.failure("clearOutput failed: "
@@ -304,14 +308,14 @@ public class PrinterDevice implements StatusUpdateListener {
             if (getIsCheckInserted()) {
                 try {
                     withdrawCheck();
-                    log.failure("Withdraw check executed", 17,null);
+                    log.success("Withdraw check executed", 5);
                 } catch (JposException cleanupException) {
                     log.failure("withdrawCheck failed: "
                             + cleanupException.getErrorCode(), 17, cleanupException);
                 }
             }
             unlock();
-            log.failure("Printer lock released", 17,null);
+            log.success("Printer lock released", 5);
         }
     }
 
@@ -512,6 +516,7 @@ public class PrinterDevice implements StatusUpdateListener {
                 log.success("Status Update: Printer cover is open", 13);
                 setWasDoorOpened(true);
                 setIsReconnectNeeded(false);
+                deviceListener.statusUpdateOccurred(statusUpdateEvent);
                 break;
             case POSPrinterConst.PTR_SUE_COVER_OK:
                 log.success("Status Update: Printer cover OK", 5);
