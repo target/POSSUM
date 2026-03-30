@@ -1,12 +1,15 @@
 package com.target.devicemanager.common;
 
 import jpos.JposConst;
+import jpos.JposException;
 import jpos.events.ErrorEvent;
 import jpos.events.JposEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -54,6 +57,32 @@ public class EventSynchronizer {
     //Do not make this synchronized, the phaser guarantees this will only trigger when the other threads send us data
     public JposEvent waitForEvent() {
         phaser.awaitAdvance(waitingPhase.get());
+        JposEvent tmpEvent;
+        synchronized (this) {
+            areEventsActive.set(false);
+            tmpEvent = lastEvent;
+        }
+        return tmpEvent;
+    }
+
+    // Waits for an event up to the specified timeout.
+    public JposEvent waitForEvent(long timeout, TimeUnit unit) throws JposException {
+        try {
+            phaser.awaitAdvanceInterruptibly(waitingPhase.get(), timeout, unit);
+        } catch (TimeoutException timeoutException) {
+            synchronized (this) {
+                areEventsActive.set(false);
+            }
+            log.failure("waitForEvent timed out after " + unit.toMillis(timeout) + "ms", 18, null);
+            throw new JposException(JposConst.JPOS_E_TIMEOUT);
+        } catch (InterruptedException interruptedException) {
+            Thread.currentThread().interrupt();
+            synchronized (this) {
+                areEventsActive.set(false);
+            }
+            log.failure("waitForEvent interrupted", 17, interruptedException);
+            throw new JposException(JposConst.JPOS_E_TIMEOUT);
+        }
         JposEvent tmpEvent;
         synchronized (this) {
             areEventsActive.set(false);

@@ -15,6 +15,7 @@ import jpos.services.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -146,6 +147,22 @@ public class DeviceListener implements DataListener, ErrorListener, StatusUpdate
         }
 
         log.success("waitForOutputToComplete(out)", 1);
+    }
+
+    // This is waitForOutputToComplete with a timeout, which allows the caller to recover and release locks if the device is not responding. Currently only used by printer
+    public void waitForOutputToComplete(long timeout, TimeUnit unit) throws JposException {
+        log.success("waitForOutputToComplete(timeout=" + unit.toMillis(timeout) + "ms, in)", 1);
+        JposEvent jposEvent = eventSynchronizer.waitForEvent(timeout, unit);
+        if (jposEvent instanceof ErrorEvent) {
+            throw jposExceptionFromErrorEvent((ErrorEvent) jposEvent);
+        }
+        if (jposEvent instanceof StatusUpdateEvent) {
+            throw jposExceptionFromStatusUpdateEvent((StatusUpdateEvent) jposEvent);
+        }
+        if (!(jposEvent instanceof OutputCompleteEvent)) {
+            throw new JposException(JposConst.JPOS_E_FAILURE);
+        }
+        log.success("waitForOutputToComplete(timeout, out)", 1);
     }
 
     public StatusUpdateEvent waitForStatusUpdate() throws JposException {

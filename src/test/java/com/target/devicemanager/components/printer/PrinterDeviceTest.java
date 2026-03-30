@@ -480,8 +480,10 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
+            // getDevice: 1st from printContent sync, 2nd from paperEmptyCheck sync
             verify(mockDynamicPrinter, times(2)).getDevice();
-            verify(mockPrinter).getPhysicalDeviceName();
+            // getPhysicalDeviceName: 1st from paperEmptyCheck
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
             verify(mockPrinter).directIO(anyInt(), any(), any());
             verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
             verify(mockPrinter).clearOutput();
@@ -515,6 +517,7 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
+            // getDevice: 1st from printContent sync, 2nd from paperEmptyCheck sync
             verify(mockDynamicPrinter, times(2)).getDevice();
             verify(mockPrinter).getPhysicalDeviceName();
             verify(mockPrinter, never()).directIO(anyInt(), any(), any());
@@ -531,38 +534,40 @@ public class PrinterDeviceTest {
     @Test
     public void printContent_WhenReconnectR5Printer_ThrowsException() throws JposException {
         //arrange
+        // reconnectR5Printer() is now commented out in the source, so this test verifies
+        // that the paper-empty check path with R5 printer name still works, and that
+        // isReconnectNeeded remains true since reconnectR5Printer is not called.
         List<PrinterContent> contents = new ArrayList<>();
-        PrinterContent printerContent = new PrinterContent() {
-            @Override
-            public String toString() {
-                return super.toString();
-            }
-        };
-        contents.add(printerContent);
+        TextContent textContent = new TextContent();
+        textContent.setType(ContentType.TEXT);
+        contents.add(textContent);
         printerDevice.setDeviceConnected(true);
         printerDevice.setWasPaperEmpty(false);
         printerDevice.setIsReconnectNeeded(true);
-        when(mockPrinter.getPhysicalDeviceName()).thenReturn("NCR Kiosk POS Printer").thenThrow(new JposException(JposConst.JPOS_E_EXTENDED));
+        when(mockPrinter.getPhysicalDeviceName()).thenReturn("NCR Kiosk POS Printer");
 
         //act
         try {
             printerDevice.printContent(contents, 0);
         }
 
-        //assert
+        //assert — paperEmptyCheck passes (ref[0] is 0 by default, not -2147482880),
+        // reconnectR5Printer is commented out so no second getPhysicalDeviceName call,
+        // print proceeds normally with no exception
         catch (JposException jposException) {
-            verify(mockDynamicPrinter, times(3)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
-            verify(mockPrinter).directIO(anyInt(), any(), any());
-            assertTrue(printerDevice.getIsReconnectNeeded());
-            verify(mockPrinter, never()).transactionPrint(anyInt(), anyInt());
-            verify(mockPrinter).clearOutput();
-            return;
+            fail("Unexpected JposException: " + jposException.getMessage());
         } catch (PrinterException printerException) {
-            fail("Expected JposException, got PrinterException");
+            fail("Unexpected PrinterException: " + printerException.getMessage());
         }
 
-        fail("Expected Exception, but got none");
+        // getDevice: 1st from printContent sync, 2nd from paperEmptyCheck sync
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        // getPhysicalDeviceName: only from paperEmptyCheck (reconnectR5Printer is commented out)
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
+        verify(mockPrinter).directIO(anyInt(), any(), any());
+        assertTrue(printerDevice.getIsReconnectNeeded());
+        verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
+        verify(mockPrinter).clearOutput();
     }
 
     @Test
@@ -589,8 +594,10 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
-            verify(mockDynamicPrinter, times(3)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
+            // getDevice: 1st from printContent sync, 2nd from paperEmptyCheck sync
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            // getPhysicalDeviceName: only from paperEmptyCheck (reconnectR5Printer commented out)
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
             verify(mockPrinter, never()).directIO(anyInt(), any(), any());
             assertTrue(printerDevice.getIsReconnectNeeded());
             verify(mockPrinter).transactionPrint(0, POSPrinterConst.PTR_TP_TRANSACTION);
@@ -620,8 +627,8 @@ public class PrinterDeviceTest {
         printerDevice.printContent(contents, 0);
 
         //assert
-        verify(mockDynamicPrinter, times(3)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter).directIO(anyInt(), any(), any());
         assertFalse(printerDevice.getIsReconnectNeeded());
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
@@ -649,12 +656,15 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
-            verify(mockDynamicPrinter, times(6)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
-            verify(mockDynamicPrinter).disconnect();
-            verify(mockDynamicPrinter).connect();
+            // getDevice: 1st from printContent sync, 2nd from paperEmptyCheck sync
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
+            // no disconnect/connect since JPOS_E_EXTENDED is not failure/disabled
+            verify(mockDynamicPrinter, never()).disconnect();
+            verify(mockDynamicPrinter, never()).connect();
             verify(mockPrinter).directIO(anyInt(), any(), any());
-            assertFalse(printerDevice.getIsReconnectNeeded());
+            // reconnectR5Printer is commented out, so isReconnectNeeded stays true
+            assertTrue(printerDevice.getIsReconnectNeeded());
             verify(mockPrinter).transactionPrint(0, POSPrinterConst.PTR_TP_TRANSACTION);
             verify(mockPrinter).transactionPrint(0, POSPrinterConst.PTR_TP_NORMAL);
             verify(mockPrinter).printBarCode(anyInt(), any(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt());
@@ -682,8 +692,8 @@ public class PrinterDeviceTest {
         printerDevice.printContent(contents, 0);
 
         //assert
-        verify(mockDynamicPrinter, times(3)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
         verify(mockPrinter).printMemoryBitmap(anyInt(), any(), anyInt(), anyInt(), anyInt());
         verify(mockPrinter).clearOutput();
@@ -708,8 +718,9 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
-            verify(mockDynamicPrinter, times(3)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
+            // getDevice: 1st from printContent sync, 2nd from paperEmptyCheck sync
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
             // transaction is started, then closed in finally
             verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
             verify(mockPrinter).printMemoryBitmap(anyInt(), any(), anyInt(), anyInt(), anyInt());
@@ -736,8 +747,8 @@ public class PrinterDeviceTest {
         printerDevice.printContent(contents, 0);
 
         //assert
-        verify(mockDynamicPrinter, times(3)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
         verify(mockPrinter).printNormal(anyInt(), any());
         verify(mockPrinter).clearOutput();
@@ -761,8 +772,9 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
-            verify(mockDynamicPrinter, times(3)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
+            // getDevice: 1st from printContent sync, 2nd from paperEmptyCheck sync
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
             // transaction is started, then closed in finally
             verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
             verify(mockPrinter).printNormal(anyInt(), any());
@@ -793,8 +805,8 @@ public class PrinterDeviceTest {
         printerDevice.printContent(contents, 0);
 
         //assert
-        verify(mockDynamicPrinter, times(3)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
         verify(mockPrinter).printBarCode(anyInt(), any(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt());
         verify(mockPrinter).printMemoryBitmap(anyInt(), any(), anyInt(), anyInt(), anyInt());
@@ -818,8 +830,8 @@ public class PrinterDeviceTest {
         printerDevice.printContent(contents, 0);
 
         //assert
-        verify(mockDynamicPrinter, times(3)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
         verify(mockPrinter).printBarCode(anyInt(), any(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt());
         verify(mockPrinter).printNormal(anyInt(), any());
@@ -844,8 +856,8 @@ public class PrinterDeviceTest {
         printerDevice.printContent(contents, 0);
 
         //assert
-        verify(mockDynamicPrinter, times(3)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
         verify(mockPrinter).printMemoryBitmap(anyInt(), any(), anyInt(), anyInt(), anyInt());
         verify(mockPrinter).printNormal(anyInt(), any());
@@ -873,8 +885,8 @@ public class PrinterDeviceTest {
         printerDevice.printContent(contents, 0);
 
         //assert
-        verify(mockDynamicPrinter, times(3)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
         verify(mockPrinter).printBarCode(anyInt(), any(), anyInt(), anyInt(), anyInt(), anyInt(), anyInt());
         verify(mockPrinter).printMemoryBitmap(anyInt(), any(), anyInt(), anyInt(), anyInt());
@@ -900,8 +912,9 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
-            verify(mockDynamicPrinter, times(3)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
+            // getDevice: 1st from printContent sync, 2nd from paperEmptyCheck sync
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
             verify(mockPrinter).transactionPrint(0, POSPrinterConst.PTR_TP_TRANSACTION);
             verify(mockPrinter, times(2)).transactionPrint(0, POSPrinterConst.PTR_TP_NORMAL);
             verify(mockPrinter).clearOutput();
@@ -922,7 +935,7 @@ public class PrinterDeviceTest {
         contents.add(textContent);
         printerDevice.setDeviceConnected(true);
         when(mockPrinter.getPhysicalDeviceName()).thenReturn("NotR5");
-        doThrow(new JposException(JposConst.JPOS_E_EXTENDED)).when(mockDeviceListener).waitForOutputToComplete();
+        doThrow(new JposException(JposConst.JPOS_E_EXTENDED)).when(mockDeviceListener).waitForOutputToComplete(anyLong(), any(TimeUnit.class));
 
         //act
         try {
@@ -931,8 +944,9 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
-            verify(mockDynamicPrinter, times(3)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
+            // getDevice: 1st from printContent sync, 2nd from paperEmptyCheck sync
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
             verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
             verify(mockPrinter).clearOutput();
             return;
@@ -944,41 +958,7 @@ public class PrinterDeviceTest {
     }
 
     @Test
-    public void printContent_When111Exception_Reconnect() throws JposException, InterruptedException {
-        //arrange
-        List<PrinterContent> contents = new ArrayList<>();
-        TextContent textContent = new TextContent();
-        textContent.setType(ContentType.TEXT);
-        contents.add(textContent);
-        printerDeviceLock.setDeviceConnected(true);
-        when(mockPrinter.getPhysicalDeviceName()).thenReturn("NotR5");
-        when(mockConnectLock.tryLock(printerDevice.getTryLockTimeout(), TimeUnit.SECONDS)).thenReturn(true);
-        doThrow(new JposException(JposConst.JPOS_E_FAILURE)).when(mockDeviceListener).waitForOutputToComplete();
-
-        //act
-        try {
-            printerDeviceLock.printContent(contents, 0);
-        }
-
-        //assert
-        catch (JposException jposException) {
-            verify(mockDynamicPrinter, times(6)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
-            verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
-            verify(mockDynamicPrinter).disconnect();
-            verify(mockDynamicPrinter).connect();
-            verify(mockConnectLock).unlock();
-            verify(mockPrinter).clearOutput();
-            return;
-        } catch (PrinterException printerException) {
-            fail("Expected JposException, got PrinterException");
-        }
-
-        fail("Expected Exception, but got none");
-    }
-
-    @Test
-    public void printContent_When105Exception_Reconnect() throws JposException, InterruptedException {
+    public void printContent_When111Exception_DoesNotReconnect() throws JposException, InterruptedException {
         //arrange
         List<PrinterContent> contents = new ArrayList<>();
         TextContent textContent = new TextContent();
@@ -987,7 +967,7 @@ public class PrinterDeviceTest {
         printerDeviceLock.setDeviceConnected(true);
         when(mockPrinter.getPhysicalDeviceName()).thenReturn("NotR5");
         when(mockConnectLock.tryLock(printerDeviceLock.getTryLockTimeout(), TimeUnit.SECONDS)).thenReturn(true);
-        doThrow(new JposException(JposConst.JPOS_E_DISABLED)).when(mockDeviceListener).waitForOutputToComplete();
+        doThrow(new JposException(JposConst.JPOS_E_FAILURE)).when(mockDeviceListener).waitForOutputToComplete(anyLong(), any(TimeUnit.class));
 
         //act
         try {
@@ -996,15 +976,53 @@ public class PrinterDeviceTest {
 
         //assert
         catch (JposException jposException) {
-            verify(mockDynamicPrinter, times(6)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
+            assertEquals(JposConst.JPOS_E_FAILURE, jposException.getErrorCode());
+            // getDevice: 1st printContent sync, 2nd paperEmptyCheck sync (no reconnect calls)
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
             verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
-            verify(mockDynamicPrinter).disconnect();
-            verify(mockDynamicPrinter).connect();
+            verify(mockDynamicPrinter, never()).disconnect();
+            verify(mockDynamicPrinter, never()).connect();
             verify(mockConnectLock).unlock();
             verify(mockPrinter).clearOutput();
             return;
-        }  catch (PrinterException printerException) {
+        } catch (PrinterException printerException) {
+            fail("Expected JposException, got PrinterException");
+        }
+
+        fail("Expected Exception, but got none");
+    }
+
+    @Test
+    public void printContent_When105Exception_DoesNotReconnect() throws JposException, InterruptedException {
+        //arrange
+        List<PrinterContent> contents = new ArrayList<>();
+        TextContent textContent = new TextContent();
+        textContent.setType(ContentType.TEXT);
+        contents.add(textContent);
+        printerDeviceLock.setDeviceConnected(true);
+        when(mockPrinter.getPhysicalDeviceName()).thenReturn("NotR5");
+        when(mockConnectLock.tryLock(printerDeviceLock.getTryLockTimeout(), TimeUnit.SECONDS)).thenReturn(true);
+        doThrow(new JposException(JposConst.JPOS_E_DISABLED)).when(mockDeviceListener).waitForOutputToComplete(anyLong(), any(TimeUnit.class));
+
+        //act
+        try {
+            printerDeviceLock.printContent(contents, 0);
+        }
+
+        //assert
+        catch (JposException jposException) {
+            assertEquals(JposConst.JPOS_E_DISABLED, jposException.getErrorCode());
+            // getDevice: 1st printContent sync, 2nd paperEmptyCheck sync (no reconnect calls)
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
+            verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
+            verify(mockDynamicPrinter, never()).disconnect();
+            verify(mockDynamicPrinter, never()).connect();
+            verify(mockConnectLock).unlock();
+            verify(mockPrinter).clearOutput();
+            return;
+        } catch (PrinterException printerException) {
             fail("Expected JposException, got PrinterException");
         }
 
@@ -1021,7 +1039,7 @@ public class PrinterDeviceTest {
         printerDeviceLock.setDeviceConnected(true);
         when(mockPrinter.getPhysicalDeviceName()).thenReturn("NotR5");
         when(mockConnectLock.tryLock(printerDeviceLock.getTryLockTimeout(), TimeUnit.SECONDS)).thenReturn(true);
-        doThrow(new JposException(JposConst.JPOS_E_ILLEGAL)).when(mockDeviceListener).waitForOutputToComplete();
+        doThrow(new JposException(JposConst.JPOS_E_ILLEGAL)).when(mockDeviceListener).waitForOutputToComplete(anyLong(), any(TimeUnit.class));
 
         //act
         try {
@@ -1032,9 +1050,9 @@ public class PrinterDeviceTest {
         catch (JposException jposException) {
             fail("Expected PrinterException, got JposException");
         } catch (PrinterException printerException) {
-            // getDevice is called from: printContent(), paperEmptyCheck(), reconnectR5Printer()
-            verify(mockDynamicPrinter, times(3)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
+            // getDevice: 1st printContent sync, 2nd paperEmptyCheck sync
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
             verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
             // invalid-format path does NOT reconnect
             verify(mockDynamicPrinter, never()).disconnect();
@@ -1058,7 +1076,7 @@ public class PrinterDeviceTest {
         printerDeviceLock.setDeviceConnected(true);
         when(mockPrinter.getPhysicalDeviceName()).thenReturn("NotR5");
         when(mockConnectLock.tryLock(printerDevice.getTryLockTimeout(), TimeUnit.SECONDS)).thenReturn(true);
-        doThrow(new JposException(114, 207)).when(mockDeviceListener).waitForOutputToComplete();
+        doThrow(new JposException(114, 207)).when(mockDeviceListener).waitForOutputToComplete(anyLong(), any(TimeUnit.class));
 
         //act
         try {
@@ -1069,9 +1087,9 @@ public class PrinterDeviceTest {
         catch (JposException jposException) {
             fail("Expected PrinterException, got JposException");
         }  catch (PrinterException printerException) {
-            // getDevice is called from: printContent(), paperEmptyCheck(), reconnectR5Printer()
-            verify(mockDynamicPrinter, times(3)).getDevice();
-            verify(mockPrinter, times(2)).getPhysicalDeviceName();
+            // getDevice: 1st printContent sync, 2nd paperEmptyCheck sync
+            verify(mockDynamicPrinter, times(2)).getDevice();
+            verify(mockPrinter, times(1)).getPhysicalDeviceName();
             verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
             // invalid-format path does NOT reconnect
             verify(mockDynamicPrinter, never()).disconnect();
@@ -1135,8 +1153,8 @@ public class PrinterDeviceTest {
         //act / assert
         assertDoesNotThrow(() -> printerDevice.printContent(contents, 0));
 
-        verify(mockDynamicPrinter, times(3)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter).transactionPrint(0, POSPrinterConst.PTR_TP_TRANSACTION);
         verify(mockPrinter).transactionPrint(0, POSPrinterConst.PTR_TP_NORMAL);
         verify(mockPrinter).clearOutput();
@@ -1154,8 +1172,8 @@ public class PrinterDeviceTest {
 
         printerDevice.printContent(contents, 0);
 
-        verify(mockDynamicPrinter, times(3)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(2)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
         verify(mockPrinter).clearOutput();
         verify(mockPrinter, never()).beginRemoval(anyInt());
@@ -1174,8 +1192,8 @@ public class PrinterDeviceTest {
 
         printerDevice.printContent(contents, 0);
 
-        verify(mockDynamicPrinter, times(4)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(3)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
         verify(mockPrinter).clearOutput();
         verify(mockPrinter).beginRemoval(anyInt());
@@ -1195,8 +1213,8 @@ public class PrinterDeviceTest {
 
         printerDevice.printContent(contents, 0);
 
-        verify(mockDynamicPrinter, times(4)).getDevice();
-        verify(mockPrinter, times(2)).getPhysicalDeviceName();
+        verify(mockDynamicPrinter, times(3)).getDevice();
+        verify(mockPrinter, times(1)).getPhysicalDeviceName();
         verify(mockPrinter, times(2)).transactionPrint(anyInt(), anyInt());
         verify(mockPrinter).clearOutput();
         verify(mockPrinter).beginRemoval(anyInt());

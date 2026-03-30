@@ -31,6 +31,7 @@ public class PrinterDevice implements StatusUpdateListener {
     private boolean isReconnectNeeded = false;
     private static final String R5PrinterName = "NCR Kiosk POS Printer";
     private static final int TRY_LOCK_TIMEOUT = 1;
+    private static final int PRINT_TIMEOUT_SECONDS = 30;
     private final ReentrantLock connectLock;
     private boolean isLocked = false;
     private final int[] ref = new int[1];
@@ -192,9 +193,6 @@ public class PrinterDevice implements StatusUpdateListener {
                     log.failure("Paper empty detected before print", 13, null);
                     throw new JposException(114, 203);
                 }
-
-                reconnectR5Printer();
-                log.success("Reconnect Check for R5 completed", 5);
                 printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_TRANSACTION);
                 transactionStarted = true;
                 log.success("Transaction started", 5);
@@ -231,7 +229,7 @@ public class PrinterDevice implements StatusUpdateListener {
                 transactionStarted = false;
                 log.success("Transaction ended (PTR_TP_NORMAL)", 5);
 
-                deviceListener.waitForOutputToComplete();
+                deviceListener.waitForOutputToComplete(PRINT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
                 log.success("Output complete event received", 5);
 
                 PrinterException statusError =
@@ -243,7 +241,7 @@ public class PrinterDevice implements StatusUpdateListener {
                     throw statusError;
                 }
 
-                log.success("printContent() completed successfully", 5);
+                    log.success("printContent() completed successfully", 5);
             }
 
         } catch (PrinterException printerException) {
@@ -253,6 +251,16 @@ public class PrinterDevice implements StatusUpdateListener {
         } catch (JposException jposException) {
             log.failure("JposException: " + jposException.getErrorCode()
                     + ", " + jposException.getErrorCodeExtended(), 18, jposException);
+
+            boolean printTimeoutError = jposException.getErrorCode() == JposConst.JPOS_E_TIMEOUT;
+
+            if (printTimeoutError) {
+                log.failure("Print timed out after " + PRINT_TIMEOUT_SECONDS
+                        + "s waiting for OutputComplete event. Disconnecting and reconnecting to recover.", 18, jposException);
+                disconnect();
+                connect();
+                throw jposException;
+            }
 
             boolean failureOrDisabledError = jposException.getErrorCode() == 111
                     || jposException.getErrorCode() == 105;
@@ -269,14 +277,11 @@ public class PrinterDevice implements StatusUpdateListener {
             }
 
             if (failureOrDisabledError) {
-                log.failure("Device failure/disabled detected. Reconnecting...", 18, jposException);
-                disconnect();
-                connect();
+                log.failure("Device failure/disabled detected.", 18, jposException);
             }
 
             if (paperEmptyError) {
-                log.failure("Paper empty detected, marking reconnect needed for next print", 18, jposException);
-                setIsReconnectNeeded(true);
+                log.failure("Paper empty detected", 18, jposException);
             }
 
             throw jposException;
@@ -460,6 +465,8 @@ public class PrinterDevice implements StatusUpdateListener {
                     posPrinter.printNormal(POSPrinterConst.PTR_S_RECEIPT, selectReceipt);
                     String init = "\u001B" + "@";
                     posPrinter.printNormal(POSPrinterConst.PTR_S_RECEIPT, init);
+                    reconnectR5Printer();
+                    log.success("Reconnect Check for R5 completed", 5);
                 }
             } catch (JposException jposException) {
                 log.failure("Printer Failed to clear buffer: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 18, jposException);
