@@ -193,6 +193,10 @@ public class PrinterDevice implements StatusUpdateListener {
                     log.failure("Paper empty detected before print", 13, null);
                     throw new JposException(114, 203);
                 }
+
+                reconnectR5Printer();
+                log.success("Reconnect Check for R5 completed", 5);
+
                 printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_TRANSACTION);
                 transactionStarted = true;
                 log.success("Transaction started", 5);
@@ -445,13 +449,25 @@ public class PrinterDevice implements StatusUpdateListener {
      * @throws JposException
      */
     private void reconnectR5Printer() throws JposException {
-        POSPrinter printer;
-        synchronized (printer = dynamicPrinter.getDevice()) {
+        boolean acquiredLock = false;
+        if (!connectLock.isHeldByCurrentThread()) {
+            if (!tryLock()) {
+                log.success("reconnectR5Printer: lock unavailable, skipping reconnect", 5);
+                return;
+            }
+            acquiredLock = true;
+        }
+        try {
+            POSPrinter printer = dynamicPrinter.getDevice();
             if (printer.getPhysicalDeviceName().contains(R5PrinterName) && getIsReconnectNeeded()) {
                 log.success("Reconnecting R5 printer", 9);
                 disconnect();
                 connect();
                 setIsReconnectNeeded(false);
+            }
+        } finally {
+            if (acquiredLock) {
+                unlock();
             }
         }
     }
@@ -465,8 +481,6 @@ public class PrinterDevice implements StatusUpdateListener {
                     posPrinter.printNormal(POSPrinterConst.PTR_S_RECEIPT, selectReceipt);
                     String init = "\u001B" + "@";
                     posPrinter.printNormal(POSPrinterConst.PTR_S_RECEIPT, init);
-                    reconnectR5Printer();
-                    log.success("Reconnect Check for R5 completed", 5);
                 }
             } catch (JposException jposException) {
                 log.failure("Printer Failed to clear buffer: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 18, jposException);
