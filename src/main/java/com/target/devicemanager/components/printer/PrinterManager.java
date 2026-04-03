@@ -124,6 +124,7 @@ public class PrinterManager {
             }
             executorService.shutdownNow(); // attempt to stop running tasks immediately
             log.failure(PrinterError.PRINTER_TIME_OUT.getDescription(), 17, timeoutException);
+            printerDevice.forceUnlock();
             throw new PrinterException(PrinterError.PRINTER_TIME_OUT);
         } catch (InterruptedException interruptedException) {
             // preserve interrupt status and try to stop worker

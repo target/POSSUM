@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class PrinterDevice implements StatusUpdateListener {
@@ -33,7 +34,9 @@ public class PrinterDevice implements StatusUpdateListener {
     private static final int TRY_LOCK_TIMEOUT = 1;
     private static final int PRINT_TIMEOUT_SECONDS = 30;
     private final ReentrantLock connectLock;
-    private boolean isLocked = false;
+    private volatile boolean isLocked = false;
+    private final AtomicReference<Thread> lockOwnerThread = new AtomicReference<>(null);
+    private volatile boolean interruptedByTimeout = false;
     private final int[] ref = new int[1];
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterDevice.class);
     private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getPrinterServiceName(), "PrinterDevice", LOGGER);
@@ -176,6 +179,10 @@ public class PrinterDevice implements StatusUpdateListener {
 
                 log.success("Acquired printer and entered synchronized block", 5);
 
+                if (interruptedByTimeout) {
+                    log.failure("Aborting printContent — interrupted by forceUnlock timeout before print started", 17, null);
+                    throw new JposException(JposConst.JPOS_E_TIMEOUT);
+                }
                 // Clear status
                 PrinterErrorHandlingSingleton.getPrinterErrorHandlingSingleton().clearError();
                 log.success("Cleared singleton error state", 5);
@@ -196,7 +203,6 @@ public class PrinterDevice implements StatusUpdateListener {
 
                 reconnectR5Printer();
                 log.success("Reconnect Check for R5 completed", 5);
-
                 printer.transactionPrint(printerStation, POSPrinterConst.PTR_TP_TRANSACTION);
                 transactionStarted = true;
                 log.success("Transaction started", 5);
@@ -259,10 +265,15 @@ public class PrinterDevice implements StatusUpdateListener {
             boolean printTimeoutError = jposException.getErrorCode() == JposConst.JPOS_E_TIMEOUT;
 
             if (printTimeoutError) {
-                log.failure("Print timed out after " + PRINT_TIMEOUT_SECONDS
-                        + "s waiting for OutputComplete event. Disconnecting and reconnecting to recover.", 18, jposException);
-                disconnect();
-                connect();
+                if (interruptedByTimeout) {
+                    log.failure("Print timeout after forceUnlock interrupt — skipping disconnect, recovery owned by forceUnlock", 17, jposException);
+                    interruptedByTimeout = false;
+                } else {
+                    log.failure("Print timed out after " + PRINT_TIMEOUT_SECONDS
+                            + "s waiting for OutputComplete event. Disconnecting and reconnecting to recover.", 18, jposException);
+                    disconnect();
+                    connect();
+                }
                 throw jposException;
             }
 
@@ -621,6 +632,9 @@ public class PrinterDevice implements StatusUpdateListener {
         try {
             isLocked = connectLock.tryLock(TRY_LOCK_TIMEOUT, TimeUnit.SECONDS);
             log.success("Lock: " + isLocked, 1);
+            if (isLocked) {
+                lockOwnerThread.set(Thread.currentThread());
+            }
         } catch (InterruptedException interruptedException) {
             log.failure("Lock Failed: " + interruptedException.getMessage(), 17, interruptedException);
         }
@@ -631,8 +645,74 @@ public class PrinterDevice implements StatusUpdateListener {
      * unlock the current resource.
      */
     public void unlock() {
-        connectLock.unlock();
         isLocked = false;
+        connectLock.unlock();
+        lockOwnerThread.set(null);
+    }
+
+    public void forceUnlock() {
+        log.failure("forceUnlock() called — interrupting stuck worker thread and disconnecting device", 17, null);
+        Thread owner = lockOwnerThread.get();
+
+        if (owner == null) {
+            log.failure("forceUnlock: worker already finished — no action needed", 5, null);
+            deviceConnected = false;
+            areListenersAttached = false;
+            return;
+        }
+
+        if (owner.isAlive()) {
+            interruptedByTimeout = true;
+            owner.interrupt();
+        }
+        Thread disconnectThread = new Thread(() -> {
+            if (lockOwnerThread.get() != owner) {
+                log.failure("forceUnlock: skipping disconnect — lock owner changed, no longer stuck", 5, null);
+                return;
+            }
+            try {
+                dynamicPrinter.disconnect();
+                log.failure("forceUnlock: background disconnect completed", 17, null);
+            } catch (Exception ex) {
+                log.failure("forceUnlock: dynamicPrinter.disconnect() threw: " + ex.getMessage(), 17, null);
+            }
+
+            boolean reconnected = false;
+            for (int attempt = 0; attempt < 3; attempt++) {
+                if (tryLock()) {
+                    try {
+                        log.failure("forceUnlock: reconnecting printer (attempt " + attempt + ")", 17, null);
+                        boolean success = connect();
+                        if (success) {
+                            log.failure("forceUnlock: printer reconnected successfully", 5, null);
+                            reconnected = true;
+                        } else {
+                            log.failure("forceUnlock: reconnect attempt " + attempt + " failed", 17, null);
+                        }
+                    } finally {
+                        unlock();
+                    }
+                    break;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    log.failure("forceUnlock: reconnect polling interrupted", 17, null);
+                    break;
+                }
+            }
+            if (!reconnected) {
+                log.failure("forceUnlock: printer did not reconnect — @Scheduled connect() will retry", 17, null);
+            }
+            interruptedByTimeout = false;
+        }, "printer-force-disconnect");
+        disconnectThread.setDaemon(true);
+        disconnectThread.start();
+
+        isLocked = false;
+        deviceConnected = false;
+        areListenersAttached = false;
     }
 
     /**
