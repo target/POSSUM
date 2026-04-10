@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -37,6 +38,7 @@ public class PrinterDevice implements StatusUpdateListener {
     private volatile boolean isLocked = false;
     private final AtomicReference<Thread> lockOwnerThread = new AtomicReference<>(null);
     private volatile boolean interruptedByTimeout = false;
+    private final AtomicBoolean recoveryInProgress = new AtomicBoolean(false);
     private final int[] ref = new int[1];
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterDevice.class);
     private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getPrinterServiceName(), "PrinterDevice", LOGGER);
@@ -270,9 +272,53 @@ public class PrinterDevice implements StatusUpdateListener {
                     interruptedByTimeout = false;
                 } else {
                     log.failure("Print timed out after " + PRINT_TIMEOUT_SECONDS
-                            + "s waiting for OutputComplete event. Disconnecting and reconnecting to recover.", 18, jposException);
-                    disconnect();
-                    connect();
+                            + "s waiting for OutputComplete event. Scheduling background recovery.", 18, jposException);
+                    interruptedByTimeout = true;
+                    if (recoveryInProgress.compareAndSet(false, true)) {
+                        Thread recoveryThread = new Thread(() -> {
+                            try {
+                                dynamicPrinter.disconnect();
+                                log.failure("Inner timeout recovery: disconnect completed", 17, null);
+                            } catch (Exception ex) {
+                                log.failure("Inner timeout recovery: disconnect threw: " + ex.getMessage(), 17, null);
+                            }
+                            boolean reconnected = false;
+                            for (int attempt = 0; attempt < 3; attempt++) {
+                                if (tryLock()) {
+                                    try {
+                                        log.failure("Inner timeout recovery: reconnecting (attempt " + attempt + ")", 17, null);
+                                        boolean success = connect();
+                                        if (success) {
+                                            log.failure("Inner timeout recovery: printer reconnected successfully", 5, null);
+                                            reconnected = true;
+                                        } else {
+                                            log.failure("Inner timeout recovery: reconnect attempt " + attempt + " failed", 17, null);
+                                        }
+                                    } finally {
+                                        unlock();
+                                    }
+                                    break;
+                                }
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException ie) {
+                                    Thread.currentThread().interrupt();
+                                    log.failure("Inner timeout recovery: polling interrupted", 17, null);
+                                    break;
+                                }
+                            }
+                            if (!reconnected) {
+                                log.failure("Inner timeout recovery: printer did not reconnect — @Scheduled connect() will retry", 17, null);
+                            }
+                            interruptedByTimeout = false;
+                            recoveryInProgress.set(false);
+                        }, "printer-inner-timeout-recovery");
+                        recoveryThread.setDaemon(true);
+                        recoveryThread.start();
+                    } else {
+                        log.failure("Inner timeout recovery: forceUnlock recovery already in progress — skipping", 17, null);
+                        interruptedByTimeout = false;
+                    }
                 }
                 throw jposException;
             }
@@ -668,6 +714,13 @@ public class PrinterDevice implements StatusUpdateListener {
         Thread disconnectThread = new Thread(() -> {
             if (lockOwnerThread.get() != owner) {
                 log.failure("forceUnlock: skipping disconnect — lock owner changed, no longer stuck", 5, null);
+                interruptedByTimeout = false;
+                recoveryInProgress.set(false);
+                return;
+            }
+            if (!recoveryInProgress.compareAndSet(false, true)) {
+                log.failure("forceUnlock: inner timeout recovery already in progress — skipping duplicate disconnect", 5, null);
+                interruptedByTimeout = false;
                 return;
             }
             try {
@@ -706,6 +759,7 @@ public class PrinterDevice implements StatusUpdateListener {
                 log.failure("forceUnlock: printer did not reconnect — @Scheduled connect() will retry", 17, null);
             }
             interruptedByTimeout = false;
+            recoveryInProgress.set(false);
         }, "printer-force-disconnect");
         disconnectThread.setDaemon(true);
         disconnectThread.start();
@@ -727,3 +781,4 @@ public class PrinterDevice implements StatusUpdateListener {
         return TRY_LOCK_TIMEOUT;
     }
 }
+
