@@ -31,7 +31,7 @@ public class PrinterManager {
 
     private final PrinterDevice printerDevice;
     private final Lock printerLock;
-    private static final int PRINTER_TIMEOUT = 10;  // Timeout value for printContent call in seconds
+    private static final int PRINTER_TIMEOUT = 35;  // Timeout value for printContent call in seconds
     private ConnectEnum connectStatus = ConnectEnum.FIRST_CONNECT;
     private static final Logger LOGGER = LoggerFactory.getLogger(PrinterManager.class);
     private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getPrinterServiceName(), "PrinterManager", LOGGER);
@@ -124,6 +124,7 @@ public class PrinterManager {
             }
             executorService.shutdownNow(); // attempt to stop running tasks immediately
             log.failure(PrinterError.PRINTER_TIME_OUT.getDescription(), 17, timeoutException);
+            printerDevice.forceUnlock();
             throw new PrinterException(PrinterError.PRINTER_TIME_OUT);
         } catch (InterruptedException interruptedException) {
             // preserve interrupt status and try to stop worker
