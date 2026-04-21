@@ -241,7 +241,7 @@ public class ScannerDevice {
                 log.failure(getScannerType() + " Failed to Enable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 17, jposException);
             }
 
-            if(getScannerType().equalsIgnoreCase("HANDHELD")) {
+            if(getScannerType().equalsIgnoreCase("HANDHELD") && getDeviceName().equalsIgnoreCase("Honeywell 1900 Scanner")) {
                 log.success("Attempting HANDHELD Reconnect enable", 9);
                 handheldReconnect();
             } else {
@@ -269,7 +269,7 @@ public class ScannerDevice {
             } else if(jposException.getErrorCode() != JposConst.JPOS_E_CLOSED) {
                 log.failure(getScannerType() + " Failed to Disable Device: " + jposException.getErrorCode() + ", " + jposException.getErrorCodeExtended(), 17, jposException);
             }
-            if(getScannerType().equalsIgnoreCase("HANDHELD")) {
+            if(getScannerType().equalsIgnoreCase("HANDHELD") && getDeviceName().equalsIgnoreCase("Honeywell 1900 Scanner") {
                 log.success("Attempting HANDHELD Reconnect disable", 9);
                 handheldReconnect();
             } else {
