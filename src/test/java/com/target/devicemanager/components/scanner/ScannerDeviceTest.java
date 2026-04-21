@@ -400,6 +400,7 @@ public class ScannerDeviceTest {
     public void getScannerData_WhenSetDataEventEnabledWithHandScanner_ThrowsException() throws JposException {
         //arrange
         when(mockDynamicHandheldScanner.isConnected()).thenReturn(true);
+        when(mockDynamicHandheldScanner.getDeviceName()).thenReturn("Honeywell 1900 Scanner");
         doThrow(new JposException(JposConst.JPOS_E_DISABLED)).doNothing().when(mockHandheldScanner).setDataEventEnabled(true);
         byte[] expectedData = {'T', 'E', 'S', 'T'};
         int expectedType = 101;
