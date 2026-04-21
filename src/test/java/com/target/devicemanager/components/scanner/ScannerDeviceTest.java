@@ -449,6 +449,7 @@ public class ScannerDeviceTest {
     public void getScannerData_WhenTimeoutWithHandScanner_ThrowsException() throws JposException {
         //arrange
         when(mockDynamicHandheldScanner.isConnected()).thenReturn(true);
+        when(mockDynamicHandheldScanner.getDeviceName()).thenReturn("Honeywell 1900 Scanner");
         doThrow(new JposException(JposConst.JPOS_E_TIMEOUT)).doNothing().when(mockHandheldScanner).setAutoDisable(true);
         handheldScannerDevice.setIsTest(true);
         int expectedType = 101;
@@ -478,6 +479,7 @@ public class ScannerDeviceTest {
     public void getScannerData_WhenTimeoutWithHandScanner_ThrowsInterruptedException() throws JposException {
         //arrange
         when(mockDynamicHandheldScanner.isConnected()).thenReturn(true);
+        when(mockDynamicHandheldScanner.getDeviceName()).thenReturn("Honeywell 1900 Scanner")
         doThrow(new JposException(JposConst.JPOS_E_TIMEOUT)).doNothing().when(mockHandheldScanner).setAutoDisable(true);
         handheldScannerDevice.setIsTest(true);
         byte[] expectedData = {'T', 'E', 'S', 'T'};
