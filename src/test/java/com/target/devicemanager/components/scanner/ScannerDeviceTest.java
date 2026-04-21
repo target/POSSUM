@@ -447,6 +447,36 @@ public class ScannerDeviceTest {
     }
 
     @Test
+    public void getZebraHandScannerData_WhenTimeoutWithHandScanner_ThrowsException() throws JposException {
+        //arrange
+        when(mockDynamicHandheldScanner.isConnected()).thenReturn(true);
+        when(mockDynamicHandheldScanner.getDeviceName()).thenReturn("ZebraScanner");
+        doThrow(new JposException(JposConst.JPOS_E_TIMEOUT)).doNothing().when(mockHandheldScanner).setAutoDisable(true);
+        handheldScannerDevice.setIsTest(true);
+        int expectedType = 101;
+        doThrow(new JposException(JposConst.JPOS_E_EXTENDED)).when(mockHandheldScanner).getScanDataLabel();
+        when(mockHandheldScanner.getScanDataType()).thenReturn(expectedType);
+        when(mockDeviceListener.waitForData()).thenReturn(new DataEvent(mockHandheldScanner, 1));
+
+        //act
+        try {
+            handheldScannerDevice.getScannerData();
+        }
+
+        //assert
+        catch (JposException jposException) {
+            verify(mockDeviceListener, never()).startEventListeners();
+            verify(mockHandheldScanner, never()).setAutoDisable(true);
+            verify(mockHandheldScanner, never()).setDecodeData(true);
+            verify(mockHandheldScanner, never()).setDataEventEnabled(true);
+            verify(mockHandheldScanner, never()).setDeviceEnabled(true);
+            verify(mockHandheldScanner).getScanDataLabel();
+            verify(mockHandheldScanner, never()).getScanDataType();
+            assertEquals(JposConst.JPOS_E_EXTENDED, jposException.getErrorCode());
+        }
+    }
+
+    @Test
     public void getScannerData_WhenTimeoutWithHandScanner_ThrowsException() throws JposException {
         //arrange
         when(mockDynamicHandheldScanner.isConnected()).thenReturn(true);
