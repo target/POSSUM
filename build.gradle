@@ -44,7 +44,7 @@ dependencies {
     implementation "org.junit.platform:junit-platform-engine:1.12.2"
     implementation "org.javapos:javapos-config-loader:4.0.2"
     implementation "org.javapos:javapos:1.14.4"
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13"
     implementation"com.fasterxml.jackson:jackson-bom:2.21.2"
     implementation "com.fasterxml.jackson.core:jackson-annotations"
     implementation "com.fasterxml.jackson.core:jackson-core"
