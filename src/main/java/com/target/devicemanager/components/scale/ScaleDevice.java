@@ -325,19 +325,16 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     }
 
     /**
-     * Checks to see if scale is opened.
-     * @return opened status.
+     * The scale tracks a single cached connection flag (set only after a
+     * successful open + claim + enable), so opened/claimed mirror isConnected()
+     * to keep the health gate and the health check on one source of truth.
      */
     public boolean isOpened() {
-        return dynamicScale.isOpened();
+        return isConnected();
     }
 
-    /**
-     * Checks to see if scale is claimed.
-     * @return claimed status.
-     */
     public boolean isClaimed() {
-        return dynamicScale.isClaimed();
+        return isConnected();
     }
 
     /**

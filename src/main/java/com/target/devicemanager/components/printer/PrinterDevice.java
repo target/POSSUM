@@ -423,17 +423,16 @@ public class PrinterDevice implements StatusUpdateListener {
     }
 
     /**
-     * Whether the printer has been opened.
+     * The printer tracks a single cached connection flag (set only after a
+     * successful open + claim + enable), so opened/claimed mirror isConnected()
+     * to keep the health gate and the health check on one source of truth.
      */
     public boolean isOpened() {
-        return dynamicPrinter.isOpened();
+        return isConnected();
     }
 
-    /**
-     * Whether the printer has been claimed.
-     */
     public boolean isClaimed() {
-        return dynamicPrinter.isClaimed();
+        return isConnected();
     }
 
     public boolean getIsCheckInserted() {
