@@ -231,6 +231,20 @@ public class CashDrawerDevice implements StatusUpdateListener{
     public boolean isConnected() { return deviceConnected; }
 
     /**
+     * Shows if the device is opened.
+     */
+    public boolean isOpened() {
+        return dynamicCashDrawer.isOpened();
+    }
+
+    /**
+     * Shows if the device is claimed.
+     */
+    public boolean isClaimed() {
+        return dynamicCashDrawer.isClaimed();
+    }
+
+    /**
      * Attaches an event listener and adding it to a new instance.
      */
     private void attachEventListeners() {

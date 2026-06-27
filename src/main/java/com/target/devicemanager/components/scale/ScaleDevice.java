@@ -325,6 +325,22 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     }
 
     /**
+     * Checks to see if scale is opened.
+     * @return opened status.
+     */
+    public boolean isOpened() {
+        return dynamicScale.isOpened();
+    }
+
+    /**
+     * Checks to see if scale is claimed.
+     * @return claimed status.
+     */
+    public boolean isClaimed() {
+        return dynamicScale.isClaimed();
+    }
+
+    /**
      * Lock the current resource.
      * @return
      */

@@ -93,6 +93,9 @@ public class CashDrawerManagerTest {
     public void testInitialize() {
         cashDrawerManager = new CashDrawerManager(mockCashDrawerDevice, mockCashDrawerLock);
         cashDrawerManagerCache = new CashDrawerManager(mockCashDrawerDevice, mockCashDrawerLock, mockCacheManager);
+        // Issue #10: default the device to opened + claimed so existing health tests reach the health check.
+        when(mockCashDrawerDevice.isOpened()).thenReturn(true);
+        when(mockCashDrawerDevice.isClaimed()).thenReturn(true);
     }
 
     @Test
@@ -312,6 +315,36 @@ public class CashDrawerManagerTest {
         assertEquals("cashDrawer", deviceHealthResponse.getDeviceName());
         assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
         assertEquals(expected.toString(), testCache.get("health").get().toString());
+    }
+
+    @Test
+    public void getHealth_WhenNotClaimed_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockCashDrawerDevice.isClaimed()).thenReturn(false);
+        when(mockCashDrawerDevice.getDeviceName()).thenReturn("cashDrawer");
+        when(mockCacheManager.getCache("cashDrawerHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = cashDrawerManagerCache.getHealth();
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockCashDrawerDevice, never()).isConnected();
+    }
+
+    @Test
+    public void getHealth_WhenNotOpened_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockCashDrawerDevice.isOpened()).thenReturn(false);
+        when(mockCashDrawerDevice.getDeviceName()).thenReturn("cashDrawer");
+        when(mockCacheManager.getCache("cashDrawerHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = cashDrawerManagerCache.getHealth();
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockCashDrawerDevice, never()).isConnected();
     }
 
     @Test

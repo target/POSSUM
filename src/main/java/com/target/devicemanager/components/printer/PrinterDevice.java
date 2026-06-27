@@ -422,6 +422,20 @@ public class PrinterDevice implements StatusUpdateListener {
         return deviceConnected;
     }
 
+    /**
+     * Whether the printer has been opened.
+     */
+    public boolean isOpened() {
+        return dynamicPrinter.isOpened();
+    }
+
+    /**
+     * Whether the printer has been claimed.
+     */
+    public boolean isClaimed() {
+        return dynamicPrinter.isClaimed();
+    }
+
     public boolean getIsCheckInserted() {
         return isCheckInserted;
     }

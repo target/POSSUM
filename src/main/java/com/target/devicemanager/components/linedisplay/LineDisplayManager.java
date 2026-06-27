@@ -100,7 +100,11 @@ public class LineDisplayManager implements ConnectionEventListener {
 
     public DeviceHealthResponse getHealth() {
         DeviceHealthResponse deviceHealthResponse;
-        if (lineDisplayDevice.isConnected()) {
+        // Issue #10: only run the health check when the device is opened AND claimed;
+        // otherwise immediately report NOT_READY without checking health.
+        if (!lineDisplayDevice.isOpened() || !lineDisplayDevice.isClaimed()) {
+            deviceHealthResponse = new DeviceHealthResponse(lineDisplayDevice.getDeviceName(), DeviceHealth.NOTREADY);
+        } else if (lineDisplayDevice.isConnected()) {
             deviceHealthResponse = new DeviceHealthResponse(lineDisplayDevice.getDeviceName(), DeviceHealth.READY);
         } else {
             deviceHealthResponse = new DeviceHealthResponse(lineDisplayDevice.getDeviceName(), DeviceHealth.NOTREADY);
