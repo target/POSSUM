@@ -20,24 +20,29 @@ public class DeviceErrorStatusResponse {
     private static List<DeviceErrorStatus> deviceErrorStatuses;
 
     private DeviceErrorStatusResponse(){
-        deviceErrorStatuses = new CopyOnWriteArrayList<>();
-        ObjectMapper objectMapper = new ObjectMapper();
-        File jsonConfirm = new File("/var/tmp/CONFIRMOUT/confirmout.json");
-        if(jsonConfirm.exists() && jsonConfirm.isFile()){
-            JsonNode rootDevNode = null;
-            try {
-                rootDevNode = objectMapper.readTree(jsonConfirm);
-            } catch (IOException ioException) {
-                log.failure("Error in parsing confirmout", 17, ioException);
-            }
-            Iterator<String> fieldNames = rootDevNode.fieldNames();
+        deviceErrorStatuses = loadDeviceErrorStatuses(new File("/var/tmp/CONFIRMOUT/confirmout.json"));
+    }
 
-            while(fieldNames.hasNext()){
-                deviceErrorStatuses.add(new DeviceErrorStatus(fieldNames.next(), false, null));
-            }
-        } else {
-            log.failure("JSON is in wrong format", 17, null);
+    static List<DeviceErrorStatus> loadDeviceErrorStatuses(File jsonConfirm){
+        List<DeviceErrorStatus> statuses = new CopyOnWriteArrayList<>();
+        if(jsonConfirm == null || !jsonConfirm.exists() || !jsonConfirm.isFile()){
+            log.failure("confirmout.json not found at " + (jsonConfirm == null ? "null" : jsonConfirm.getPath()), 17, null);
+            return statuses;
         }
+
+        JsonNode rootDevNode;
+        try {
+            rootDevNode = new ObjectMapper().readTree(jsonConfirm);
+        } catch (IOException ioException) {
+            log.failure("JSON is in wrong format", 17, ioException);
+            return statuses;
+        }
+
+        Iterator<String> fieldNames = rootDevNode.fieldNames();
+        while(fieldNames.hasNext()){
+            statuses.add(new DeviceErrorStatus(fieldNames.next(), false, null));
+        }
+        return statuses;
     }
 
     public static List<DeviceErrorStatus> getDeviceErrorStatusResponse(){
