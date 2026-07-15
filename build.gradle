@@ -25,15 +25,16 @@ repositories {
 }
 
 ext['log4j2.version'] = '2.25.4'
+ext['logback.version'] = '1.5.35'
 
 dependencies {
     implementation "org.apache.tomcat.embed:tomcat-embed-core:11.0.22"
-    implementation ("org.springframework.boot:spring-boot-starter-web") {
+    implementation("org.springframework.boot:spring-boot-starter-web") {
         exclude group: "org.apache.logging.log4j"
     }
-
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "org.springframework.boot:spring-boot-loader"
     implementation "org.springframework:spring-webmvc"
     implementation "org.springframework:spring-web"
@@ -45,13 +46,13 @@ dependencies {
     implementation "org.javapos:javapos-config-loader:4.0.2"
     implementation "org.javapos:javapos:1.14.4"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13"
-    implementation"com.fasterxml.jackson:jackson-bom:2.21.2"
-    implementation "com.fasterxml.jackson.core:jackson-annotations"
-    implementation "com.fasterxml.jackson.core:jackson-core"
-    implementation "com.fasterxml.jackson.core:jackson-databind"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    implementation "com.fasterxml.jackson:jackson-bom:2.22.0"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.22"
+    implementation "com.fasterxml.jackson.core:jackson-core:2.22.0"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.22.0"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.0"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.22.0"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.0"
     implementation "com.fasterxml.jackson.module:jackson-module-parameter-names"
     implementation "jakarta.servlet:jakarta.servlet-api:6.1.0"
     implementation "jakarta.validation:jakarta.validation-api:3.1.1"
@@ -60,17 +61,14 @@ dependencies {
     implementation "org.apache.logging.log4j:log4j-core"
     implementation "org.apache.logging.log4j:log4j-1.2-api"
     implementation "org.apache.commons:commons-lang3:3.18.0"
-
     implementation "net.logstash.logback:logstash-logback-encoder:8.1"
     implementation "org.yaml:snakeyaml:2.4"
-
-    implementation "org.springframework.boot:spring-boot-starter-cache:3.4.9"
     implementation "com.github.ben-manes.caffeine:caffeine:3.2.0"
     implementation "io.github.classgraph:classgraph:4.8.179"
-    testImplementation "org.springframework.boot:spring-boot-starter-test:3.4.9"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
 
-tasks.withType(JavaExec){
+tasks.withType(JavaExec) {
     systemProperties System.properties
 }
 
@@ -104,7 +102,7 @@ task copyRuntimeJars(type: Copy) {
     into "$buildDir/libs"
 }
 
-shadowJar{
+shadowJar {
     archiveClassifier.set("")
 }
 
@@ -130,6 +128,6 @@ task generatePom {
                     }
                 }
             }
-        }.writeTo("$buildDir/pom/$archivesBaseName-$version"+".pom")
+        }.writeTo("$buildDir/pom/$archivesBaseName-$version" + ".pom")
     }
 }
