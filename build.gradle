@@ -24,7 +24,7 @@ repositories {
     mavenCentral()
 }
 
-ext['log4j2.version'] = '2.26.1'
+ext['log4j2.version'] = '2.25.5'
 ext['logback.version'] = '1.5.35'
 
 dependencies {
