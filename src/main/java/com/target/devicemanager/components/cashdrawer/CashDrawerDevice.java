@@ -231,6 +231,19 @@ public class CashDrawerDevice implements StatusUpdateListener{
     public boolean isConnected() { return deviceConnected; }
 
     /**
+     * The cash drawer tracks a single cached connection flag (set only after a
+     * successful open + claim + enable), so opened/claimed mirror isConnected()
+     * to keep the health gate and the health check on one source of truth.
+     */
+    public boolean isOpened() {
+        return isConnected();
+    }
+
+    public boolean isClaimed() {
+        return isConnected();
+    }
+
+    /**
      * Attaches an event listener and adding it to a new instance.
      */
     private void attachEventListeners() {

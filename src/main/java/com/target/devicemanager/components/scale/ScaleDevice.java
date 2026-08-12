@@ -325,6 +325,19 @@ public class ScaleDevice implements StatusUpdateListener, ErrorListener {
     }
 
     /**
+     * The scale tracks a single cached connection flag (set only after a
+     * successful open + claim + enable), so opened/claimed mirror isConnected()
+     * to keep the health gate and the health check on one source of truth.
+     */
+    public boolean isOpened() {
+        return isConnected();
+    }
+
+    public boolean isClaimed() {
+        return isConnected();
+    }
+
+    /**
      * Lock the current resource.
      * @return
      */
