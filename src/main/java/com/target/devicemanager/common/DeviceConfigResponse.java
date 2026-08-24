@@ -3,7 +3,7 @@ package com.target.devicemanager.common;
 public class DeviceConfigResponse {
     public String devicename;
     public String vidpid;
-    public String usbport;
+   // public String usbport;
     public String manufacturer;
     public String model;
     public String config;
@@ -12,10 +12,10 @@ public class DeviceConfigResponse {
     public boolean isFunctional;
     public boolean attached;
 
-    public DeviceConfigResponse(String devicename, String vidpid, String usbport, String manufacturer, String model, String config, String firmware, String serialnumber, boolean isFunctional, boolean attached) {
+    public DeviceConfigResponse(String devicename, String vidpid, String manufacturer, String model, String config, String firmware, String serialnumber, boolean isFunctional, boolean attached) {
         this.devicename = devicename;
         this.vidpid = vidpid;
-        this.usbport = usbport;
+        //this.usbport = usbport;
         this.manufacturer = manufacturer;
         this.model = model;
         this.config = config;
@@ -29,7 +29,7 @@ public class DeviceConfigResponse {
         return
                 "deviceName=" + devicename +
                         ", vidpid=" + vidpid +
-                        ", usbport=" + usbport +
+                        //", usbport=" + usbport +
                         ", manufacturer=" + manufacturer +
                         ", model=" + model +
                         ", config=" + config +

@@ -128,7 +128,7 @@ public class DeviceAvailabilityService {
                             if (!devName.equals("scale")) {
                                 deviceAvailabilityResponse.devicelist.add(new DeviceConfigResponse(
                                         devName,
-                                        device.get("vidpid").asText(),
+                                        //device.get("vidpid").asText(),
                                         device.get("usbport").asText(),
                                         device.get("manufacturer").asText(),
                                         device.get("model").asText(),
@@ -142,7 +142,7 @@ public class DeviceAvailabilityService {
                                 deviceAvailabilityResponse.devicelist.add(new ScaleConfigResponse(
                                         devName,
                                         device.get("vidpid").asText(),
-                                        device.get("usbport").asText(),
+                                        //device.get("usbport").asText(),
                                         device.get("manufacturer").asText(),
                                         device.get("model").asText(),
                                         device.get("config").asText(),
