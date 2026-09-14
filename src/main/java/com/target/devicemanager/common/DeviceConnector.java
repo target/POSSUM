@@ -95,7 +95,7 @@ public class DeviceConnector<T extends BaseJposControl> {
                 // then disable to put it back in the same state
                 // For ELO cash drawer devices, StatusUpdateEvents are only delivered after the first setDeviceEnabled(true) call, 
                 // so we need to skip the probe for that device.
-                if (configName != eloCashDrawerLogicalName) {
+                if (!eloCashDrawerLogicalName.equals(configName)) {
                     try {
                         device.setDeviceEnabled(true);
                     } catch (JposException jposException){
