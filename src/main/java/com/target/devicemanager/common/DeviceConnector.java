@@ -20,6 +20,7 @@ public class DeviceConnector<T extends BaseJposControl> {
     private final int RETRY_REGISTRY_LOAD = 5;
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceConnector.class);
     private static final StructuredEventLogger log = StructuredEventLogger.of(StructuredEventLogger.getCommonServiceName(), "DeviceConnector", LOGGER);
+    private static final String eloCashDrawerLogicalName = "CashDrawer_ELO";
 
 
     public DeviceConnector(T device, JposEntryRegistry deviceRegistry) {
@@ -90,19 +91,23 @@ public class DeviceConnector<T extends BaseJposControl> {
                     log.failure("failed to claim " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
                     return false;
                 }
-                //this is a test, some devices wont signal connected status until enabled
-                //then disable to put it back in the same state
-                try {
-                    device.setDeviceEnabled(true);
-                } catch (JposException jposException){
-                    log.failure("failed to enable " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
-                    return false;
-                }
-                try {
-                    device.setDeviceEnabled(false);
-                } catch (JposException jposException){
-                    log.failure("failed to disable " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
-                    return false;
+                // this is a test, some devices wont signal connected status until enabled
+                // then disable to put it back in the same state
+                // For ELO cash drawer devices, StatusUpdateEvents are only delivered after the first setDeviceEnabled(true) call, 
+                // so we need to skip the probe for that device.
+                if (!configName.equals(eloCashDrawerLogicalName)) {
+                    try {
+                        device.setDeviceEnabled(true);
+                    } catch (JposException jposException){
+                        log.failure("failed to enable " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
+                        return false;
+                    }
+                    try {
+                        device.setDeviceEnabled(false);
+                    } catch (JposException jposException){
+                        log.failure("failed to disable " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
+                        return false;
+                    }
                 }
                 this.connectedDeviceName = configName;
                 log.success("successfully connected " + configName, 9);
