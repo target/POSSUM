@@ -108,8 +108,6 @@ public class DeviceConnector<T extends BaseJposControl> {
                         log.failure("failed to disable " + configName + " with error " + jposException.getErrorCode(), 17, jposException);
                         return false;
                     }
-                } else {
-                    log.success("skipping enable/disable probe for " + configName, 10);
                 }
                 this.connectedDeviceName = configName;
                 log.success("successfully connected " + configName, 9);
