@@ -28,7 +28,6 @@ ext['log4j2.version'] = '2.25.5'
 ext['logback.version'] = '1.5.35'
 
 dependencies {
-    implementation "org.apache.tomcat.embed:tomcat-embed-core:11.0.25"
     implementation("org.springframework.boot:spring-boot-starter-webmvc") {
         exclude group: "org.apache.logging.log4j"
     }
@@ -76,6 +75,14 @@ dependencies {
     // runtimeOnly "org.springframework.boot:spring-boot-properties-migrator"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == "org.apache.tomcat.embed") {
+            details.useVersion("11.0.25")
+        }
+    }
 }
 
 tasks.withType(JavaExec) {
