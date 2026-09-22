@@ -25,7 +25,8 @@ repositories {
 }
 
 ext['log4j2.version'] = '2.25.5'
-ext['logback.version'] = '1.5.35'
+ext['logback.version'] = '1.6.3'
+ext['jackson-bom.version'] = '3.1.6'
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc") {
@@ -45,18 +46,9 @@ dependencies {
     implementation "org.javapos:javapos-config-loader:4.0.2"
     implementation "org.javapos:javapos:1.14.4"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1"
-
-    // Jackson 2 compatibility bridge: Boot 4 auto-configures Jackson 3 (tools.jackson.*),
-    // but this project still uses com.fasterxml.jackson.* (ObjectMapper, JsonNode) directly and
-    // injects an ObjectMapper bean. This deprecated stop-gap keeps that working. Migrate to
-    // Jackson 3 later, then remove this module and the explicit jackson deps below.
-    implementation "org.springframework.boot:spring-boot-jackson2"
     implementation "com.fasterxml.jackson.core:jackson-annotations"
-    implementation "com.fasterxml.jackson.core:jackson-databind"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
-    implementation "com.fasterxml.jackson.module:jackson-module-parameter-names"
+    implementation "tools.jackson.core:jackson-databind"
+    implementation "tools.jackson.dataformat:jackson-dataformat-yaml"
 
     implementation "jakarta.servlet:jakarta.servlet-api"
     implementation "jakarta.validation:jakarta.validation-api"

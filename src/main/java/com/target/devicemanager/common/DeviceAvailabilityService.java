@@ -1,7 +1,8 @@
 package com.target.devicemanager.common;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.target.devicemanager.common.entities.DeviceErrorStatusResponse;
 import com.target.devicemanager.common.entities.DeviceHealth;
 import com.target.devicemanager.common.entities.DeviceHealthResponse;
@@ -22,8 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
@@ -118,10 +119,9 @@ public class DeviceAvailabilityService {
             ObjectMapper objectMapper = new ObjectMapper();
             if(jsonConfirm != null && jsonConfirm.exists() && jsonConfirm.isFile()){
                 JsonNode rootDevNode = objectMapper.readTree(jsonConfirm);
-                Iterator<String> fieldNames = rootDevNode.fieldNames();
 
-                while(fieldNames.hasNext()){
-                    String devName = fieldNames.next();
+                for (Map.Entry<String, JsonNode> field : rootDevNode.properties()) {
+                    String devName = field.getKey();
                     JsonNode devices = rootDevNode.path(devName);
                     if(devices.isArray()) {
                         for (JsonNode device : devices) {
@@ -161,7 +161,7 @@ public class DeviceAvailabilityService {
             } else {
                 log.failure("JSON file not found or invalid", 17, null);
             }
-        } catch (IOException ioException) {
+        } catch (JacksonException ioException) {
             log.failure("Received IOException", 17, ioException);
         }
 
