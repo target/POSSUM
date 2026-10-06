@@ -1,16 +1,16 @@
 package com.target.devicemanager.common.entities;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.target.devicemanager.common.DeviceAvailabilityService;
 import com.target.devicemanager.common.StructuredEventLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DeviceErrorStatusResponse {
@@ -27,13 +27,11 @@ public class DeviceErrorStatusResponse {
             JsonNode rootDevNode = null;
             try {
                 rootDevNode = objectMapper.readTree(jsonConfirm);
-            } catch (IOException ioException) {
+            } catch (JacksonException ioException) {
                 log.failure("Error in parsing confirmout", 17, ioException);
             }
-            Iterator<String> fieldNames = rootDevNode.fieldNames();
-
-            while(fieldNames.hasNext()){
-                deviceErrorStatuses.add(new DeviceErrorStatus(fieldNames.next(), false, null));
+            for (Map.Entry<String, JsonNode> field : rootDevNode.properties()) {
+                deviceErrorStatuses.add(new DeviceErrorStatus(field.getKey(), false, null));
             }
         } else {
             log.failure("JSON is in wrong format", 17, null);

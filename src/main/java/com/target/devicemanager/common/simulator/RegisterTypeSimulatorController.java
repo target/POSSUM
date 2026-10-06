@@ -1,6 +1,6 @@
 package com.target.devicemanager.common.simulator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.target.devicemanager.common.DeviceAvailabilityController;
 import com.target.devicemanager.common.DeviceAvailabilityService;
 import com.target.devicemanager.common.entities.RegisterType;

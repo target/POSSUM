@@ -1,8 +1,8 @@
 package com.target.devicemanager.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 import org.springframework.http.HttpStatus;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)

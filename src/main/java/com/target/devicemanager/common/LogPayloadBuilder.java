@@ -1,7 +1,6 @@
 package com.target.devicemanager.common;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ObjectMapper;
 import com.target.devicemanager.common.entities.LogField;
 import org.slf4j.Logger;
 
@@ -15,8 +14,9 @@ import java.util.Map;
  * - convenience methods to log via SLF4J logger at common levels
  */
 public class LogPayloadBuilder {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    // Jackson 3 defaults WRITE_DATES_AS_TIMESTAMPS to false, so a default mapper
+    // already serializes dates as ISO-8601 strings.
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final Map<String, Object> root = new HashMap<>();
 

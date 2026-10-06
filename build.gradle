@@ -3,12 +3,12 @@ plugins {
     id 'maven-publish'
     id 'idea'
     id 'application'
-    id 'org.springframework.boot' version '3.5.15'
+    id 'org.springframework.boot' version '4.1.1'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'de.undercouch.download' version '5.6.0'
     id 'jacoco'
     id 'org.barfuin.gradle.jacocolog' version '3.1.0'
-    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id 'com.gradleup.shadow' version '9.2.2'
 }
 
 application {
@@ -25,11 +25,11 @@ repositories {
 }
 
 ext['log4j2.version'] = '2.25.5'
-ext['logback.version'] = '1.5.35'
+ext['logback.version'] = '1.6.3'
+ext['jackson-bom.version'] = '3.1.6'
 
 dependencies {
-    implementation "org.apache.tomcat.embed:tomcat-embed-core:11.0.24"
-    implementation("org.springframework.boot:spring-boot-starter-web") {
+    implementation("org.springframework.boot:spring-boot-starter-webmvc") {
         exclude group: "org.apache.logging.log4j"
     }
     implementation "org.springframework.boot:spring-boot-starter-actuator"
@@ -40,32 +40,37 @@ dependencies {
     implementation "org.springframework:spring-web"
     implementation "org.springframework:spring-core"
     implementation "org.springframework.security:spring-security-core"
-    implementation "org.junit.platform:junit-platform-launcher:1.12.2"
-    implementation "org.junit.platform:junit-platform-commons:1.12.2"
-    implementation "org.junit.platform:junit-platform-engine:1.12.2"
+    implementation "org.junit.platform:junit-platform-launcher"
+    implementation "org.junit.platform:junit-platform-commons"
+    implementation "org.junit.platform:junit-platform-engine"
     implementation "org.javapos:javapos-config-loader:4.0.2"
     implementation "org.javapos:javapos:1.14.4"
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13"
-    implementation "com.fasterxml.jackson:jackson-bom:2.22.0"
-    implementation "com.fasterxml.jackson.core:jackson-annotations:2.22"
-    implementation "com.fasterxml.jackson.core:jackson-core:2.22.0"
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.22.1"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.0"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.22.0"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.0"
-    implementation "com.fasterxml.jackson.module:jackson-module-parameter-names"
-    implementation "jakarta.servlet:jakarta.servlet-api:6.1.0"
-    implementation "jakarta.validation:jakarta.validation-api:3.1.1"
-    implementation "jakarta.annotation:jakarta.annotation-api:3.0.0"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1"
+    implementation "com.fasterxml.jackson.core:jackson-annotations"
+    implementation "tools.jackson.core:jackson-databind"
+    implementation "tools.jackson.dataformat:jackson-dataformat-yaml"
+
+    implementation "jakarta.servlet:jakarta.servlet-api"
+    implementation "jakarta.validation:jakarta.validation-api"
+    implementation "jakarta.annotation:jakarta.annotation-api"
     implementation "org.apache.logging.log4j:log4j-api"
     implementation "org.apache.logging.log4j:log4j-core"
     implementation "org.apache.logging.log4j:log4j-1.2-api"
-    implementation "org.apache.commons:commons-lang3:3.18.0"
+    implementation "org.apache.commons:commons-lang3"
     implementation "net.logstash.logback:logstash-logback-encoder:8.1"
-    implementation "org.yaml:snakeyaml:2.4"
-    implementation "com.github.ben-manes.caffeine:caffeine:3.2.0"
+    implementation "org.yaml:snakeyaml"
+    implementation "com.github.ben-manes.caffeine:caffeine"
     implementation "io.github.classgraph:classgraph:4.8.179"
+
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == "org.apache.tomcat.embed") {
+            details.useVersion("11.0.26")
+        }
+    }
 }
 
 tasks.withType(JavaExec) {
