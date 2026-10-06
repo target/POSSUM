@@ -72,7 +72,7 @@ dependencies {
 configurations.all {
     resolutionStrategy.eachDependency { details ->
         if (details.requested.group == "org.apache.tomcat.embed") {
-            details.useVersion("11.0.25")
+            details.useVersion("11.0.26")
         }
     }
 }
