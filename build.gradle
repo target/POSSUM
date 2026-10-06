@@ -62,10 +62,6 @@ dependencies {
     implementation "com.github.ben-manes.caffeine:caffeine"
     implementation "io.github.classgraph:classgraph:4.8.179"
 
-    // Temporary migration aid: uncomment to log renamed/removed config properties at startup,
-    // then remove once application.properties has been updated.
-    // runtimeOnly "org.springframework.boot:spring-boot-properties-migrator"
-
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
 
