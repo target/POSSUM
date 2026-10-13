@@ -42,11 +42,6 @@ public class SimulatedJposLineDisplay extends LineDisplay  {
     }
 
     @Override
-    public boolean getClaimed() {
-        return true;
-    }
-
-    @Override
     public int getCapPowerReporting() {
         return JPOS_PR_STANDARD;
     }

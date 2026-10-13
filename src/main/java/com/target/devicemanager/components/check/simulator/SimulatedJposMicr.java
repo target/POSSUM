@@ -33,11 +33,6 @@ public class SimulatedJposMicr extends MICR {
     }
 
     @Override
-    public boolean getClaimed() {
-        return true;
-    }
-
-    @Override
     public int getState() {
         return simulatorState == SimulatorState.ONLINE ? JposConst.JPOS_S_IDLE : JposConst.JPOS_S_CLOSED;
     }
