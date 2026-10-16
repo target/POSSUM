@@ -110,6 +110,11 @@ public class ScannerManagerTest {
         reconnectResults.add(mockFuture);
         scannerManager = new ScannerManager(scannerDevices, mockScannerLock);
         scannerManagerCache = Mockito.spy(new ScannerManager(scannerDevices, mockScannerLock, mockCacheManager, mockExecutor, reconnectResults, true));
+        // Issue #10: default scanners to opened + claimed so existing health tests reach the health check.
+        when(mockHandheldScannerDevice.isOpened()).thenReturn(true);
+        when(mockHandheldScannerDevice.isClaimed()).thenReturn(true);
+        when(mockFlatbedScannerDevice.isOpened()).thenReturn(true);
+        when(mockFlatbedScannerDevice.isClaimed()).thenReturn(true);
     }
 
     @Test
@@ -406,6 +411,42 @@ public class ScannerManagerTest {
         assertEquals("FLATBED", deviceHealthResponseList.get(0).getDeviceName());
         assertEquals(DeviceHealth.NOTREADY, deviceHealthResponseList.get(0).getHealthStatus());
         assertEquals(expectedList.toString(), testCache.get("health").get().toString());
+    }
+
+    @Test
+    public void getHealth_WhenScannerNotClaimed_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockHandheldScannerDevice.isClaimed()).thenReturn(false);
+        when(mockHandheldScannerDevice.getDeviceName()).thenReturn("HANDHELD");
+        when(mockFlatbedScannerDevice.isConnected()).thenReturn(true);
+        when(mockFlatbedScannerDevice.getDeviceName()).thenReturn("FLATBED");
+        when(mockCacheManager.getCache("scannerHealth")).thenReturn(testCache);
+
+        //act
+        List<DeviceHealthResponse> deviceHealthResponseList = scannerManagerCache.getHealth(ScannerType.BOTH);
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponseList.get(0).getHealthStatus());
+        assertEquals(DeviceHealth.READY, deviceHealthResponseList.get(1).getHealthStatus());
+        verify(mockHandheldScannerDevice, never()).isConnected();
+    }
+
+    @Test
+    public void getHealth_WhenScannerNotOpened_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockHandheldScannerDevice.isOpened()).thenReturn(false);
+        when(mockHandheldScannerDevice.getDeviceName()).thenReturn("HANDHELD");
+        when(mockFlatbedScannerDevice.isConnected()).thenReturn(true);
+        when(mockFlatbedScannerDevice.getDeviceName()).thenReturn("FLATBED");
+        when(mockCacheManager.getCache("scannerHealth")).thenReturn(testCache);
+
+        //act
+        List<DeviceHealthResponse> deviceHealthResponseList = scannerManagerCache.getHealth(ScannerType.BOTH);
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponseList.get(0).getHealthStatus());
+        assertEquals(DeviceHealth.READY, deviceHealthResponseList.get(1).getHealthStatus());
+        verify(mockHandheldScannerDevice, never()).isConnected();
     }
 
     @Test

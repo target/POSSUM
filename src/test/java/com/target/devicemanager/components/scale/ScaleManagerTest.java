@@ -115,6 +115,9 @@ public class ScaleManagerTest {
         sseEmitterList.add(mockSseEmitter);
         scaleManager = new ScaleManager(mockScaleDevice, mockSseEmitterList, mockCompletableFutureFormattedWeightList);
         scaleManagerListCacheEmitter = new ScaleManager(mockScaleDevice, sseEmitterList, completableFutureFormattedWeightList, mockCacheManager, mockSseEmitterList);
+        // Issue #10: default the device to opened + claimed so existing health tests reach the health check.
+        when(mockScaleDevice.isOpened()).thenReturn(true);
+        when(mockScaleDevice.isClaimed()).thenReturn(true);
     }
 
     @Test
@@ -566,6 +569,36 @@ public class ScaleManagerTest {
         assertEquals("scale", deviceHealthResponse.getDeviceName());
         assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
         assertEquals(expected.toString(), testCache.get("health").get().toString());
+    }
+
+    @Test
+    public void getHealth_WhenNotClaimed_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockScaleDevice.isClaimed()).thenReturn(false);
+        when(mockScaleDevice.getDeviceName()).thenReturn("scale");
+        when(mockCacheManager.getCache("scaleHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = scaleManagerListCacheEmitter.getHealth();
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockScaleDevice, never()).isConnected();
+    }
+
+    @Test
+    public void getHealth_WhenNotOpened_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockScaleDevice.isOpened()).thenReturn(false);
+        when(mockScaleDevice.getDeviceName()).thenReturn("scale");
+        when(mockCacheManager.getCache("scaleHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = scaleManagerListCacheEmitter.getHealth();
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockScaleDevice, never()).isConnected();
     }
 
     @Test

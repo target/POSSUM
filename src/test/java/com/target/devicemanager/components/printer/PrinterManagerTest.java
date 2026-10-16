@@ -99,6 +99,9 @@ public class PrinterManagerTest {
     public void testInitialize() {
         printerManager = new PrinterManager(mockPrinterDevice, mockPrinterLock);
         printerManagerCacheFuture = new PrinterManager(mockPrinterDevice, mockPrinterLock, mockCacheManager, mockFuture, true);
+        // Issue #10: default the device to opened + claimed so existing health tests reach the health check.
+        when(mockPrinterDevice.isOpened()).thenReturn(true);
+        when(mockPrinterDevice.isClaimed()).thenReturn(true);
     }
 
     @Test
@@ -499,6 +502,38 @@ public class PrinterManagerTest {
         assertEquals("printer", deviceHealthResponse.getDeviceName());
         assertEquals(DeviceHealth.READY, deviceHealthResponse.getHealthStatus());
         assertEquals(expected.toString(), testCache.get("health").get().toString());
+    }
+
+    @Test
+    public void getHealth_WhenNotClaimed_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockPrinterDevice.isClaimed()).thenReturn(false);
+        when(mockPrinterDevice.getDeviceName()).thenReturn("printer");
+        when(mockCacheManager.getCache("printerHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = printerManagerCacheFuture.getHealth();
+
+        //assert
+        assertEquals("printer", deviceHealthResponse.getDeviceName());
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockPrinterDevice, never()).isConnected();
+    }
+
+    @Test
+    public void getHealth_WhenNotOpened_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockPrinterDevice.isOpened()).thenReturn(false);
+        when(mockPrinterDevice.getDeviceName()).thenReturn("printer");
+        when(mockCacheManager.getCache("printerHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = printerManagerCacheFuture.getHealth();
+
+        //assert
+        assertEquals("printer", deviceHealthResponse.getDeviceName());
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockPrinterDevice, never()).isConnected();
     }
 
     @Test

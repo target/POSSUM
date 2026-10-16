@@ -187,7 +187,11 @@ public class ScaleManager implements ScaleEventListener, ConnectionEventListener
 
     public DeviceHealthResponse getHealth() {
         DeviceHealthResponse deviceHealthResponse;
-        if (isScaleReady()) {
+        // Issue #10: only run the health check when the device is opened AND claimed;
+        // otherwise immediately report NOT_READY without checking health.
+        if (!scaleDevice.isOpened() || !scaleDevice.isClaimed()) {
+            deviceHealthResponse = new DeviceHealthResponse(scaleDevice.getDeviceName(), DeviceHealth.NOTREADY);
+        } else if (isScaleReady()) {
             deviceHealthResponse = new DeviceHealthResponse(scaleDevice.getDeviceName(), DeviceHealth.READY);
         } else {
             deviceHealthResponse = new DeviceHealthResponse(scaleDevice.getDeviceName(), DeviceHealth.NOTREADY);

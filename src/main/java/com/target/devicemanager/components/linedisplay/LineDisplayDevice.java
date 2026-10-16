@@ -118,6 +118,20 @@ public class LineDisplayDevice implements StatusUpdateListener {
     }
 
     /**
+     * @return Device is opened.
+     */
+    public boolean isOpened() {
+        return dynamicLineDisplay.isOpened();
+    }
+
+    /**
+     * @return Device is claimed.
+     */
+    public boolean isClaimed() {
+        return dynamicLineDisplay.isClaimed();
+    }
+
+    /**
      * Makes sure it displays the lines on device.
      * @param line1Text displays the first line text.
      * @param line2Text displays second line text.

@@ -166,6 +166,20 @@ public class MicrDevice implements StatusUpdateListener, ErrorListener, DataList
     }
 
     /**
+     * @return Device is opened.
+     */
+    public boolean isOpened() {
+        return dynamicMicr.isOpened();
+    }
+
+    /**
+     * @return Device is claimed.
+     */
+    public boolean isClaimed() {
+        return dynamicMicr.isClaimed();
+    }
+
+    /**
      * begins check insertion process.
      */
     void insertCheck() throws MicrException {

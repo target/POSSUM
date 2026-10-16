@@ -203,6 +203,22 @@ public class ScannerDevice {
         return dynamicScanner.isConnected();
     }
 
+    /**
+     * Whether the scanner has been opened.
+     * @return Opened status.
+     */
+    public boolean isOpened() {
+        return dynamicScanner.isOpened();
+    }
+
+    /**
+     * Whether the scanner has been claimed.
+     * @return Claimed status.
+     */
+    public boolean isClaimed() {
+        return dynamicScanner.isClaimed();
+    }
+
 
     public void setIsTest(boolean isTest) {
         this.isTest = isTest;

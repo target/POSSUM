@@ -99,7 +99,11 @@ public class CashDrawerManager {
 
     public DeviceHealthResponse getHealth() {
         DeviceHealthResponse deviceHealthResponse;
-        if (cashDrawerDevice.isConnected()) {
+        // Issue #10: only run the health check when the device is opened AND claimed;
+        // otherwise immediately report NOT_READY without checking health.
+        if (!cashDrawerDevice.isOpened() || !cashDrawerDevice.isClaimed()) {
+            deviceHealthResponse = new DeviceHealthResponse(cashDrawerDevice.getDeviceName(), DeviceHealth.NOTREADY);
+        } else if (cashDrawerDevice.isConnected()) {
             deviceHealthResponse = new DeviceHealthResponse(cashDrawerDevice.getDeviceName(), DeviceHealth.READY);
         } else {
             deviceHealthResponse = new DeviceHealthResponse(cashDrawerDevice.getDeviceName(), DeviceHealth.NOTREADY);

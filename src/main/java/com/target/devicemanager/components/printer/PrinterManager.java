@@ -162,7 +162,11 @@ public class PrinterManager {
 
     public DeviceHealthResponse getHealth() {
         DeviceHealthResponse deviceHealthResponse;
-        if (printerDevice.isConnected()) {
+        // Issue #10: only run the health check when the device is opened AND claimed;
+        // otherwise immediately report NOT_READY without checking health.
+        if (!printerDevice.isOpened() || !printerDevice.isClaimed()) {
+            deviceHealthResponse = new DeviceHealthResponse(printerDevice.getDeviceName(), DeviceHealth.NOTREADY);
+        } else if (printerDevice.isConnected()) {
             deviceHealthResponse = new DeviceHealthResponse(printerDevice.getDeviceName(), DeviceHealth.READY);
         } else {
             deviceHealthResponse = new DeviceHealthResponse(printerDevice.getDeviceName(), DeviceHealth.NOTREADY);
