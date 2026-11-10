@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'idea'
     id 'application'
-    id 'org.springframework.boot' version '4.1.1'
+    id 'org.springframework.boot' version '4.1.2'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'de.undercouch.download' version '5.6.0'
     id 'jacoco'
@@ -25,8 +25,8 @@ repositories {
 }
 
 ext['log4j2.version'] = '2.25.5'
-ext['logback.version'] = '1.6.3'
-ext['jackson-bom.version'] = '3.1.6'
+ext['logback.version'] = '1.6.6'
+ext['jackson-bom.version'] = '3.3.0'
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc") {
@@ -67,8 +67,8 @@ dependencies {
 
 configurations.all {
     resolutionStrategy.eachDependency { details ->
-        if (details.requested.group == "org.apache.tomcat.embed") {
-            details.useVersion("11.0.26")
+        if (details.requested.group == "com.fasterxml.jackson.core" && (details.requested.name == "jackson-databind" || details.requested.name == "jackson-core")) {
+            details.useVersion("2.23.0")
         }
     }
 }
