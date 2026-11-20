@@ -102,4 +102,10 @@ public class DynamicDevice<DEVICE extends BaseJposControl> {
     public String getDeviceName() {
         return deviceConnector.getConnectedDeviceName();
     }
+
+    public Object getDeviceProperty(String propertyName) {
+        synchronized (device) {
+            return deviceConnector.getDeviceProperty(propertyName);
+        }
+    }
 }

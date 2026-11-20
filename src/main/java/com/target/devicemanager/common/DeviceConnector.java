@@ -2,6 +2,7 @@ package com.target.devicemanager.common;
 
 import jpos.BaseJposControl;
 import jpos.JposException;
+import jpos.config.JposEntry;
 import jpos.config.JposEntryRegistry;
 import jpos.config.simple.SimpleEntry;
 import org.slf4j.Logger;
@@ -55,6 +56,11 @@ public class DeviceConnector<T extends BaseJposControl> {
 
     String getConnectedDeviceName() {
         return this.connectedDeviceName;
+    }
+
+    Object getDeviceProperty(String propertyName) {
+        JposEntry entry = deviceRegistry.getJposEntry(connectedDeviceName);
+        return entry == null ? null : entry.getPropertyValue(propertyName);
     }
 
     private void clearDeviceCache() {
