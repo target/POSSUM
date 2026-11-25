@@ -30,7 +30,7 @@ class LineDisplayConfig {
         JposEntryRegistry deviceRegistry = JposServiceLoader.getManager().getEntryRegistry();
 
         if (applicationConfig.IsSimulationMode()) {
-            dynamicLineDisplay = new DynamicDevice<>(simulatedLineDisplay, new DevicePower(), new DeviceConnector<>(simulatedLineDisplay, deviceRegistry));
+            dynamicLineDisplay = new SimulatedDynamicDevice<>(simulatedLineDisplay, new DevicePower(), new DeviceConnector<>(simulatedLineDisplay, deviceRegistry));
         } else {
             LineDisplay lineDisplay = new LineDisplay();
             dynamicLineDisplay = new DynamicDevice<>(lineDisplay, new DevicePower(), new DeviceConnector<>(lineDisplay, deviceRegistry ));

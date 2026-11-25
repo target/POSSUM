@@ -4,6 +4,7 @@ import com.target.devicemanager.common.DeviceAvailabilitySingleton;
 import com.target.devicemanager.common.DeviceConnector;
 import com.target.devicemanager.common.DevicePower;
 import com.target.devicemanager.common.DynamicDevice;
+import com.target.devicemanager.common.SimulatedDynamicDevice;
 import com.target.devicemanager.components.check.simulator.SimulatedJposMicr;
 import com.target.devicemanager.configuration.ApplicationConfig;
 import jpos.MICR;
@@ -32,7 +33,7 @@ class MicrConfig {
         JposEntryRegistry deviceRegistry = JposServiceLoader.getManager().getEntryRegistry();
 
         if (applicationConfig.IsSimulationMode()) {
-            dynamicMicr = new DynamicDevice<>(simulatedMicr, new DevicePower(), new DeviceConnector<>(simulatedMicr, deviceRegistry));
+            dynamicMicr = new SimulatedDynamicDevice<>(simulatedMicr, new DevicePower(), new DeviceConnector<>(simulatedMicr, deviceRegistry));
         } else {
             MICR micr = new MICR();
             dynamicMicr = new DynamicDevice<>(micr, new DevicePower(), new DeviceConnector<>(micr, deviceRegistry));
