@@ -143,7 +143,11 @@ public class MicrManager implements MicrEventListener, ConnectionEventListener {
 
     public DeviceHealthResponse getHealth() {
         DeviceHealthResponse deviceHealthResponse;
-        if (micrDevice.isConnected()) {
+        // Issue #10: only run the health check when the device is opened AND claimed;
+        // otherwise immediately report NOT_READY without checking health.
+        if (!micrDevice.isOpened() || !micrDevice.isClaimed()) {
+            deviceHealthResponse = new DeviceHealthResponse(micrDevice.getDeviceName(), DeviceHealth.NOTREADY);
+        } else if (micrDevice.isConnected()) {
             deviceHealthResponse = new DeviceHealthResponse(micrDevice.getDeviceName(), DeviceHealth.READY);
         } else {
             deviceHealthResponse = new DeviceHealthResponse(micrDevice.getDeviceName(), DeviceHealth.NOTREADY);

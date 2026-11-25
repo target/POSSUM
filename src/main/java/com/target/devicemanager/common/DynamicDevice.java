@@ -74,21 +74,40 @@ public class DynamicDevice<DEVICE extends BaseJposControl> {
         }
     }
 
-    public boolean isConnected() {
+    /**
+     * Whether the underlying device has been opened (its JavaPOS state is no
+     * longer CLOSED). A claimed device is always opened, but an opened device
+     * is not necessarily claimed.
+     */
+    public boolean isOpened() {
         synchronized (device) {
             int deviceState = device.getState();
-            if (deviceState != JposConst.JPOS_S_IDLE && deviceState != JposConst.JPOS_S_BUSY) {
+            return deviceState == JposConst.JPOS_S_IDLE || deviceState == JposConst.JPOS_S_BUSY;
+        }
+    }
+
+    /**
+     * Whether this process has claimed (taken exclusive ownership of) the
+     * device. Returns false if the device is not opened or the claim cannot be
+     * read.
+     */
+    public boolean isClaimed() {
+        synchronized (device) {
+            try {
+                return device.getClaimed();
+            } catch (JposException jposException) {
                 return false;
             }
-            try {
-                if (!device.getClaimed()) {
-                    return false;
-                }
-                int powerState = devicePower.getPowerState(device);
-                if (powerState != JposConst.JPOS_PS_ONLINE && powerState != JposConst.JPOS_PS_UNKNOWN) {
-                    return false;
-                }
-            } catch (JposException jposException) {
+        }
+    }
+
+    public boolean isConnected() {
+        synchronized (device) {
+            if (!isOpened() || !isClaimed()) {
+                return false;
+            }
+            int powerState = devicePower.getPowerState(device);
+            if (powerState != JposConst.JPOS_PS_ONLINE && powerState != JposConst.JPOS_PS_UNKNOWN) {
                 return false;
             }
         }

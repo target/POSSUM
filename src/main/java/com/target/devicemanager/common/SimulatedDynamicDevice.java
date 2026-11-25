@@ -25,4 +25,20 @@ public class SimulatedDynamicDevice<T extends BaseJposControl> extends DynamicDe
     public boolean isConnected() {
         return simulatedDevice.getState() == JposConst.JPOS_S_IDLE;
     }
+
+    /**
+     * A simulated device does not go through the real open/claim handshake, so
+     * opened/claimed track its simulated connection state instead of the
+     * underlying JavaPOS control (whose getClaimed() would otherwise report not
+     * claimed).
+     */
+    @Override
+    public boolean isOpened() {
+        return isConnected();
+    }
+
+    @Override
+    public boolean isClaimed() {
+        return isConnected();
+    }
 }

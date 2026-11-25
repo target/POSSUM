@@ -95,6 +95,9 @@ public class MicrManagerTest {
     public void testInitialize() {
         micrManager = new MicrManager(mockMicrDevice);
         micrManagerCacheClient = new MicrManager(mockMicrDevice, mockCacheManager, mockFutureClient);
+        // Issue #10: default the device to opened + claimed so existing health tests reach the health check.
+        when(mockMicrDevice.isOpened()).thenReturn(true);
+        when(mockMicrDevice.isClaimed()).thenReturn(true);
     }
 
     @Test
@@ -374,6 +377,36 @@ public class MicrManagerTest {
         assertEquals("micr", deviceHealthResponse.getDeviceName());
         assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
         assertEquals(expected.toString(), testCache.get("health").get().toString());
+    }
+
+    @Test
+    public void getHealth_WhenNotClaimed_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockMicrDevice.isClaimed()).thenReturn(false);
+        when(mockMicrDevice.getDeviceName()).thenReturn("micr");
+        when(mockCacheManager.getCache("micrHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = micrManagerCacheClient.getHealth();
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockMicrDevice, never()).isConnected();
+    }
+
+    @Test
+    public void getHealth_WhenNotOpened_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockMicrDevice.isOpened()).thenReturn(false);
+        when(mockMicrDevice.getDeviceName()).thenReturn("micr");
+        when(mockCacheManager.getCache("micrHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = micrManagerCacheClient.getHealth();
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockMicrDevice, never()).isConnected();
     }
 
     @Test

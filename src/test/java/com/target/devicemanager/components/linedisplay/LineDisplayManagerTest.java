@@ -89,6 +89,9 @@ public class LineDisplayManagerTest {
     public void testInitialize() {
         lineDisplayManager = new LineDisplayManager(mockLineDisplayDevice);
         lineDisplayManagerCache = new LineDisplayManager(mockLineDisplayDevice, mockCacheManager);
+        // Issue #10: default the device to opened + claimed so existing health tests reach the health check.
+        when(mockLineDisplayDevice.isOpened()).thenReturn(true);
+        when(mockLineDisplayDevice.isClaimed()).thenReturn(true);
     }
 
     @Test
@@ -285,6 +288,36 @@ public class LineDisplayManagerTest {
         assertEquals("lineDisplay", deviceHealthResponse.getDeviceName());
         assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
         assertEquals(expected.toString(), testCache.get("health").get().toString());
+    }
+
+    @Test
+    public void getHealth_WhenNotClaimed_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockLineDisplayDevice.isClaimed()).thenReturn(false);
+        when(mockLineDisplayDevice.getDeviceName()).thenReturn("lineDisplay");
+        when(mockCacheManager.getCache("lineDisplayHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = lineDisplayManagerCache.getHealth();
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockLineDisplayDevice, never()).isConnected();
+    }
+
+    @Test
+    public void getHealth_WhenNotOpened_ShouldReturnNotReadyWithoutCheckingConnection() {
+        //arrange
+        when(mockLineDisplayDevice.isOpened()).thenReturn(false);
+        when(mockLineDisplayDevice.getDeviceName()).thenReturn("lineDisplay");
+        when(mockCacheManager.getCache("lineDisplayHealth")).thenReturn(testCache);
+
+        //act
+        DeviceHealthResponse deviceHealthResponse = lineDisplayManagerCache.getHealth();
+
+        //assert
+        assertEquals(DeviceHealth.NOTREADY, deviceHealthResponse.getHealthStatus());
+        verify(mockLineDisplayDevice, never()).isConnected();
     }
 
     @Test

@@ -193,19 +193,11 @@ public class ScannerManager {
                 case "FLATBED":
                 case "HANDHELD":
                     if(scanner.getScannerType().equals(scannerType.name())) {
-                        if (scanner.isConnected()) {
-                            response.add(new DeviceHealthResponse(scanner.getDeviceName(), DeviceHealth.READY));
-                        } else {
-                            response.add(new DeviceHealthResponse(scanner.getDeviceName(), DeviceHealth.NOTREADY));
-                        }
+                        response.add(getScannerHealth(scanner));
                     }
                     break;
                 default:
-                    if (scanner.isConnected()) {
-                        response.add(new DeviceHealthResponse(scanner.getDeviceName(), DeviceHealth.READY));
-                    } else {
-                        response.add(new DeviceHealthResponse(scanner.getDeviceName(), DeviceHealth.NOTREADY));
-                    }
+                    response.add(getScannerHealth(scanner));
             }
         }
         try {
@@ -215,6 +207,18 @@ public class ScannerManager {
         }
         log.success("getHealth(out)", 1);
         return response;
+    }
+
+    /**
+     * Issue #10: a scanner reports READY only when it is opened AND claimed and
+     * its health check passes; otherwise the health check is skipped and it
+     * reports NOT_READY.
+     */
+    private DeviceHealthResponse getScannerHealth(ScannerDevice scanner) {
+        if (scanner.isOpened() && scanner.isClaimed() && scanner.isConnected()) {
+            return new DeviceHealthResponse(scanner.getDeviceName(), DeviceHealth.READY);
+        }
+        return new DeviceHealthResponse(scanner.getDeviceName(), DeviceHealth.NOTREADY);
     }
 
     public List<DeviceHealthResponse> getStatus() {
